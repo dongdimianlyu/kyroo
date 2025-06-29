@@ -10,8 +10,5 @@
     "src/pages/api/logEvent.ts": {
       "maxDuration": 10
     }
-  },
-  "env": {
-    "OPENAI_API_KEY": "OPENAI_API_KEY"
   }
 }

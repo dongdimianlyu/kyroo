@@ -20,10 +20,16 @@ interface AnalysisResult {
   advice: string;
 }
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize OpenAI client - this will be created fresh for each request
+const getOpenAIClient = () => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OpenAI API key not configured');
+  }
+  return new OpenAI({
+    apiKey: apiKey,
+  });
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -47,8 +53,8 @@ export default async function handler(
 
     // Check for OpenAI API key
     if (!process.env.OPENAI_API_KEY) {
-      console.error('OpenAI API key not configured');
-      return res.status(500).json({ error: 'Service temporarily unavailable. Please check configuration.' });
+      console.error('OpenAI API key not configured - environment variable OPENAI_API_KEY is missing');
+      return res.status(500).json({ error: 'Service authentication failed. Please check configuration.' });
     }
 
     // Enhanced prompt for better manipulation detection and overthinking assessment
@@ -101,6 +107,7 @@ IMPORTANT GUIDELINES:
 - Be specific about what makes something manipulative vs just awkward
 - Help build confidence in normal social situations while staying alert to real red flags`;
 
+    const openai = getOpenAIClient();
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
