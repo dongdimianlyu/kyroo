@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import OpenAI from 'openai';
 
 interface AnalyzeRequest {
   message: string;
@@ -8,14 +9,21 @@ interface AnalyzeRequest {
 
 interface AnalysisResult {
   analysis: {
-    tone: string;
-    redFlags: string[];
-    sentiment: string;
-    manipulation: string[];
+    emotionalWarmth: number;
+    manipulationRisk: number;
+    passiveAggressive: number;
   };
-  responses: string[];
+  responses: Array<{
+    tone: 'Direct' | 'Diplomatic' | 'Assertive';
+    text: string;
+  }>;
   advice: string;
 }
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export default async function handler(
   req: NextApiRequest,
@@ -37,94 +45,138 @@ export default async function handler(
       return res.status(400).json({ error: 'Anonymous ID is required' });
     }
 
-    // TODO: Replace this with actual OpenAI GPT-4o API call
-    // For now, return placeholder analysis based on message content
-    const analysisResult: AnalysisResult = generatePlaceholderAnalysis(message, context);
+    // Check for OpenAI API key
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OpenAI API key not configured');
+      return res.status(500).json({ error: 'Service temporarily unavailable. Please check configuration.' });
+    }
 
-    res.status(200).json(analysisResult);
-  } catch (error) {
-    console.error('Analysis error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+    // Enhanced prompt for better manipulation detection and overthinking assessment
+    const prompt = `You are a social intelligence assistant helping autistic and introverted individuals navigate social interactions safely. Your goal is to help them identify potential manipulation, passive-aggressiveness, and understand whether they might be overthinking normal social situations.
+
+ANALYZE THIS MESSAGE/SCENARIO:
+"${message}"
+
+${context ? `ADDITIONAL CONTEXT: "${context}"` : ''}
+
+Please provide analysis focusing on:
+
+1. **MANIPULATION DETECTION**: Look for signs of emotional manipulation, guilt-tripping, gaslighting, pressure tactics, boundary violations, or attempts to exploit vulnerabilities. Consider if this person is trying to get something from the user through emotional coercion.
+
+2. **PASSIVE-AGGRESSIVENESS**: Identify indirect hostility, sarcasm, backhanded compliments, silent treatment implications, or veiled criticism disguised as concern.
+
+3. **EMOTIONAL WARMTH vs HOSTILITY**: Assess the genuine emotional tone - is this person being genuinely supportive/friendly, neutral, or showing signs of irritation/hostility?
+
+4. **REALITY CHECK**: Importantly, help determine if the user might be overthinking a normal social interaction. Sometimes social awkwardness or brief responses are just that - not manipulation or hostility.
+
+Respond with a JSON object in this exact format:
+{
+  "analysis": {
+    "emotionalWarmth": [0-100 number, where 0=hostile/cold, 50=neutral, 100=genuinely warm/supportive],
+    "manipulationRisk": [0-100 number, where 0=no manipulation detected, 50=some concerning patterns, 100=clear manipulation tactics],
+    "passiveAggressive": [0-100 number, where 0=direct communication, 50=some indirect elements, 100=clearly passive-aggressive]
+  },
+  "responses": [
+    {
+      "tone": "Direct",
+      "text": "[A straightforward, honest response that sets clear boundaries if needed]"
+    },
+    {
+      "tone": "Diplomatic", 
+      "text": "[A polite but firm response that addresses concerns while maintaining relationship]"
+    },
+    {
+      "tone": "Assertive",
+      "text": "[A confident response that protects the user's interests without being aggressive]"
+    }
+  ],
+  "advice": "[Specific guidance about whether this situation requires concern or if the user might be overthinking. Include red flags to watch for OR reassurance that this seems like normal social interaction. Give practical next steps for handling similar situations.]"
 }
 
-// Placeholder analysis function - replace with actual AI analysis
-function generatePlaceholderAnalysis(message: string, context?: string): AnalysisResult {
-  const lowerMessage = message.toLowerCase();
-  
-  // Simple tone detection
-  let tone = 'Neutral';
-  if (lowerMessage.includes('!') || lowerMessage.includes('urgent') || lowerMessage.includes('asap')) {
-    tone = 'Urgent/Demanding';
-  } else if (lowerMessage.includes('please') || lowerMessage.includes('thank')) {
-    tone = 'Polite';
-  } else if (lowerMessage.includes('angry') || lowerMessage.includes('mad') || lowerMessage.includes('hate')) {
-    tone = 'Aggressive';
-  } else if (lowerMessage.includes('sorry') || lowerMessage.includes('apologize')) {
-    tone = 'Apologetic';
-  }
+IMPORTANT GUIDELINES:
+- If you detect manipulation (score 70+), prioritize user safety in responses
+- If scores are low (under 30), reassure user they may be overthinking 
+- For passive-aggression, teach user to recognize the patterns
+- Responses should be practical and actually usable by someone who struggles with social cues
+- Be specific about what makes something manipulative vs just awkward
+- Help build confidence in normal social situations while staying alert to real red flags`;
 
-  // Simple sentiment analysis
-  let sentiment = 'Neutral';
-  if (lowerMessage.includes('love') || lowerMessage.includes('great') || lowerMessage.includes('amazing')) {
-    sentiment = 'Positive';
-  } else if (lowerMessage.includes('hate') || lowerMessage.includes('terrible') || lowerMessage.includes('awful')) {
-    sentiment = 'Negative';
-  }
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system", 
+          content: "You are a helpful social intelligence assistant specializing in helping neurodivergent individuals navigate social situations safely. Always respond with valid JSON in the exact format requested."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 1500,
+    });
 
-  // Check for potential red flags
-  const redFlags: string[] = [];
-  if (lowerMessage.includes('secret') || lowerMessage.includes('don\'t tell')) {
-    redFlags.push('Requests secrecy or confidentiality');
-  }
-  if (lowerMessage.includes('right now') || lowerMessage.includes('immediately')) {
-    redFlags.push('Creates artificial urgency');
-  }
-  if (lowerMessage.includes('you always') || lowerMessage.includes('you never')) {
-    redFlags.push('Uses absolute language that may be unfair');
-  }
+    const responseContent = completion.choices[0]?.message?.content;
+    if (!responseContent) {
+      throw new Error('No response content from OpenAI');
+    }
 
-  // Check for manipulation tactics
-  const manipulation: string[] = [];
-  if (lowerMessage.includes('guilt') || lowerMessage.includes('disappointed')) {
-    manipulation.push('Guilt-tripping');
-  }
-  if (lowerMessage.includes('everyone else') || lowerMessage.includes('nobody else')) {
-    manipulation.push('Social pressure/comparison');
-  }
-  if (lowerMessage.includes('if you really') || lowerMessage.includes('prove')) {
-    manipulation.push('Conditional affection');
-  }
+    // Parse the JSON response
+    let analysisResult: AnalysisResult;
+    try {
+      analysisResult = JSON.parse(responseContent);
+    } catch {
+      console.error('Failed to parse OpenAI response:', responseContent);
+      throw new Error('Invalid response format from AI service');
+    }
 
-  // Generate responses based on analysis
-  const responses: string[] = [];
-  if (tone === 'Urgent/Demanding') {
-    responses.push("I understand this seems important to you. Can we discuss the timeline?");
-    responses.push("I'd like to help. Let me check my schedule and get back to you.");
-  } else if (tone === 'Aggressive') {
-    responses.push("I can see you're upset. Can we talk about what's bothering you?");
-    responses.push("I want to understand your perspective. Can we discuss this calmly?");
-  } else {
-    responses.push("Thank you for sharing this with me. I appreciate you reaching out.");
-    responses.push("I hear what you're saying. Let me think about this and respond thoughtfully.");
-    responses.push("I understand. Can we talk more about this when we both have time?");
-  }
+    // Validate the response structure
+    if (!analysisResult.analysis || !analysisResult.responses || !analysisResult.advice) {
+      console.error('Invalid response structure:', analysisResult);
+      throw new Error('Incomplete analysis result');
+    }
 
-  // Generate advice
-  let advice = "This message appears to be straightforward communication. ";
-  if (redFlags.length > 0 || manipulation.length > 0) {
-    advice = "Be cautious with this message. Consider setting boundaries and taking time to respond thoughtfully. ";
-  }
-  advice += "Remember that you have the right to take time to process and respond at your own pace.";
+    // Validate analysis scores are numbers between 0-100
+    const { emotionalWarmth, manipulationRisk, passiveAggressive } = analysisResult.analysis;
+    if (typeof emotionalWarmth !== 'number' || emotionalWarmth < 0 || emotionalWarmth > 100 ||
+        typeof manipulationRisk !== 'number' || manipulationRisk < 0 || manipulationRisk > 100 ||
+        typeof passiveAggressive !== 'number' || passiveAggressive < 0 || passiveAggressive > 100) {
+      throw new Error('Invalid analysis scores');
+    }
 
-  return {
-    analysis: {
-      tone,
-      redFlags,
-      sentiment,
-      manipulation
-    },
-    responses,
-    advice
-  };
+    // Validate responses array
+    if (!Array.isArray(analysisResult.responses) || analysisResult.responses.length !== 3) {
+      throw new Error('Invalid responses format');
+    }
+
+    const validTones = ['Direct', 'Diplomatic', 'Assertive'];
+    for (const response of analysisResult.responses) {
+      if (!validTones.includes(response.tone) || typeof response.text !== 'string') {
+        throw new Error('Invalid response format');
+      }
+    }
+
+    return res.status(200).json(analysisResult);
+
+  } catch (error: unknown) {
+    console.error('Analysis error:', error);
+    
+    // Handle specific OpenAI errors
+    if (error && typeof error === 'object' && 'status' in error) {
+      const errorWithStatus = error as { status?: number };
+      if (errorWithStatus.status === 401) {
+        return res.status(500).json({ error: 'Service authentication failed. Please check configuration.' });
+      } else if (errorWithStatus.status === 429) {
+        return res.status(429).json({ error: 'Service is busy. Please try again in a moment.' });
+      } else if (errorWithStatus.status === 403) {
+        return res.status(500).json({ error: 'Service quota exceeded. Please try again later.' });
+      }
+    }
+    
+    const errorMessage = error instanceof Error ? error.message : 'Analysis failed. Please try again.';
+    return res.status(500).json({ 
+      error: errorMessage
+    });
+  }
 } 

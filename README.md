@@ -1,117 +1,165 @@
-# Kairoo
+# Kairoo - Social Intelligence for Everyone
 
-A minimal, privacy-first web app to help introverted or autistic teens understand social messages. Kairoo uses AI to detect manipulation, analyze tone, and suggest emotionally intelligent replies.
+**Kairoo** is a privacy-first web application designed to help people navigate social messages with confidence. Built specifically for neurodivergent individuals, those dealing with social anxiety, or anyone who finds social communication challenging.
 
-## Features
+## 🌟 What Kairoo Does
 
-- **Privacy-First**: No sign-up required, no personal data stored
-- **Anonymous Usage**: Generates random UUID for analytics only
-- **Message Analysis**: Detects tone, sentiment, red flags, and manipulation tactics
-- **Smart Responses**: Suggests appropriate replies based on message analysis
-- **Outcome Advice**: Provides guidance on best approaches for different situations
+- **Analyze Message Tone**: Get insights into emotional warmth, manipulation risk, and passive-aggressiveness
+- **Suggest Responses**: Receive personalized reply suggestions in Direct, Diplomatic, and Assertive tones
+- **Build Confidence**: Learn to recognize patterns and trust your instincts in social situations
+- **Reality Check**: Understand whether you're overthinking normal interactions or if concerns are valid
 
-## Tech Stack
+## 🛡️ Privacy-First Design
 
-- **Next.js** with TypeScript
-- **Tailwind CSS** for styling
-- **Pages Router** (not App Router)
-- **Vercel**-compatible deployment
+- **No Sign-Up Required**: Start using immediately with no personal information
+- **No Message Storage**: All content is analyzed and immediately discarded
+- **Anonymous by Design**: Only anonymous UUIDs for basic usage analytics
+- **Secure Processing**: All analysis happens through encrypted connections
 
-## Getting Started
+## 🎯 Our Mission
 
-1. **Install dependencies:**
+We believe social intelligence tools should be accessible to everyone. Kairoo is completely free to use because we're not here to monetize struggles or profit from difficult moments. This is about care, understanding, and empathy—not commerce.
+
+## 🚀 Technology Stack
+
+- **Frontend**: Next.js 15 with TypeScript and Tailwind CSS
+- **AI Integration**: OpenAI GPT-4 for intelligent message analysis
+- **Architecture**: Pages Router with API routes
+- **Deployment**: Optimized for Vercel
+
+## 🛠️ Local Development
+
+### Prerequisites
+
+- Node.js 18+ and npm 8+
+- OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
+
+### Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd kyroo
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. **Run the development server:**
+3. **Configure environment**
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local and add your OpenAI API key
+   ```
+
+4. **Start development server**
    ```bash
    npm run dev
    ```
 
-3. **Open your browser:**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+5. **Open in browser**
+   ```
+   http://localhost:3000
+   ```
 
-## Project Structure
+## 📦 Production Deployment
 
-```
-src/
-├── pages/
-│   ├── index.tsx          # Landing page
-│   ├── app.tsx            # Main application
-│   ├── _app.tsx           # App wrapper
-│   ├── _document.tsx      # Document structure
-│   └── api/
-│       ├── analyze.ts     # Message analysis endpoint
-│       └── logEvent.ts    # Privacy-safe logging
-└── styles/
-    └── globals.css        # Global styles with Tailwind
-```
+### Deploy to Vercel (Recommended)
 
-## API Endpoints
+1. **Push to GitHub**
+   ```bash
+   git add .
+   git commit -m "Ready for production"
+   git push origin main
+   ```
 
-### POST `/api/analyze`
-Analyzes a message and returns insights.
+2. **Connect to Vercel**
+   - Go to [vercel.com](https://vercel.com)
+   - Import your GitHub repository
+   - Vercel will auto-detect Next.js configuration
 
-**Request:**
-```json
-{
-  "message": "The message to analyze",
-  "context": "Optional context",
-  "anonId": "anonymous-user-id"
-}
-```
+3. **Add Environment Variables**
+   - In Vercel dashboard, go to Project Settings → Environment Variables
+   - Add `OPENAI_API_KEY` with your API key
+   - Make sure to add it for Production, Preview, and Development environments
 
-**Response:**
-```json
-{
-  "analysis": {
-    "tone": "Urgent/Demanding",
-    "redFlags": ["Creates artificial urgency"],
-    "sentiment": "Neutral",
-    "manipulation": []
-  },
-  "responses": ["Suggested response 1", "Suggested response 2"],
-  "advice": "Guidance on how to handle this situation"
-}
+4. **Deploy**
+   - Vercel will automatically build and deploy
+   - Your app will be live at `https://your-project-name.vercel.app`
+
+### Manual Build
+
+```bash
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
 
-### POST `/api/logEvent`
-Logs anonymous usage events for analytics.
+## 📁 Project Structure
 
-**Request:**
-```json
-{
-  "anonId": "anonymous-user-id",
-  "eventType": "analyze_message",
-  "timestamp": "2024-01-01T00:00:00.000Z"
-}
+```
+kyroo/
+├── src/
+│   ├── pages/
+│   │   ├── index.tsx          # Landing page with warm, supportive messaging
+│   │   ├── app.tsx            # Main application with message analysis
+│   │   ├── _app.tsx           # Next.js app wrapper
+│   │   ├── _document.tsx      # Custom document
+│   │   └── api/
+│   │       ├── analyze.ts     # OpenAI integration for message analysis
+│   │       └── logEvent.ts    # Privacy-safe anonymous logging
+│   └── styles/
+│       └── globals.css        # Global styles with Tailwind
+├── public/                    # Static assets
+├── vercel.json               # Vercel deployment configuration
+├── .env.example              # Environment variables template
+└── SETUP.md                  # OpenAI API setup instructions
 ```
 
-## Privacy & Security
+## 🎨 Features
 
-- **No Personal Data**: Messages are analyzed but never stored
-- **Anonymous IDs**: Only random UUIDs are used for analytics
-- **No Tracking**: No IP addresses, emails, or personal information collected
-- **Secure Communication**: All API calls use HTTPS in production
+### Landing Page
+- **Warm, Supportive Messaging**: Designed for people in vulnerable situations
+- **Clear Value Proposition**: Explains how Kairoo helps with social navigation
+- **Privacy Assurance**: Detailed explanation of privacy protections
+- **Mission Statement**: Care-focused, not profit-driven approach
 
-## Next Steps
+### Main Application
+- **Message Analysis**: Real-time AI-powered analysis using GPT-4
+- **Three Analysis Metrics**: 
+  - Emotional Warmth (0-100)
+  - Manipulation Risk (0-100) 
+  - Passive-Aggressiveness (0-100)
+- **Response Suggestions**: Three different communication styles
+- **Always-Visible Preview**: Shows what analysis will look like before use
+- **Settings Page**: Placeholder for future customization options
 
-1. **Integrate AI**: Replace placeholder analysis with OpenAI GPT-4o or Claude API
-2. **Enhanced Analytics**: Add privacy-focused analytics service (PostHog, Plausible)
-3. **Improved UI**: Add more interactive features and better mobile experience
-4. **Testing**: Add comprehensive test suite
+### Technical Features
+- **Production-Ready**: Optimized build with proper error handling
+- **TypeScript**: Full type safety for reliable development
+- **Responsive Design**: Works seamlessly on all device sizes
+- **Accessibility**: Built with inclusive design principles
 
-## Development
+## 🔧 API Configuration
 
-- **Build**: `npm run build`
-- **Start**: `npm start`
-- **Lint**: `npm run lint`
+The app requires an OpenAI API key to function. See `SETUP.md` for detailed configuration instructions.
 
-## Deployment
+### Environment Variables
 
-This project is optimized for Vercel deployment. Simply connect your repository to Vercel for automatic deployments.
+- `OPENAI_API_KEY`: Your OpenAI API key (required)
 
-## License
+## 🤝 Contributing
 
-MIT License - see LICENSE file for details.
+We welcome contributions that align with our mission of making social communication tools accessible and supportive. Please ensure any changes maintain the app's privacy-first, care-focused approach.
+
+## 📄 License
+
+This project is built with the intention of helping people navigate social situations with dignity and confidence. Please use responsibly and in alignment with our mission of accessibility and care.
+
+---
+
+**Built with care for anyone who finds social communication challenging.**
+*Free to use, private by design.*
