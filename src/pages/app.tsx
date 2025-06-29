@@ -22,6 +22,7 @@ export default function App() {
   const [error, setError] = useState('');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [anonId, setAnonId] = useState('');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Initially collapsed
 
   // Generate anonymous ID on first visit
   useEffect(() => {
@@ -156,12 +157,31 @@ export default function App() {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         {/* Fixed Left Sidebar */}
-        <aside className="fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-sm" style={{ width: '200px' }}>
-          <div className="p-6">
+        <aside className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ${
+          sidebarCollapsed ? 'w-16' : 'w-48'
+        }`}>
+          <div className="p-4">
+            {/* Collapse Toggle */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="w-full flex items-center justify-center p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors mb-6"
+              title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <svg className={`w-5 h-5 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-0' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
             {/* Logo */}
-            <Link href="/" className="block mb-8">
-              <h1 className="text-xl font-bold text-indigo-600">Kairoo</h1>
-              <p className="text-xs text-gray-500 mt-1">Social Intelligence</p>
+            <Link href="/" className={`block mb-8 ${sidebarCollapsed ? 'text-center' : ''}`}>
+              {sidebarCollapsed ? (
+                <div className="text-xl font-bold text-indigo-600">K</div>
+              ) : (
+                <>
+                  <h1 className="text-xl font-bold text-indigo-600">Kairoo</h1>
+                  <p className="text-xs text-gray-500 mt-1">Social Intelligence</p>
+                </>
+              )}
             </Link>
 
             {/* Navigation */}
@@ -173,14 +193,17 @@ export default function App() {
                 <button
                   key={item.name}
                   onClick={() => setActiveNav(item.name)}
-                  className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center space-x-3 ${
+                  className={`w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
+                    sidebarCollapsed ? 'justify-center' : 'space-x-3'
+                  } ${
                     activeNav === item.name
                       ? 'bg-indigo-100 text-indigo-700 border border-indigo-200'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
+                  title={sidebarCollapsed ? item.name : undefined}
                 >
                   <span className="text-lg">{item.icon}</span>
-                  <span>{item.name}</span>
+                  {!sidebarCollapsed && <span>{item.name}</span>}
                 </button>
               ))}
             </nav>
@@ -188,7 +211,9 @@ export default function App() {
         </aside>
 
         {/* Settings Content */}
-        <main className="flex-1" style={{ marginLeft: '200px' }}>
+        <main className={`flex-1 transition-all duration-300 ${
+          sidebarCollapsed ? 'ml-16' : 'ml-48'
+        }`}>
           <div className="max-w-4xl mx-auto px-6 py-8">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
               <div className="text-center space-y-6">
@@ -258,12 +283,31 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Fixed Left Sidebar */}
-      <aside className="fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-sm" style={{ width: '200px' }}>
-        <div className="p-6">
+      <aside className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ${
+        sidebarCollapsed ? 'w-16' : 'w-48'
+      }`}>
+        <div className="p-4">
+          {/* Collapse Toggle */}
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="w-full flex items-center justify-center p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors mb-6"
+            title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <svg className={`w-5 h-5 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-0' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
           {/* Logo */}
-          <Link href="/" className="block mb-8">
-            <h1 className="text-xl font-bold text-indigo-600">Kairoo</h1>
-            <p className="text-xs text-gray-500 mt-1">Social Intelligence</p>
+          <Link href="/" className={`block mb-8 ${sidebarCollapsed ? 'text-center' : ''}`}>
+            {sidebarCollapsed ? (
+              <div className="text-xl font-bold text-indigo-600">K</div>
+            ) : (
+              <>
+                <h1 className="text-xl font-bold text-indigo-600">Kairoo</h1>
+                <p className="text-xs text-gray-500 mt-1">Social Intelligence</p>
+              </>
+            )}
           </Link>
 
           {/* Navigation */}
@@ -275,14 +319,17 @@ export default function App() {
               <button
                 key={item.name}
                 onClick={() => setActiveNav(item.name)}
-                className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center space-x-3 ${
+                className={`w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
+                  sidebarCollapsed ? 'justify-center' : 'space-x-3'
+                } ${
                   activeNav === item.name
                     ? 'bg-indigo-100 text-indigo-700 border border-indigo-200'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
+                title={sidebarCollapsed ? item.name : undefined}
               >
                 <span className="text-lg">{item.icon}</span>
-                <span>{item.name}</span>
+                {!sidebarCollapsed && <span>{item.name}</span>}
               </button>
             ))}
           </nav>
@@ -290,7 +337,9 @@ export default function App() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1" style={{ marginLeft: '200px' }}>
+      <main className={`flex-1 transition-all duration-300 ${
+        sidebarCollapsed ? 'ml-16' : 'ml-48'
+      }`}>
         <div className="max-w-6xl mx-auto px-6 py-8">
           {/* Upper Half - Input Section */}
           <div className="mb-8">
