@@ -32,6 +32,13 @@ interface SimulationResponse {
   sceneDescription?: string;
 }
 
+interface ProgressEvaluation {
+  progressScore: number;
+  feedback: string;
+  strengths: string[];
+  improvements: string[];
+}
+
 export default function App() {
   const [message, setMessage] = useState('');
   const [context, setContext] = useState('');
@@ -49,6 +56,7 @@ export default function App() {
   const [currentInput, setCurrentInput] = useState('');
   const [sceneDescription, setSceneDescription] = useState('');
   const [lastCoaching, setLastCoaching] = useState<CoachingInsight | null>(null);
+  const [progressEvaluation, setProgressEvaluation] = useState<ProgressEvaluation | null>(null);
   
   // Speech features
   const [isListening, setIsListening] = useState(false);
@@ -57,6 +65,7 @@ export default function App() {
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isConversationalMode, setIsConversationalMode] = useState(false);
   const [isWaitingForSpeech, setIsWaitingForSpeech] = useState(false);
+  const [shouldAutoSend, setShouldAutoSend] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthesisRef = useRef<SpeechSynthesis | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -87,6 +96,9 @@ export default function App() {
         const transcript = event.results[0][0].transcript;
         setCurrentInput(transcript);
         setIsListening(false);
+        
+        // Trigger auto-send for voice input in simulation mode
+        setShouldAutoSend(true);
       };
       
       recognitionRef.current.onend = () => {
@@ -101,6 +113,76 @@ export default function App() {
       setSpeechEnabled(true);
     }
   }, []);
+
+  // Auto-send message when voice input is received
+  useEffect(() => {
+    if (shouldAutoSend && currentInput.trim() && isSimulationActive) {
+      setShouldAutoSend(false);
+      // Create a synthetic send action
+      const sendVoiceMessage = async () => {
+        if (!currentInput.trim() || loading) return;
+
+        const userMessage: Message = {
+          id: crypto.randomUUID(),
+          role: 'user',
+          content: currentInput.trim(),
+          timestamp: new Date(),
+        };
+
+        setMessages(prev => [...prev, userMessage]);
+        setCurrentInput('');
+        setLoading(true);
+        setError('');
+
+        try {
+          const response = await fetch('/api/simulate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              action: 'continue',
+              userMessage: userMessage.content,
+              conversationHistory: messages,
+              scenario,
+              anonId,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to get response');
+          }
+
+          const data: SimulationResponse = await response.json();
+          
+          const aiMessage: Message = {
+            id: crypto.randomUUID(),
+            role: 'ai',
+            content: data.aiResponse,
+            timestamp: new Date(),
+          };
+
+          setMessages(prev => [...prev, aiMessage]);
+          setLastCoaching(data.coaching);
+          
+          // Speak the AI response
+          speakText(data.aiResponse);
+          
+          // Evaluate progress after each exchange
+          setTimeout(() => {
+            evaluateProgress();
+          }, 500);
+          
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Failed to get response');
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      sendVoiceMessage();
+    }
+  }, [shouldAutoSend, currentInput, isSimulationActive, loading, messages, scenario, anonId]);
 
   // Get analysis results - shows fillers when no analysis, real results when analyzed
   const getDisplayResults = () => {
@@ -449,6 +531,11 @@ export default function App() {
       // Speak the AI response
       speakText(data.aiResponse);
       
+      // Evaluate progress after each exchange
+      setTimeout(() => {
+        evaluateProgress();
+      }, 500);
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to get response');
     } finally {
@@ -456,7 +543,7 @@ export default function App() {
     }
   };
 
-  const handleRephrase = async (tone: 'softer' | 'stronger' | 'different') => {
+  const handleRephrase = async (tone: 'softer' | 'stronger' | 'different' | 'curious') => {
     if (!currentInput.trim()) {
       setError('Please enter a message to rephrase.');
       return;
@@ -495,12 +582,42 @@ export default function App() {
     }
   };
 
+  const evaluateProgress = async () => {
+    if (messages.length === 0) return;
+
+    try {
+      const response = await fetch('/api/evaluate-progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          conversationHistory: messages,
+          scenario,
+          anonId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to evaluate progress');
+      }
+
+      const data: ProgressEvaluation = await response.json();
+      setProgressEvaluation(data);
+      
+    } catch (err) {
+      console.error('Progress evaluation error:', err);
+      // Don't show error to user, just log it
+    }
+  };
+
   const resetSimulation = () => {
     setIsSimulationActive(false);
     setMessages([]);
     setScenario('');
     setSceneDescription('');
     setLastCoaching(null);
+    setProgressEvaluation(null);
     setCurrentInput('');
     setError('');
     setIsConversationalMode(false);
@@ -659,141 +776,85 @@ export default function App() {
                 </div>
               </div>
             ) : (
-              /* Active Simulation */
+              /* Active Simulation - New Card-Based Layout */
               <div className="space-y-6">
+                {/* Progress Bar */}
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-purple-800">Conversation Progress</h3>
+                    <span className="text-sm text-purple-600">
+                      {progressEvaluation ? `${progressEvaluation.progressScore}%` : 'Starting...'}
+                    </span>
+                  </div>
+                  <div className="w-full bg-purple-100 rounded-full h-3">
+                    <div 
+                      className="bg-gradient-to-r from-purple-400 to-purple-600 h-3 rounded-full transition-all duration-700 ease-out"
+                      style={{ width: `${progressEvaluation?.progressScore || 0}%` }}
+                    />
+                  </div>
+                  {progressEvaluation && (
+                    <p className="text-sm text-purple-700 mt-2 italic">
+                      {progressEvaluation.feedback}
+                    </p>
+                  )}
+                </div>
+
                 {/* Scene Description */}
                 {sceneDescription && (
-                  <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-purple-100 p-6">
-                    <h3 className="font-semibold text-purple-800 mb-2">Scene</h3>
-                    <p className="text-gray-700 italic">{sceneDescription}</p>
+                  <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
+                    <h3 className="font-semibold text-purple-800 mb-3">📍 Scene Setting</h3>
+                    <p className="text-gray-700 italic leading-relaxed">{sceneDescription}</p>
                   </div>
                 )}
 
-                {/* Conversation */}
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-purple-100 shadow-lg">
-                  <div className="h-96 overflow-y-auto p-6 space-y-4">
-                    {messages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div
-                          className={`max-w-sm px-4 py-3 rounded-2xl ${
-                            message.role === 'user'
-                              ? 'bg-purple-500 text-white'
-                              : 'bg-gray-100 text-gray-800 border border-gray-200'
-                          }`}
-                        >
-                          <p className="text-sm">{message.content}</p>
+                {/* Conversation Cards */}
+                <div className="space-y-4">
+                  {messages.map((message, index) => (
+                    <div key={message.id} className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
+                      <div className="flex items-start space-x-4">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          message.role === 'user' 
+                            ? 'bg-purple-100 text-purple-600' 
+                            : 'bg-blue-100 text-blue-600'
+                        }`}>
+                          {message.role === 'user' ? '👤' : '🤖'}
                         </div>
-                      </div>
-                    ))}
-                    {loading && (
-                      <div className="flex justify-start">
-                        <div className="bg-gray-100 border border-gray-200 rounded-2xl px-4 py-3">
-                          <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Input Area */}
-                  <div className="border-t border-purple-100 p-6">
-                    {isConversationalMode ? (
-                      /* Conversational Mode */
-                      <div className="text-center space-y-4">
-                        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 border border-green-200">
-                          <h3 className="text-lg font-semibold text-gray-800 mb-2">🗣️ Conversational Mode</h3>
-                          <p className="text-sm text-gray-600 mb-4">
-                            Speak naturally! The AI will respond with voice, then automatically listen for your next response.
-                          </p>
-                          
-                          {isWaitingForSpeech ? (
-                            <div className="flex items-center justify-center space-x-2 text-green-600">
-                              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                              <span className="text-sm font-medium">Listening...</span>
-                            </div>
-                          ) : isSpeaking ? (
-                            <div className="flex items-center justify-center space-x-2 text-blue-600">
-                              <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                              <span className="text-sm font-medium">AI is speaking...</span>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={startListeningConversational}
-                              disabled={loading || isListening || isSpeaking}
-                              className="px-6 py-3 bg-green-500 text-white font-medium rounded-xl hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                              Start Speaking
-                            </button>
-                          )}
-                        </div>
-                        
-                        {currentInput && (
-                          <div className="bg-gray-50 rounded-lg p-3 border">
-                            <p className="text-sm text-gray-700">
-                              <strong>You said:</strong> "{currentInput}"
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      /* Typing Mode */
-                      <div className="flex space-x-3">
                         <div className="flex-1">
-                          <textarea
-                            value={currentInput}
-                            onChange={(e) => setCurrentInput(e.target.value)}
-                            placeholder="Type your response..."
-                            className="w-full h-20 px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 resize-none text-gray-700 bg-white/90"
-                            disabled={loading}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                sendMessage();
-                              }
-                            }}
-                          />
+                          <h4 className="font-semibold text-gray-800 mb-2">
+                            {message.role === 'user' ? 'Your response:' : 'Sarah says:'}
+                          </h4>
+                          <p className="text-gray-700 leading-relaxed">{message.content}</p>
                         </div>
-                        
-                        {speechEnabled && (
-                          <button
-                            onClick={startListening}
-                            disabled={loading || isListening}
-                            className={`p-3 rounded-xl transition-colors ${
-                              isListening
-                                ? 'bg-red-500 text-white'
-                                : 'bg-purple-100 text-purple-600 hover:bg-purple-200'
-                            }`}
-                            title="Voice input"
-                          >
-                            🎤
-                          </button>
-                        )}
-                        
-                        <button
-                          onClick={sendMessage}
-                          disabled={loading || !currentInput.trim()}
-                          className="px-6 py-3 bg-purple-500 text-white font-medium rounded-xl hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          Send
-                        </button>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  ))}
+                  
+                  {loading && (
+                    <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-blue-100 text-blue-600">
+                          🤖
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-800 mb-2">Sarah is thinking...</h4>
+                          <div className="flex space-x-2">
+                            <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Coaching Insights */}
                 {lastCoaching && (
-                  <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-purple-100 p-6">
-                    <h3 className="font-semibold text-purple-800 mb-2 flex items-center">
-                      🧠 Coaching Insight
+                  <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl border border-green-200 p-6">
+                    <h3 className="font-semibold text-green-800 mb-3 flex items-center">
+                      💡 Gentle Coaching
                     </h3>
-                    <p className={`text-sm ${
+                    <p className={`leading-relaxed ${
                       lastCoaching.type === 'positive' ? 'text-green-700' :
                       lastCoaching.type === 'suggestion' ? 'text-amber-700' :
                       'text-gray-700'
@@ -803,39 +864,174 @@ export default function App() {
                   </div>
                 )}
 
+                {/* Progress Insights */}
+                {progressEvaluation && progressEvaluation.strengths.length > 0 && (
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-6">
+                    <h3 className="font-semibold text-purple-800 mb-3">✨ You're doing great!</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <h4 className="font-medium text-purple-700 mb-2">Strengths:</h4>
+                        <ul className="space-y-1">
+                          {progressEvaluation.strengths.map((strength, index) => (
+                            <li key={index} className="text-sm text-purple-600 flex items-start">
+                              <span className="text-green-500 mr-2">✓</span>
+                              {strength}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      {progressEvaluation.improvements.length > 0 && (
+                        <div>
+                          <h4 className="font-medium text-purple-700 mb-2">Next time, try:</h4>
+                          <ul className="space-y-1">
+                            {progressEvaluation.improvements.map((improvement, index) => (
+                              <li key={index} className="text-sm text-purple-600 flex items-start">
+                                <span className="text-blue-500 mr-2">💡</span>
+                                {improvement}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Input Area */}
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
+                  <h3 className="font-semibold text-purple-800 mb-4">Your turn to respond:</h3>
+                  
+                  {isConversationalMode ? (
+                    /* Conversational Mode */
+                    <div className="text-center space-y-4">
+                      <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 border border-green-200">
+                        <h4 className="text-lg font-semibold text-gray-800 mb-2">🗣️ Voice Mode</h4>
+                        <p className="text-sm text-gray-600 mb-4">
+                          Speak naturally! The AI will respond with voice, then automatically listen for your next response.
+                        </p>
+                        
+                        {isWaitingForSpeech ? (
+                          <div className="flex items-center justify-center space-x-2 text-green-600">
+                            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                            <span className="text-sm font-medium">Listening...</span>
+                          </div>
+                        ) : isSpeaking ? (
+                          <div className="flex items-center justify-center space-x-2 text-blue-600">
+                            <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                            <span className="text-sm font-medium">AI is speaking...</span>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={startListeningConversational}
+                            disabled={loading || isListening || isSpeaking}
+                            className="px-6 py-3 bg-green-500 text-white font-medium rounded-xl hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            Start Speaking
+                          </button>
+                        )}
+                      </div>
+                      
+                      {currentInput && (
+                        <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                          <p className="text-sm text-purple-700">
+                            <strong>You said:</strong> "{currentInput}"
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    /* Typing Mode */
+                    <div className="space-y-4">
+                      <textarea
+                        value={currentInput}
+                        onChange={(e) => setCurrentInput(e.target.value)}
+                        placeholder="Type how you'd like to respond..."
+                        className="w-full h-24 px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 resize-none text-gray-700 bg-white/90 transition-all"
+                        disabled={loading}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage();
+                          }
+                        }}
+                      />
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          {speechEnabled && (
+                            <button
+                              onClick={startListening}
+                              disabled={loading || isListening}
+                              className={`p-3 rounded-xl transition-colors ${
+                                isListening
+                                  ? 'bg-red-500 text-white'
+                                  : 'bg-purple-100 text-purple-600 hover:bg-purple-200'
+                              }`}
+                              title="Voice input"
+                            >
+                              🎤
+                            </button>
+                          )}
+                          <span className="text-sm text-gray-500">
+                            {isListening ? 'Listening...' : 'Press Enter to send'}
+                          </span>
+                        </div>
+                        
+                        <button
+                          onClick={sendMessage}
+                          disabled={loading || !currentInput.trim()}
+                          className="px-6 py-3 bg-purple-500 text-white font-medium rounded-xl hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Send Response
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Action Buttons */}
-                <div className="flex flex-wrap gap-3 justify-center">
-                  <button
-                    onClick={() => handleRephrase('different')}
-                    className="px-4 py-2 bg-blue-100 text-blue-700 font-medium rounded-lg hover:bg-blue-200 transition-colors"
-                    disabled={loading}
-                  >
-                    Try a Different Tone
-                  </button>
-                  <button
-                    onClick={() => handleRephrase('softer')}
-                    className="px-4 py-2 bg-green-100 text-green-700 font-medium rounded-lg hover:bg-green-200 transition-colors"
-                    disabled={loading}
-                  >
-                    Rephrase Softer
-                  </button>
-                  <button
-                    onClick={() => handleRephrase('stronger')}
-                    className="px-4 py-2 bg-orange-100 text-orange-700 font-medium rounded-lg hover:bg-orange-200 transition-colors"
-                    disabled={loading}
-                  >
-                    Rephrase Stronger
-                  </button>
-                  <button
-                    onClick={resetSimulation}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
-                  >
-                    New Scenario
-                  </button>
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
+                  <h3 className="font-semibold text-purple-800 mb-4">Need help with your response?</h3>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      onClick={() => handleRephrase('different')}
+                      className="px-4 py-2 bg-blue-100 text-blue-700 font-medium rounded-xl hover:bg-blue-200 transition-colors"
+                      disabled={loading || !currentInput.trim()}
+                    >
+                      📝 Rephrase Reply
+                    </button>
+                    <button
+                      onClick={() => handleRephrase('softer')}
+                      className="px-4 py-2 bg-green-100 text-green-700 font-medium rounded-xl hover:bg-green-200 transition-colors"
+                      disabled={loading || !currentInput.trim()}
+                    >
+                      🌸 Try Casual Tone
+                    </button>
+                    <button
+                      onClick={() => handleRephrase('stronger')}
+                      className="px-4 py-2 bg-orange-100 text-orange-700 font-medium rounded-xl hover:bg-orange-200 transition-colors"
+                      disabled={loading || !currentInput.trim()}
+                    >
+                      💪 Try Assertive Tone
+                    </button>
+                    <button
+                      onClick={() => handleRephrase('curious')}
+                      className="px-4 py-2 bg-purple-100 text-purple-700 font-medium rounded-xl hover:bg-purple-200 transition-colors"
+                      disabled={loading || !currentInput.trim()}
+                    >
+                      🤔 Try Curious Tone
+                    </button>
+                    <button
+                      onClick={resetSimulation}
+                      className="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors"
+                    >
+                      🔄 New Scenario
+                    </button>
+                  </div>
                 </div>
 
                 {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                     <p className="text-red-700 text-sm">{error}</p>
                   </div>
                 )}
