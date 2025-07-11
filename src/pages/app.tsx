@@ -43,6 +43,7 @@ export default function App() {
   const [message, setMessage] = useState('');
   const [context, setContext] = useState('');
   const [activeNav, setActiveNav] = useState('Dashboard');
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
@@ -277,10 +278,10 @@ export default function App() {
     leftEmoji: string;
     rightEmoji: string;
   }) => (
-    <div className="flex-1 space-y-3">
-      <h4 className="text-sm font-medium text-gray-700 text-center">{label}</h4>
+    <div className="space-y-3">
+      <h4 className="text-sm font-medium text-neutral-700">{label}</h4>
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-gray-600">
+        <div className="flex items-center justify-between text-xs text-neutral-500">
           <div className="flex items-center space-x-1">
             <span>{leftEmoji}</span>
             <span>{leftLabel}</span>
@@ -290,13 +291,20 @@ export default function App() {
             <span>{rightEmoji}</span>
           </div>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-neutral-200 rounded-full h-2.5">
           <div 
-            className={`h-2 rounded-full transition-all duration-300 ${
-              hasResults ? 'bg-indigo-600' : 'bg-gray-400'
+            className={`h-2.5 rounded-full transition-smooth ${
+              hasResults ? 'bg-primary-600' : 'bg-neutral-400'
             }`}
             style={{ width: `${value}%` }}
           ></div>
+        </div>
+        <div className="text-right">
+          <span className={`text-xs font-medium ${
+            hasResults ? 'text-neutral-700' : 'text-neutral-500'
+          }`}>
+            {value}%
+          </span>
         </div>
       </div>
     </div>
@@ -633,72 +641,71 @@ export default function App() {
   // Render Kairoo LIVE page
   if (activeNav === 'Kairoo LIVE') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex">
-        {/* Fixed Left Sidebar */}
-        <aside className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ${
-          sidebarCollapsed ? 'w-16' : 'w-48'
-        }`}>
-          <div className="p-4">
-            {/* Collapse Toggle */}
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="w-full flex items-center justify-center p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors mb-6"
-              title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              <svg className={`w-5 h-5 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-0' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-
-            {/* Logo */}
-            <Link href="/" className={`block mb-8 ${sidebarCollapsed ? 'text-center' : ''}`}>
-              {sidebarCollapsed ? (
-                <div className="text-xl font-bold text-indigo-600">K</div>
-              ) : (
-                <>
-                  <h1 className="text-xl font-bold text-indigo-600">Kairoo</h1>
-                  <p className="text-xs text-gray-500 mt-1">Social Intelligence</p>
-                </>
-              )}
-            </Link>
-
-            {/* Navigation */}
-            <nav className="space-y-3">
-              {[
-                { name: 'Dashboard', icon: '📊' },
-                { name: 'Kairoo LIVE', icon: '💬' },
-                { name: 'Settings', icon: '⚙️' }
-              ].map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => setActiveNav(item.name)}
-                  className={`w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
-                    sidebarCollapsed ? 'justify-center' : 'space-x-3'
-                  } ${
-                    activeNav === item.name
-                      ? 'bg-indigo-100 text-indigo-700 border border-indigo-200'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                  title={sidebarCollapsed ? item.name : undefined}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  {!sidebarCollapsed && <span>{item.name}</span>}
-                </button>
-              ))}
-            </nav>
+      <div className="min-h-screen bg-neutral-50">
+        {/* Top Navigation */}
+        <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex justify-between items-center">
+              <Link href="/" className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">K</span>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-neutral-900">Kairoo</h1>
+                  <p className="text-xs text-neutral-500 -mt-1">Social Intelligence</p>
+                </div>
+              </Link>
+              
+              {/* Navigation Tabs */}
+              <div className="flex items-center space-x-1 bg-neutral-100 rounded-xl p-1">
+                {[
+                  { name: 'Dashboard', icon: '📊' },
+                  { name: 'Kairoo LIVE', icon: '💬' },
+                  { name: 'Settings', icon: '⚙️' }
+                ].map((item) => (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      if (item.name !== activeNav) {
+                        setIsTransitioning(true);
+                        setTimeout(() => {
+                          setActiveNav(item.name);
+                          setIsTransitioning(false);
+                        }, 150);
+                      }
+                    }}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-smooth ${
+                      activeNav === item.name
+                        ? 'bg-white text-primary-600 shadow-sm'
+                        : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
+                    }`}
+                  >
+                    <span className="text-base">{item.icon}</span>
+                    <span>{item.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </aside>
+        </nav>
 
         {/* Main Content */}
-        <main className={`flex-1 transition-all duration-300 ${
-          sidebarCollapsed ? 'ml-16' : 'ml-48'
-        }`}>
-          <div className="max-w-4xl mx-auto px-6 py-8">
-            {/* Audio Controls */}
-            <div className="flex justify-end items-center gap-3 mb-4">
-              {isSimulationActive && speechEnabled && (
+        <main className="max-w-6xl mx-auto px-6 py-8">
+          <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-neutral-900 mb-2">Kairoo LIVE</h1>
+              <p className="text-neutral-600">
+                Practice real-life conversations in a safe, supportive environment.
+              </p>
+            </div>
+
+          {/* Audio Controls */}
+          {isSimulationActive && (
+            <div className="flex justify-end items-center gap-3 mb-6">
+              {speechEnabled && (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Mode:</span>
+                  <span className="text-sm text-neutral-600">Mode:</span>
                   <button
                     onClick={() => {
                       setIsConversationalMode(!isConversationalMode);
@@ -709,10 +716,10 @@ export default function App() {
                         }
                       }
                     }}
-                    className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-smooth ${
                       isConversationalMode
-                        ? 'bg-green-100 text-green-700 border border-green-200'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        ? 'bg-success-100 text-success-700 border border-success-200'
+                        : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                     }`}
                     title={isConversationalMode ? "Switch to typing mode" : "Switch to conversational mode - speak directly to AI"}
                   >
@@ -726,317 +733,285 @@ export default function App() {
                   setIsAudioMuted(!isAudioMuted);
                   if (!isAudioMuted) stopSpeaking();
                 }}
-                className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                className="p-2 text-neutral-600 hover:text-secondary-600 hover:bg-secondary-50 rounded-lg transition-smooth"
                 title={isAudioMuted ? "Enable audio" : "Mute audio"}
               >
                 {isAudioMuted ? '🔇' : '🔈'}
               </button>
             </div>
+          )}
 
-            {!isSimulationActive ? (
-              /* Scenario Setup */
-              <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 shadow-lg p-8">
+          {!isSimulationActive ? (
+            /* Scenario Setup */
+            <div className="max-w-3xl mx-auto">
+              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
                 <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl text-white">💬</span>
+                  <div className="w-16 h-16 bg-secondary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg className="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
                   </div>
-                  <h1 className="text-3xl font-bold text-gray-800 mb-2">Kairoo LIVE</h1>
-                  <p className="text-lg text-gray-600">Practice real-life conversations in a safe space</p>
+                  <h2 className="text-2xl font-bold text-neutral-900 mb-4">Start a Practice Session</h2>
+                  <p className="text-neutral-600">
+                    Practice conversations in a safe space with AI coaching and feedback.
+                  </p>
                 </div>
 
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-lg font-medium text-gray-700 mb-4">
-                      What kind of situation are you preparing for?
+                    <label className="block text-sm font-medium text-neutral-700 mb-3">
+                      What situation would you like to practice?
                     </label>
                     <textarea
                       value={scenario}
                       onChange={(e) => setScenario(e.target.value)}
-                      placeholder="e.g., Having lunch with a new classmate, Texting a friend who might be mad, Asking for help with homework..."
-                      className="w-full h-32 px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 resize-none text-gray-700 bg-white/90"
+                      placeholder="e.g., Having lunch with a new classmate, Texting a friend who might be upset, Asking for help with homework..."
+                      className="input-field h-32 resize-none"
                       disabled={loading}
                     />
                   </div>
 
                   {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                      <p className="text-red-700 text-sm">{error}</p>
+                    <div className="bg-error-50 border border-error-200 rounded-xl p-4">
+                      <p className="text-error-600 text-sm">{error}</p>
                     </div>
                   )}
 
-                  <div className="text-center pt-4">
+                  <div className="pt-4">
                     <button
                       onClick={startSimulation}
                       disabled={loading || !scenario.trim()}
-                      className="px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                      className="w-full button-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? 'Starting simulation...' : 'Begin Practice'}
+                      {loading ? 'Starting practice session...' : 'Begin Practice'}
                     </button>
                   </div>
                 </div>
               </div>
-            ) : (
-              /* Active Simulation - New Card-Based Layout */
-              <div className="space-y-6">
-                {/* Progress Bar */}
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-purple-800">Conversation Progress</h3>
-                    <span className="text-sm text-purple-600">
-                      {progressEvaluation ? `${progressEvaluation.progressScore}%` : 'Starting...'}
-                    </span>
-                  </div>
-                  <div className="w-full bg-purple-100 rounded-full h-3">
-                    <div 
-                      className="bg-gradient-to-r from-purple-400 to-purple-600 h-3 rounded-full transition-all duration-700 ease-out"
-                      style={{ width: `${progressEvaluation?.progressScore || 0}%` }}
-                    />
-                  </div>
-                  {progressEvaluation && (
-                    <p className="text-sm text-purple-700 mt-2 italic">
-                      {progressEvaluation.feedback}
-                    </p>
-                  )}
+            </div>
+          ) : (
+            /* Active Simulation */
+            <div className="space-y-6">
+              {/* Progress Bar */}
+              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-neutral-900">Conversation Progress</h3>
+                  <span className="text-sm text-primary-600">
+                    {progressEvaluation ? `${progressEvaluation.progressScore}%` : 'Starting...'}
+                  </span>
                 </div>
-
-                {/* Scene Description */}
-                {sceneDescription && (
-                  <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
-                    <h3 className="font-semibold text-purple-800 mb-3">📍 Scene Setting</h3>
-                    <p className="text-gray-700 italic leading-relaxed">{sceneDescription}</p>
-                  </div>
+                <div className="w-full bg-neutral-200 rounded-full h-2">
+                  <div 
+                    className="bg-primary-600 h-2 rounded-full transition-smooth"
+                    style={{ width: `${progressEvaluation?.progressScore || 0}%` }}
+                  />
+                </div>
+                {progressEvaluation && (
+                  <p className="text-sm text-neutral-600 mt-2">
+                    {progressEvaluation.feedback}
+                  </p>
                 )}
+              </div>
 
-                {/* Conversation Cards */}
-                <div className="space-y-4">
-                  {messages.map((message, index) => (
-                    <div key={message.id} className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
-                      <div className="flex items-start space-x-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          message.role === 'user' 
-                            ? 'bg-purple-100 text-purple-600' 
-                            : 'bg-blue-100 text-blue-600'
-                        }`}>
-                          {message.role === 'user' ? '👤' : '🤖'}
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-800 mb-2">
-                            {message.role === 'user' ? 'Your response:' : 'Sarah says:'}
-                          </h4>
-                          <p className="text-gray-700 leading-relaxed">{message.content}</p>
+              {/* Scene Description */}
+              {sceneDescription && (
+                <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+                  <h3 className="font-semibold text-neutral-900 mb-3 flex items-center">
+                    <span className="w-6 h-6 bg-secondary-100 rounded-lg flex items-center justify-center mr-2 text-sm">📍</span>
+                    Scene Setting
+                  </h3>
+                  <p className="text-neutral-600 italic">{sceneDescription}</p>
+                </div>
+              )}
+
+              {/* Conversation Cards */}
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <div key={message.id} className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+                    <div className="flex items-start space-x-4">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                        message.role === 'user' 
+                          ? 'bg-primary-100 text-primary-600' 
+                          : 'bg-secondary-100 text-secondary-600'
+                      }`}>
+                        {message.role === 'user' ? '👤' : '🤖'}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-neutral-900 mb-2">
+                          {message.role === 'user' ? 'You' : 'AI Partner'}
+                        </h4>
+                        <p className="text-neutral-700">{message.content}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {loading && (
+                  <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-secondary-100 text-secondary-600">
+                        🤖
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-neutral-900 mb-2">AI Partner is thinking...</h4>
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                          <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                         </div>
                       </div>
                     </div>
-                  ))}
-                  
-                  {loading && (
-                    <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-blue-100 text-blue-600">
-                          🤖
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-800 mb-2">Sarah is thinking...</h4>
-                          <div className="flex space-x-2">
-                            <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Coaching Insights */}
-                {lastCoaching && (
-                  <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl border border-green-200 p-6">
-                    <h3 className="font-semibold text-green-800 mb-3 flex items-center">
-                      💡 Gentle Coaching
-                    </h3>
-                    <p className={`leading-relaxed ${
-                      lastCoaching.type === 'positive' ? 'text-green-700' :
-                      lastCoaching.type === 'suggestion' ? 'text-amber-700' :
-                      'text-gray-700'
-                    }`}>
-                      {lastCoaching.message}
-                    </p>
                   </div>
                 )}
+              </div>
 
-                {/* Progress Insights */}
-                {progressEvaluation && progressEvaluation.strengths.length > 0 && (
-                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-6">
-                    <h3 className="font-semibold text-purple-800 mb-3">✨ You're doing great!</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-medium text-purple-700 mb-2">Strengths:</h4>
-                        <ul className="space-y-1">
-                          {progressEvaluation.strengths.map((strength, index) => (
-                            <li key={index} className="text-sm text-purple-600 flex items-start">
-                              <span className="text-green-500 mr-2">✓</span>
-                              {strength}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      {progressEvaluation.improvements.length > 0 && (
-                        <div>
-                          <h4 className="font-medium text-purple-700 mb-2">Next time, try:</h4>
-                          <ul className="space-y-1">
-                            {progressEvaluation.improvements.map((improvement, index) => (
-                              <li key={index} className="text-sm text-purple-600 flex items-start">
-                                <span className="text-blue-500 mr-2">💡</span>
-                                {improvement}
-                              </li>
-                            ))}
-                          </ul>
+              {/* Coaching Insights */}
+              {lastCoaching && (
+                <div className="bg-success-50 rounded-2xl border border-success-200 p-6">
+                  <h3 className="font-semibold text-success-800 mb-3 flex items-center">
+                    <span className="w-6 h-6 bg-success-100 rounded-lg flex items-center justify-center mr-2 text-sm">💡</span>
+                    Coaching Insight
+                  </h3>
+                  <p className={`${
+                    lastCoaching.type === 'positive' ? 'text-success-700' :
+                    lastCoaching.type === 'suggestion' ? 'text-warning-700' :
+                    'text-neutral-700'
+                  }`}>
+                    {lastCoaching.message}
+                  </p>
+                </div>
+              )}
+
+              {/* Input Area */}
+              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+                <h3 className="font-semibold text-neutral-900 mb-4">Your Response</h3>
+                
+                {isConversationalMode ? (
+                  <div className="text-center space-y-4">
+                    <div className="bg-success-50 rounded-xl p-6 border border-success-200">
+                      <h4 className="font-semibold text-neutral-900 mb-2">🗣️ Voice Mode Active</h4>
+                      <p className="text-sm text-neutral-600 mb-4">
+                        Speak naturally and the AI will respond with voice.
+                      </p>
+                      
+                      {isWaitingForSpeech ? (
+                        <div className="flex items-center justify-center space-x-2 text-success-600">
+                          <div className="w-3 h-3 bg-success-500 rounded-full animate-pulse"></div>
+                          <span className="text-sm font-medium">Listening...</span>
                         </div>
+                      ) : isSpeaking ? (
+                        <div className="flex items-center justify-center space-x-2 text-primary-600">
+                          <div className="w-3 h-3 bg-primary-500 rounded-full animate-pulse"></div>
+                          <span className="text-sm font-medium">AI is speaking...</span>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={startListeningConversational}
+                          disabled={loading || isListening || isSpeaking}
+                          className="button-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Start Speaking
+                        </button>
                       )}
                     </div>
                   </div>
-                )}
-
-                {/* Input Area */}
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
-                  <h3 className="font-semibold text-purple-800 mb-4">Your turn to respond:</h3>
-                  
-                  {isConversationalMode ? (
-                    /* Conversational Mode */
-                    <div className="text-center space-y-4">
-                      <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 border border-green-200">
-                        <h4 className="text-lg font-semibold text-gray-800 mb-2">🗣️ Voice Mode</h4>
-                        <p className="text-sm text-gray-600 mb-4">
-                          Speak naturally! The AI will respond with voice, then automatically listen for your next response.
-                        </p>
-                        
-                        {isWaitingForSpeech ? (
-                          <div className="flex items-center justify-center space-x-2 text-green-600">
-                            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm font-medium">Listening...</span>
-                          </div>
-                        ) : isSpeaking ? (
-                          <div className="flex items-center justify-center space-x-2 text-blue-600">
-                            <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm font-medium">AI is speaking...</span>
-                          </div>
-                        ) : (
+                ) : (
+                  <div className="space-y-4">
+                    <textarea
+                      value={currentInput}
+                      onChange={(e) => setCurrentInput(e.target.value)}
+                      placeholder="Type your response..."
+                      className="input-field h-24 resize-none"
+                      disabled={loading}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          sendMessage();
+                        }
+                      }}
+                    />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        {speechEnabled && (
                           <button
-                            onClick={startListeningConversational}
-                            disabled={loading || isListening || isSpeaking}
-                            className="px-6 py-3 bg-green-500 text-white font-medium rounded-xl hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            onClick={startListening}
+                            disabled={loading || isListening}
+                            className={`p-2 rounded-lg transition-smooth ${
+                              isListening
+                                ? 'bg-error-500 text-white'
+                                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                            }`}
+                            title="Voice input"
                           >
-                            Start Speaking
+                            🎤
                           </button>
                         )}
+                        <span className="text-sm text-neutral-500">
+                          {isListening ? 'Listening...' : 'Press Enter to send'}
+                        </span>
                       </div>
                       
-                      {currentInput && (
-                        <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                          <p className="text-sm text-purple-700">
-                            <strong>You said:</strong> "{currentInput}"
-                          </p>
-                        </div>
-                      )}
+                      <button
+                        onClick={sendMessage}
+                        disabled={loading || !currentInput.trim()}
+                        className="button-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Send Response
+                      </button>
                     </div>
-                  ) : (
-                    /* Typing Mode */
-                    <div className="space-y-4">
-                      <textarea
-                        value={currentInput}
-                        onChange={(e) => setCurrentInput(e.target.value)}
-                        placeholder="Type how you'd like to respond..."
-                        className="w-full h-24 px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 resize-none text-gray-700 bg-white/90 transition-all"
-                        disabled={loading}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            sendMessage();
-                          }
-                        }}
-                      />
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          {speechEnabled && (
-                            <button
-                              onClick={startListening}
-                              disabled={loading || isListening}
-                              className={`p-3 rounded-xl transition-colors ${
-                                isListening
-                                  ? 'bg-red-500 text-white'
-                                  : 'bg-purple-100 text-purple-600 hover:bg-purple-200'
-                              }`}
-                              title="Voice input"
-                            >
-                              🎤
-                            </button>
-                          )}
-                          <span className="text-sm text-gray-500">
-                            {isListening ? 'Listening...' : 'Press Enter to send'}
-                          </span>
-                        </div>
-                        
-                        <button
-                          onClick={sendMessage}
-                          disabled={loading || !currentInput.trim()}
-                          className="px-6 py-3 bg-purple-500 text-white font-medium rounded-xl hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          Send Response
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 p-6">
-                  <h3 className="font-semibold text-purple-800 mb-4">Need help with your response?</h3>
-                  <div className="flex flex-wrap gap-3">
-                    <button
-                      onClick={() => handleRephrase('different')}
-                      className="px-4 py-2 bg-blue-100 text-blue-700 font-medium rounded-xl hover:bg-blue-200 transition-colors"
-                      disabled={loading || !currentInput.trim()}
-                    >
-                      📝 Rephrase Reply
-                    </button>
-                    <button
-                      onClick={() => handleRephrase('softer')}
-                      className="px-4 py-2 bg-green-100 text-green-700 font-medium rounded-xl hover:bg-green-200 transition-colors"
-                      disabled={loading || !currentInput.trim()}
-                    >
-                      🌸 Try Casual Tone
-                    </button>
-                    <button
-                      onClick={() => handleRephrase('stronger')}
-                      className="px-4 py-2 bg-orange-100 text-orange-700 font-medium rounded-xl hover:bg-orange-200 transition-colors"
-                      disabled={loading || !currentInput.trim()}
-                    >
-                      💪 Try Assertive Tone
-                    </button>
-                    <button
-                      onClick={() => handleRephrase('curious')}
-                      className="px-4 py-2 bg-purple-100 text-purple-700 font-medium rounded-xl hover:bg-purple-200 transition-colors"
-                      disabled={loading || !currentInput.trim()}
-                    >
-                      🤔 Try Curious Tone
-                    </button>
-                    <button
-                      onClick={resetSimulation}
-                      className="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors"
-                    >
-                      🔄 New Scenario
-                    </button>
-                  </div>
-                </div>
-
-                {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                    <p className="text-red-700 text-sm">{error}</p>
                   </div>
                 )}
               </div>
-            )}
+
+              {/* Action Buttons */}
+              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+                <h3 className="font-semibold text-neutral-900 mb-4">Need help with your response?</h3>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => handleRephrase('different')}
+                    className="px-4 py-2 bg-primary-100 text-primary-700 font-medium rounded-lg hover:bg-primary-200 transition-smooth"
+                    disabled={loading || !currentInput.trim()}
+                  >
+                    📝 Rephrase
+                  </button>
+                  <button
+                    onClick={() => handleRephrase('softer')}
+                    className="px-4 py-2 bg-success-100 text-success-700 font-medium rounded-lg hover:bg-success-200 transition-smooth"
+                    disabled={loading || !currentInput.trim()}
+                  >
+                    🌸 Softer Tone
+                  </button>
+                  <button
+                    onClick={() => handleRephrase('stronger')}
+                    className="px-4 py-2 bg-warning-100 text-warning-700 font-medium rounded-lg hover:bg-warning-200 transition-smooth"
+                    disabled={loading || !currentInput.trim()}
+                  >
+                    💪 Stronger Tone
+                  </button>
+                  <button
+                    onClick={() => handleRephrase('curious')}
+                    className="px-4 py-2 bg-secondary-100 text-secondary-700 font-medium rounded-lg hover:bg-secondary-200 transition-smooth"
+                    disabled={loading || !currentInput.trim()}
+                  >
+                    🤔 Curious Tone
+                  </button>
+                  <button
+                    onClick={resetSimulation}
+                    className="px-4 py-2 bg-neutral-100 text-neutral-700 font-medium rounded-lg hover:bg-neutral-200 transition-smooth"
+                  >
+                    🔄 New Scenario
+                  </button>
+                </div>
+              </div>
+
+              {error && (
+                <div className="bg-error-50 border border-error-200 rounded-xl p-4">
+                  <p className="text-error-600 text-sm">{error}</p>
+                </div>
+              )}
+            </div>
+          )}
           </div>
         </main>
       </div>
@@ -1097,7 +1072,15 @@ export default function App() {
                 ) : (
                   <button
                   key={item.name}
-                  onClick={() => setActiveNav(item.name)}
+                  onClick={() => {
+                    if (item.name !== activeNav) {
+                      setIsTransitioning(true);
+                      setTimeout(() => {
+                        setActiveNav(item.name);
+                        setIsTransitioning(false);
+                      }, 150);
+                    }
+                  }}
                   className={`w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
                     sidebarCollapsed ? 'justify-center' : 'space-x-3'
                   } ${
@@ -1120,7 +1103,8 @@ export default function App() {
           sidebarCollapsed ? 'ml-16' : 'ml-48'
         }`}>
           <div className="max-w-4xl mx-auto px-6 py-8">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
+            <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
               <div className="text-center space-y-6">
                 <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto">
                   <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1168,7 +1152,13 @@ export default function App() {
 
                 <div className="pt-6">
                   <button
-                    onClick={() => setActiveNav('Dashboard')}
+                    onClick={() => {
+                      setIsTransitioning(true);
+                      setTimeout(() => {
+                        setActiveNav('Dashboard');
+                        setIsTransitioning(false);
+                      }, 150);
+                    }}
                     className="inline-flex items-center px-6 py-3 text-base font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
                   >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1179,6 +1169,7 @@ export default function App() {
                 </div>
               </div>
             </div>
+            </div>
           </div>
         </main>
       </div>
@@ -1186,93 +1177,88 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Fixed Left Sidebar */}
-      <aside className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ${
-        sidebarCollapsed ? 'w-16' : 'w-48'
-      }`}>
-        <div className="p-4">
-          {/* Collapse Toggle */}
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="w-full flex items-center justify-center p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors mb-6"
-            title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            <svg className={`w-5 h-5 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-0' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* Logo */}
-          <Link href="/" className={`block mb-8 ${sidebarCollapsed ? 'text-center' : ''}`}>
-            {sidebarCollapsed ? (
-              <div className="text-xl font-bold text-indigo-600">K</div>
-            ) : (
-              <>
-                <h1 className="text-xl font-bold text-indigo-600">Kairoo</h1>
-                <p className="text-xs text-gray-500 mt-1">Social Intelligence</p>
-              </>
-            )}
-          </Link>
-
-          {/* Navigation */}
-          <nav className="space-y-3">
-            {[
-              { name: 'Dashboard', icon: '📊' },
-              { name: 'Kairoo LIVE', icon: '💬' },
-              { name: 'Settings', icon: '⚙️' }
-            ].map((item) => (
-              <button
-                key={item.name}
-                onClick={() => setActiveNav(item.name)}
-                className={`w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
-                  sidebarCollapsed ? 'justify-center' : 'space-x-3'
-                } ${
-                  activeNav === item.name
-                    ? 'bg-indigo-100 text-indigo-700 border border-indigo-200'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-                title={sidebarCollapsed ? item.name : undefined}
-              >
-                <span className="text-lg">{item.icon}</span>
-                {!sidebarCollapsed && <span>{item.name}</span>}
-              </button>
-            ))}
-          </nav>
+    <div className="min-h-screen bg-neutral-50">
+      {/* Top Navigation */}
+      <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">K</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-neutral-900">Kairoo</h1>
+                <p className="text-xs text-neutral-500 -mt-1">Social Intelligence</p>
+              </div>
+            </Link>
+            
+            {/* Navigation Tabs */}
+            <div className="flex items-center space-x-1 bg-neutral-100 rounded-xl p-1">
+              {[
+                { name: 'Dashboard', icon: '📊' },
+                { name: 'Kairoo LIVE', icon: '💬' },
+                { name: 'Settings', icon: '⚙️' }
+              ].map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => {
+                    if (item.name !== activeNav) {
+                      setIsTransitioning(true);
+                      setTimeout(() => {
+                        setActiveNav(item.name);
+                        setIsTransitioning(false);
+                      }, 150);
+                    }
+                  }}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-smooth ${
+                    activeNav === item.name
+                      ? 'bg-white text-primary-600 shadow-sm'
+                      : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
+                  }`}
+                >
+                  <span className="text-base">{item.icon}</span>
+                  <span>{item.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </aside>
+      </nav>
 
       {/* Main Content */}
-      <main className={`flex-1 transition-all duration-300 ${
-        sidebarCollapsed ? 'ml-16' : 'ml-48'
-      }`}>
-        <div className="max-w-6xl mx-auto px-6 py-8">
-          {/* Upper Half - Input Section */}
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+          {/* Header */}
           <div className="mb-8">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 max-w-3xl mx-auto">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-8 text-center">
-                Message Analysis
-              </h2>
-              
-              <div className="space-y-6">
-                {/* Main Message Input */}
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-3">
+            <h1 className="text-3xl font-bold text-neutral-900 mb-2">Message Analysis</h1>
+            <p className="text-neutral-600">
+              Understand tone, spot manipulation, and get personalized response suggestions.
+            </p>
+          </div>
+
+        {/* Input Section */}
+        <div className="mb-12">
+          <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Message Input */}
+                <div className="space-y-4">
+                  <label htmlFor="message" className="block text-sm font-medium text-neutral-700">
                     What happened?
                   </label>
                   <textarea
                     id="message"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="w-full h-40 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none text-sm"
+                    className="input-field h-40 resize-none"
                     placeholder="Paste the message you received or describe what happened…"
                     disabled={loading}
                   />
                 </div>
 
                 {/* Context Input */}
-                <div>
-                  <label htmlFor="context" className="block text-sm font-medium text-gray-700 mb-3">
+                <div className="space-y-4">
+                  <label htmlFor="context" className="block text-sm font-medium text-neutral-700">
                     Context (Optional)
                   </label>
                   <input
@@ -1280,155 +1266,170 @@ export default function App() {
                     id="context"
                     value={context}
                     onChange={(e) => setContext(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    className="input-field"
                     placeholder="Add context (optional but helpful)"
                     disabled={loading}
                   />
+                  
+                  {/* Analyze Button */}
+                  <button
+                    onClick={handleAnalyze}
+                    disabled={!message.trim() || loading}
+                    className="w-full button-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <span className="flex items-center justify-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Analyzing...
+                      </span>
+                    ) : (
+                      'Analyze Message'
+                    )}
+                  </button>
                 </div>
-
-                {/* Analyze Button */}
-                <button
-                  onClick={handleAnalyze}
-                  disabled={!message.trim() || loading}
-                  className="w-full bg-indigo-600 text-white py-4 px-6 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base"
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Analyzing...
-                    </span>
-                  ) : (
-                    'Analyze Message'
-                  )}
-                </button>
-
-                {/* Error Display */}
-                {error && (
-                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-600 text-sm">{error}</p>
-                  </div>
-                )}
               </div>
+
+              {/* Error Display */}
+              {error && (
+                <div className="mt-6 p-4 bg-error-50 border border-error-200 rounded-xl">
+                  <p className="text-error-600 text-sm">{error}</p>
+                </div>
+              )}
             </div>
           </div>
+        </div>
 
-          {/* Lower Half - Results Section - Always Visible */}
-          <div className="space-y-8">
-            <h3 className="text-xl font-semibold text-gray-900 text-center">
+        {/* Results Section */}
+        <div className="space-y-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-neutral-900">
               {hasResults ? 'Analysis Results' : 'Analysis Preview'}
-            </h3>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Tone Analysis Card */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            </h2>
+            {!hasResults && (
+              <div className="flex items-center text-sm text-neutral-500">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Preview of what you'll see after analysis
+              </div>
+            )}
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Tone Analysis Card */}
+            <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6 hover:shadow-md transition-smooth">
+              <div className="flex items-center mb-6">
+                <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center mr-3">
+                  <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
-                  Tone Analysis
-                </h3>
-                
-                <div className="flex flex-col space-y-8 h-full">
-                  <ToneBar
-                    label="Emotional Warmth"
-                    leftLabel="Hostile"
-                    rightLabel="Friendly"
-                    value={displayResults.analysis.emotionalWarmth}
-                    leftEmoji="🧊"
-                    rightEmoji="🌞"
-                  />
-                  
-                  <ToneBar
-                    label="Manipulation Risk"
-                    leftLabel="Supportive"
-                    rightLabel="Manipulative"
-                    value={displayResults.analysis.manipulationRisk}
-                    leftEmoji="✅"
-                    rightEmoji="🚩"
-                  />
-                  
-                  <ToneBar
-                    label="Passive-Aggressiveness"
-                    leftLabel="Direct"
-                    rightLabel="Passive-Aggressive"
-                    value={displayResults.analysis.passiveAggressive}
-                    leftEmoji="😊"
-                    rightEmoji="😤"
-                  />
                 </div>
+                <h3 className="text-lg font-semibold text-neutral-900">Tone Analysis</h3>
               </div>
+              
+              <div className="space-y-6">
+                <ToneBar
+                  label="Emotional Warmth"
+                  leftLabel="Hostile"
+                  rightLabel="Friendly"
+                  value={displayResults.analysis.emotionalWarmth}
+                  leftEmoji="🧊"
+                  rightEmoji="🌞"
+                />
+                
+                <ToneBar
+                  label="Manipulation Risk"
+                  leftLabel="Supportive"
+                  rightLabel="Manipulative"
+                  value={displayResults.analysis.manipulationRisk}
+                  leftEmoji="✅"
+                  rightEmoji="🚩"
+                />
+                
+                <ToneBar
+                  label="Passive-Aggressiveness"
+                  leftLabel="Direct"
+                  rightLabel="Passive-Aggressive"
+                  value={displayResults.analysis.passiveAggressive}
+                  leftEmoji="😊"
+                  rightEmoji="😤"
+                />
+              </div>
+            </div>
 
-              {/* Suggested Replies Card */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {/* Suggested Replies Card */}
+            <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6 hover:shadow-md transition-smooth">
+              <div className="flex items-center mb-6">
+                <div className="w-10 h-10 bg-success-100 rounded-xl flex items-center justify-center mr-3">
+                  <svg className="w-5 h-5 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                   </svg>
-                  Suggested Replies
-                </h3>
-                
-                <div className="space-y-4">
-                  {displayResults.responses.map((reply, index) => (
-                    <div key={index} className={`border border-gray-200 rounded-lg p-4 transition-colors ${
-                      hasResults ? 'hover:bg-gray-50' : 'bg-gray-50'
-                    }`}>
-                      <div className="flex items-center justify-between mb-3">
-                        <span className={`text-xs font-medium px-3 py-1 rounded-full ${
-                          hasResults 
-                            ? 'text-indigo-600 bg-indigo-50' 
-                            : 'text-gray-500 bg-gray-100'
-                        }`}>
-                          {reply.tone}
-                        </span>
-                        <button
-                          onClick={() => copyToClipboard(reply.text)}
-                          className={`transition-colors p-1 rounded ${
-                            hasResults 
-                              ? 'text-gray-400 hover:text-gray-600' 
-                              : 'text-gray-300 cursor-not-allowed'
-                          }`}
-                          title={hasResults ? "Copy to clipboard" : "Analyze message first"}
-                          disabled={!hasResults}
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        </button>
-                      </div>
-                      <p className={`text-sm leading-relaxed ${
-                        hasResults ? 'text-gray-700' : 'text-gray-500 italic'
-                      }`}>
-                        {reply.text}
-                      </p>
-                    </div>
-                  ))}
                 </div>
+                <h3 className="text-lg font-semibold text-neutral-900">Suggested Replies</h3>
               </div>
-
-              {/* In the future... Card */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                  In the future...
-                </h3>
-                
-                <div className="space-y-4">
-                  <div className="bg-gray-50 rounded-lg p-4">
+              
+              <div className="space-y-4">
+                {displayResults.responses.map((reply, index) => (
+                  <div key={index} className={`border border-neutral-200 rounded-xl p-4 transition-smooth ${
+                    hasResults ? 'hover:bg-neutral-50' : 'bg-neutral-50'
+                  }`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`text-xs font-medium px-3 py-1 rounded-full ${
+                        hasResults 
+                          ? 'text-primary-600 bg-primary-50' 
+                          : 'text-neutral-500 bg-neutral-100'
+                      }`}>
+                        {reply.tone}
+                      </span>
+                      <button
+                        onClick={() => copyToClipboard(reply.text)}
+                        className={`transition-smooth p-2 rounded-lg ${
+                          hasResults 
+                            ? 'text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100' 
+                            : 'text-neutral-300 cursor-not-allowed'
+                        }`}
+                        title={hasResults ? "Copy to clipboard" : "Analyze message first"}
+                        disabled={!hasResults}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                      </button>
+                    </div>
                     <p className={`text-sm leading-relaxed ${
-                      hasResults ? 'text-gray-700' : 'text-gray-500 italic'
+                      hasResults ? 'text-neutral-700' : 'text-neutral-500 italic'
                     }`}>
-                      {displayResults.advice}
+                      {reply.text}
                     </p>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Guidance Card */}
+            <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6 hover:shadow-md transition-smooth">
+              <div className="flex items-center mb-6">
+                <div className="w-10 h-10 bg-secondary-100 rounded-xl flex items-center justify-center mr-3">
+                  <svg className="w-5 h-5 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
                 </div>
+                <h3 className="text-lg font-semibold text-neutral-900">Guidance</h3>
+              </div>
+              
+              <div className="bg-neutral-50 rounded-xl p-4">
+                <p className={`text-sm leading-relaxed ${
+                  hasResults ? 'text-neutral-700' : 'text-neutral-500 italic'
+                }`}>
+                  {displayResults.advice}
+                </p>
               </div>
             </div>
           </div>
+        </div>
         </div>
       </main>
     </div>
