@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 interface AnalysisResult {
@@ -14,6 +14,24 @@ interface AnalysisResult {
   advice: string;
 }
 
+interface Message {
+  id: string;
+  role: 'user' | 'ai';
+  content: string;
+  timestamp: Date;
+}
+
+interface CoachingInsight {
+  message: string;
+  type: 'positive' | 'suggestion' | 'neutral';
+}
+
+interface SimulationResponse {
+  aiResponse: string;
+  coaching: CoachingInsight;
+  sceneDescription?: string;
+}
+
 export default function App() {
   const [message, setMessage] = useState('');
   const [context, setContext] = useState('');
@@ -24,6 +42,25 @@ export default function App() {
   const [anonId, setAnonId] = useState('');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Initially collapsed
 
+  // Simulation state
+  const [scenario, setScenario] = useState('');
+  const [isSimulationActive, setIsSimulationActive] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [currentInput, setCurrentInput] = useState('');
+  const [sceneDescription, setSceneDescription] = useState('');
+  const [lastCoaching, setLastCoaching] = useState<CoachingInsight | null>(null);
+  
+  // Speech features
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speechEnabled, setSpeechEnabled] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
+  const [isConversationalMode, setIsConversationalMode] = useState(false);
+  const [isWaitingForSpeech, setIsWaitingForSpeech] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const synthesisRef = useRef<SpeechSynthesis | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   // Generate anonymous ID on first visit
   useEffect(() => {
     let id = localStorage.getItem('anonId');
@@ -32,6 +69,37 @@ export default function App() {
       localStorage.setItem('anonId', id);
     }
     setAnonId(id);
+
+    // Initialize speech synthesis
+    if ('speechSynthesis' in window) {
+      synthesisRef.current = window.speechSynthesis;
+    }
+
+    // Initialize speech recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = 'en-US';
+      
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setCurrentInput(transcript);
+        setIsListening(false);
+      };
+      
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+      
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+      
+      setSpeechEnabled(true);
+    }
   }, []);
 
   // Get analysis results - shows fillers when no analysis, real results when analyzed
@@ -152,6 +220,633 @@ export default function App() {
     </div>
   );
 
+  // Simulation functions
+  const startListening = () => {
+    if (recognitionRef.current && !isListening) {
+      setIsListening(true);
+      recognitionRef.current.start();
+    }
+  };
+
+  const startListeningConversational = () => {
+    if (recognitionRef.current && !isListening && !isSpeaking) {
+      setIsWaitingForSpeech(true);
+      setIsListening(true);
+      
+      // Set up one-time listeners for conversational mode
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setCurrentInput(transcript);
+        setIsListening(false);
+        setIsWaitingForSpeech(false);
+        
+        // Automatically send the message in conversational mode
+        setTimeout(() => {
+          sendMessage();
+        }, 100);
+      };
+      
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+        setIsWaitingForSpeech(false);
+      };
+      
+      recognitionRef.current.start();
+    }
+  };
+
+    const speakText = async (text: string) => {
+    if (isAudioMuted) return;
+
+    try {
+      setIsSpeaking(true);
+      
+      // Stop any currently playing audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+
+      // Call ElevenLabs API for text-to-speech
+      const response = await fetch('/api/text-to-speech', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: text,
+          anonId: anonId
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Voice generation failed');
+      }
+
+      // Create audio from the response
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      
+      // Create and play audio element
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+      
+      audio.onended = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+        
+        // In conversational mode, start listening after speech ends
+        if (isConversationalMode && isSimulationActive) {
+          setTimeout(() => {
+            startListeningConversational();
+          }, 500); // Small delay before listening
+        }
+      };
+      
+      audio.onerror = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+        console.error('Audio playback error');
+      };
+      
+      await audio.play();
+      
+    } catch (error) {
+      console.error('Text-to-speech error:', error);
+      setIsSpeaking(false);
+      
+      // Fallback to browser TTS if ElevenLabs fails
+      if (synthesisRef.current) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.85;
+        utterance.pitch = 0.9;
+        utterance.volume = 0.7;
+        
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => {
+          setIsSpeaking(false);
+          if (isConversationalMode && isSimulationActive) {
+            setTimeout(() => {
+              startListeningConversational();
+            }, 500);
+          }
+        };
+        utterance.onerror = () => setIsSpeaking(false);
+        
+        synthesisRef.current.speak(utterance);
+      }
+    }
+  };
+
+  const stopSpeaking = () => {
+    // Stop ElevenLabs audio
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    
+    // Stop browser TTS as fallback
+    if (synthesisRef.current) {
+      synthesisRef.current.cancel();
+    }
+    
+    setIsSpeaking(false);
+  };
+
+  const startSimulation = async () => {
+    if (!scenario.trim()) {
+      setError('Please describe the situation you want to practice.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/simulate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'start',
+          scenario: scenario.trim(),
+          anonId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to start simulation');
+      }
+
+      const data: SimulationResponse = await response.json();
+      
+      setSceneDescription(data.sceneDescription || '');
+      setMessages([{
+        id: crypto.randomUUID(),
+        role: 'ai',
+        content: data.aiResponse,
+        timestamp: new Date(),
+      }]);
+      setIsSimulationActive(true);
+      
+      // Speak the first AI message
+      speakText(data.aiResponse);
+      
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to start simulation');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!currentInput.trim() || loading) return;
+
+    const userMessage: Message = {
+      id: crypto.randomUUID(),
+      role: 'user',
+      content: currentInput.trim(),
+      timestamp: new Date(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setCurrentInput('');
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/simulate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'continue',
+          userMessage: userMessage.content,
+          conversationHistory: messages,
+          scenario,
+          anonId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      const data: SimulationResponse = await response.json();
+      
+      const aiMessage: Message = {
+        id: crypto.randomUUID(),
+        role: 'ai',
+        content: data.aiResponse,
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => [...prev, aiMessage]);
+      setLastCoaching(data.coaching);
+      
+      // Speak the AI response
+      speakText(data.aiResponse);
+      
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to get response');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRephrase = async (tone: 'softer' | 'stronger' | 'different') => {
+    if (!currentInput.trim()) {
+      setError('Please enter a message to rephrase.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/rephrase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: currentInput.trim(),
+          tone,
+          anonId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get rephrase suggestions');
+      }
+
+      const data = await response.json();
+      
+      // Show the suggestions in an alert for now (could be improved with a modal)
+      const suggestionText = data.suggestions.map((s: string, i: number) => `${i + 1}. ${s}`).join('\n\n');
+      alert(`Here are some ${tone} alternatives:\n\n${suggestionText}`);
+      
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to get rephrase suggestions');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetSimulation = () => {
+    setIsSimulationActive(false);
+    setMessages([]);
+    setScenario('');
+    setSceneDescription('');
+    setLastCoaching(null);
+    setCurrentInput('');
+    setError('');
+    setIsConversationalMode(false);
+    setIsWaitingForSpeech(false);
+    stopSpeaking();
+    
+    // Stop any ongoing speech recognition
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current.stop();
+    }
+  };
+
+  // Render Kairoo LIVE page
+  if (activeNav === 'Kairoo LIVE') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 flex">
+        {/* Fixed Left Sidebar */}
+        <aside className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ${
+          sidebarCollapsed ? 'w-16' : 'w-48'
+        }`}>
+          <div className="p-4">
+            {/* Collapse Toggle */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="w-full flex items-center justify-center p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors mb-6"
+              title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <svg className={`w-5 h-5 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-0' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Logo */}
+            <Link href="/" className={`block mb-8 ${sidebarCollapsed ? 'text-center' : ''}`}>
+              {sidebarCollapsed ? (
+                <div className="text-xl font-bold text-indigo-600">K</div>
+              ) : (
+                <>
+                  <h1 className="text-xl font-bold text-indigo-600">Kairoo</h1>
+                  <p className="text-xs text-gray-500 mt-1">Social Intelligence</p>
+                </>
+              )}
+            </Link>
+
+            {/* Navigation */}
+            <nav className="space-y-3">
+              {[
+                { name: 'Dashboard', icon: '📊' },
+                { name: 'Kairoo LIVE', icon: '💬' },
+                { name: 'Settings', icon: '⚙️' }
+              ].map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => setActiveNav(item.name)}
+                  className={`w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
+                    sidebarCollapsed ? 'justify-center' : 'space-x-3'
+                  } ${
+                    activeNav === item.name
+                      ? 'bg-indigo-100 text-indigo-700 border border-indigo-200'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                  title={sidebarCollapsed ? item.name : undefined}
+                >
+                  <span className="text-lg">{item.icon}</span>
+                  {!sidebarCollapsed && <span>{item.name}</span>}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className={`flex-1 transition-all duration-300 ${
+          sidebarCollapsed ? 'ml-16' : 'ml-48'
+        }`}>
+          <div className="max-w-4xl mx-auto px-6 py-8">
+            {/* Audio Controls */}
+            <div className="flex justify-end items-center gap-3 mb-4">
+              {isSimulationActive && speechEnabled && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">Mode:</span>
+                  <button
+                    onClick={() => {
+                      setIsConversationalMode(!isConversationalMode);
+                      if (isConversationalMode) {
+                        setIsWaitingForSpeech(false);
+                        if (recognitionRef.current) {
+                          recognitionRef.current.stop();
+                        }
+                      }
+                    }}
+                    className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                      isConversationalMode
+                        ? 'bg-green-100 text-green-700 border border-green-200'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    title={isConversationalMode ? "Switch to typing mode" : "Switch to conversational mode - speak directly to AI"}
+                  >
+                    {isConversationalMode ? '🗣️ Voice' : '⌨️ Type'}
+                  </button>
+                </div>
+              )}
+              
+              <button
+                onClick={() => {
+                  setIsAudioMuted(!isAudioMuted);
+                  if (!isAudioMuted) stopSpeaking();
+                }}
+                className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                title={isAudioMuted ? "Enable audio" : "Mute audio"}
+              >
+                {isAudioMuted ? '🔇' : '🔈'}
+              </button>
+            </div>
+
+            {!isSimulationActive ? (
+              /* Scenario Setup */
+              <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-purple-100 shadow-lg p-8">
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl text-white">💬</span>
+                  </div>
+                  <h1 className="text-3xl font-bold text-gray-800 mb-2">Kairoo LIVE</h1>
+                  <p className="text-lg text-gray-600">Practice real-life conversations in a safe space</p>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-lg font-medium text-gray-700 mb-4">
+                      What kind of situation are you preparing for?
+                    </label>
+                    <textarea
+                      value={scenario}
+                      onChange={(e) => setScenario(e.target.value)}
+                      placeholder="e.g., Having lunch with a new classmate, Texting a friend who might be mad, Asking for help with homework..."
+                      className="w-full h-32 px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 resize-none text-gray-700 bg-white/90"
+                      disabled={loading}
+                    />
+                  </div>
+
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <p className="text-red-700 text-sm">{error}</p>
+                    </div>
+                  )}
+
+                  <div className="text-center pt-4">
+                    <button
+                      onClick={startSimulation}
+                      disabled={loading || !scenario.trim()}
+                      className="px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    >
+                      {loading ? 'Starting simulation...' : 'Begin Practice'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Active Simulation */
+              <div className="space-y-6">
+                {/* Scene Description */}
+                {sceneDescription && (
+                  <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-purple-100 p-6">
+                    <h3 className="font-semibold text-purple-800 mb-2">Scene</h3>
+                    <p className="text-gray-700 italic">{sceneDescription}</p>
+                  </div>
+                )}
+
+                {/* Conversation */}
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-purple-100 shadow-lg">
+                  <div className="h-96 overflow-y-auto p-6 space-y-4">
+                    {messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-sm px-4 py-3 rounded-2xl ${
+                            message.role === 'user'
+                              ? 'bg-purple-500 text-white'
+                              : 'bg-gray-100 text-gray-800 border border-gray-200'
+                          }`}
+                        >
+                          <p className="text-sm">{message.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                    {loading && (
+                      <div className="flex justify-start">
+                        <div className="bg-gray-100 border border-gray-200 rounded-2xl px-4 py-3">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Input Area */}
+                  <div className="border-t border-purple-100 p-6">
+                    {isConversationalMode ? (
+                      /* Conversational Mode */
+                      <div className="text-center space-y-4">
+                        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 border border-green-200">
+                          <h3 className="text-lg font-semibold text-gray-800 mb-2">🗣️ Conversational Mode</h3>
+                          <p className="text-sm text-gray-600 mb-4">
+                            Speak naturally! The AI will respond with voice, then automatically listen for your next response.
+                          </p>
+                          
+                          {isWaitingForSpeech ? (
+                            <div className="flex items-center justify-center space-x-2 text-green-600">
+                              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                              <span className="text-sm font-medium">Listening...</span>
+                            </div>
+                          ) : isSpeaking ? (
+                            <div className="flex items-center justify-center space-x-2 text-blue-600">
+                              <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                              <span className="text-sm font-medium">AI is speaking...</span>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={startListeningConversational}
+                              disabled={loading || isListening || isSpeaking}
+                              className="px-6 py-3 bg-green-500 text-white font-medium rounded-xl hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                              Start Speaking
+                            </button>
+                          )}
+                        </div>
+                        
+                        {currentInput && (
+                          <div className="bg-gray-50 rounded-lg p-3 border">
+                            <p className="text-sm text-gray-700">
+                              <strong>You said:</strong> "{currentInput}"
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      /* Typing Mode */
+                      <div className="flex space-x-3">
+                        <div className="flex-1">
+                          <textarea
+                            value={currentInput}
+                            onChange={(e) => setCurrentInput(e.target.value)}
+                            placeholder="Type your response..."
+                            className="w-full h-20 px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400 resize-none text-gray-700 bg-white/90"
+                            disabled={loading}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                              }
+                            }}
+                          />
+                        </div>
+                        
+                        {speechEnabled && (
+                          <button
+                            onClick={startListening}
+                            disabled={loading || isListening}
+                            className={`p-3 rounded-xl transition-colors ${
+                              isListening
+                                ? 'bg-red-500 text-white'
+                                : 'bg-purple-100 text-purple-600 hover:bg-purple-200'
+                            }`}
+                            title="Voice input"
+                          >
+                            🎤
+                          </button>
+                        )}
+                        
+                        <button
+                          onClick={sendMessage}
+                          disabled={loading || !currentInput.trim()}
+                          className="px-6 py-3 bg-purple-500 text-white font-medium rounded-xl hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Send
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Coaching Insights */}
+                {lastCoaching && (
+                  <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-purple-100 p-6">
+                    <h3 className="font-semibold text-purple-800 mb-2 flex items-center">
+                      🧠 Coaching Insight
+                    </h3>
+                    <p className={`text-sm ${
+                      lastCoaching.type === 'positive' ? 'text-green-700' :
+                      lastCoaching.type === 'suggestion' ? 'text-amber-700' :
+                      'text-gray-700'
+                    }`}>
+                      {lastCoaching.message}
+                    </p>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap gap-3 justify-center">
+                  <button
+                    onClick={() => handleRephrase('different')}
+                    className="px-4 py-2 bg-blue-100 text-blue-700 font-medium rounded-lg hover:bg-blue-200 transition-colors"
+                    disabled={loading}
+                  >
+                    Try a Different Tone
+                  </button>
+                  <button
+                    onClick={() => handleRephrase('softer')}
+                    className="px-4 py-2 bg-green-100 text-green-700 font-medium rounded-lg hover:bg-green-200 transition-colors"
+                    disabled={loading}
+                  >
+                    Rephrase Softer
+                  </button>
+                  <button
+                    onClick={() => handleRephrase('stronger')}
+                    className="px-4 py-2 bg-orange-100 text-orange-700 font-medium rounded-lg hover:bg-orange-200 transition-colors"
+                    disabled={loading}
+                  >
+                    Rephrase Stronger
+                  </button>
+                  <button
+                    onClick={resetSimulation}
+                    className="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    New Scenario
+                  </button>
+                </div>
+
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <p className="text-red-700 text-sm">{error}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   // Render Settings page
   if (activeNav === 'Settings') {
     return (
@@ -188,9 +883,23 @@ export default function App() {
             <nav className="space-y-3">
               {[
                 { name: 'Dashboard', icon: '📊' },
+                { name: 'Kairoo LIVE', icon: '💬', href: '/simulate' },
                 { name: 'Settings', icon: '⚙️' }
-              ].map((item) => (
-                <button
+              ].map((item) =>
+                item.href ? (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
+                      sidebarCollapsed ? 'justify-center' : 'space-x-3'
+                    } text-gray-600 hover:text-gray-900 hover:bg-gray-50`}
+                    title={sidebarCollapsed ? item.name : undefined}
+                  >
+                    <span className="text-lg">{item.icon}</span>
+                    {!sidebarCollapsed && <span>{item.name}</span>}
+                  </Link>
+                ) : (
+                  <button
                   key={item.name}
                   onClick={() => setActiveNav(item.name)}
                   className={`w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
@@ -314,6 +1023,7 @@ export default function App() {
           <nav className="space-y-3">
             {[
               { name: 'Dashboard', icon: '📊' },
+              { name: 'Kairoo LIVE', icon: '💬' },
               { name: 'Settings', icon: '⚙️' }
             ].map((item) => (
               <button
