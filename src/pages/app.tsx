@@ -1,5 +1,52 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Component, ReactNode } from 'react';
 import Link from 'next/link';
+
+// Error Boundary Component
+class ErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: any) {
+    console.error('Error caught by boundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+          <div className="max-w-md mx-auto bg-white rounded-2xl border border-neutral-200 shadow-sm p-8 text-center">
+            <div className="w-16 h-16 bg-error-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8 text-error-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-neutral-900 mb-4">Something went wrong</h2>
+            <p className="text-neutral-600 mb-6">
+              We encountered an unexpected error. Please refresh the page to try again.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="button-primary"
+            >
+              Refresh Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 interface AnalysisResult {
   analysis: {
@@ -39,7 +86,7 @@ interface ProgressEvaluation {
   improvements: string[];
 }
 
-export default function App() {
+function App() {
   const [message, setMessage] = useState('');
   const [context, setContext] = useState('');
   const [activeNav, setActiveNav] = useState('Dashboard');
@@ -607,7 +654,8 @@ export default function App() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to evaluate progress');
+        console.warn('Progress evaluation failed:', response.status, response.statusText);
+        return; // Silently fail - progress evaluation is not critical
       }
 
       const data: ProgressEvaluation = await response.json();
@@ -834,11 +882,13 @@ export default function App() {
                           ? 'bg-primary-100 text-primary-600' 
                           : 'bg-secondary-100 text-secondary-600'
                       }`}>
-                        {message.role === 'user' ? '👤' : '🤖'}
+                        {message.role === 'user' ? '👤' : (
+                          <span className="text-sm font-bold text-secondary-600">AI</span>
+                        )}
                       </div>
                       <div className="flex-1">
                         <h4 className="font-semibold text-neutral-900 mb-2">
-                          {message.role === 'user' ? 'You' : 'AI Partner'}
+                          {message.role === 'user' ? 'You' : 'Alex'}
                         </h4>
                         <p className="text-neutral-700">{message.content}</p>
                       </div>
@@ -850,10 +900,10 @@ export default function App() {
                   <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
                     <div className="flex items-start space-x-4">
                       <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-secondary-100 text-secondary-600">
-                        🤖
+                        <span className="text-sm font-bold text-secondary-600">AI</span>
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-neutral-900 mb-2">AI Partner is thinking...</h4>
+                        <h4 className="font-semibold text-neutral-900 mb-2">Alex is thinking...</h4>
                         <div className="flex space-x-1">
                           <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
                           <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -1021,154 +1071,114 @@ export default function App() {
   // Render Settings page
   if (activeNav === 'Settings') {
     return (
-      <div className="min-h-screen bg-gray-50 flex">
-        {/* Fixed Left Sidebar */}
-        <aside className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ${
-          sidebarCollapsed ? 'w-16' : 'w-48'
-        }`}>
-          <div className="p-4">
-            {/* Collapse Toggle */}
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="w-full flex items-center justify-center p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors mb-6"
-              title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              <svg className={`w-5 h-5 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-0' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-
-            {/* Logo */}
-            <Link href="/" className={`block mb-8 ${sidebarCollapsed ? 'text-center' : ''}`}>
-              {sidebarCollapsed ? (
-                <div className="text-xl font-bold text-indigo-600">K</div>
-              ) : (
-                <>
-                  <h1 className="text-xl font-bold text-indigo-600">Kairoo</h1>
-                  <p className="text-xs text-gray-500 mt-1">Social Intelligence</p>
-                </>
-              )}
-            </Link>
-
-            {/* Navigation */}
-            <nav className="space-y-3">
-              {[
-                { name: 'Dashboard', icon: '📊' },
-                { name: 'Kairoo LIVE', icon: '💬', href: '/simulate' },
-                { name: 'Settings', icon: '⚙️' }
-              ].map((item) =>
-                item.href ? (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
-                      sidebarCollapsed ? 'justify-center' : 'space-x-3'
-                    } text-gray-600 hover:text-gray-900 hover:bg-gray-50`}
-                    title={sidebarCollapsed ? item.name : undefined}
-                  >
-                    <span className="text-lg">{item.icon}</span>
-                    {!sidebarCollapsed && <span>{item.name}</span>}
-                  </Link>
-                ) : (
-                  <button
-                  key={item.name}
-                  onClick={() => {
-                    if (item.name !== activeNav) {
-                      setIsTransitioning(true);
-                      setTimeout(() => {
-                        setActiveNav(item.name);
-                        setIsTransitioning(false);
-                      }, 150);
-                    }
-                  }}
-                  className={`w-full text-left px-3 py-3 rounded-lg text-sm font-medium transition-colors flex items-center ${
-                    sidebarCollapsed ? 'justify-center' : 'space-x-3'
-                  } ${
-                    activeNav === item.name
-                      ? 'bg-indigo-100 text-indigo-700 border border-indigo-200'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  }`}
-                  title={sidebarCollapsed ? item.name : undefined}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  {!sidebarCollapsed && <span>{item.name}</span>}
-                </button>
-              ))}
-            </nav>
-          </div>
-        </aside>
-
-        {/* Settings Content */}
-        <main className={`flex-1 transition-all duration-300 ${
-          sidebarCollapsed ? 'ml-16' : 'ml-48'
-        }`}>
-          <div className="max-w-4xl mx-auto px-6 py-8">
-            <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
-              <div className="text-center space-y-6">
-                <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto">
-                  <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+      <div className="min-h-screen bg-neutral-50">
+        {/* Top Navigation */}
+        <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="flex justify-between items-center">
+              <Link href="/" className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">K</span>
                 </div>
-                
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-4">Settings</h1>
-                                     <p className="text-lg text-gray-600 mb-8">
-                     We&apos;re still building this section with care.
-                   </p>
+                  <h1 className="text-xl font-bold text-neutral-900">Kairoo</h1>
+                  <p className="text-xs text-neutral-500 -mt-1">Social Intelligence</p>
                 </div>
-
-                <div className="bg-indigo-50 rounded-lg p-6 text-left">
-                  <h3 className="font-semibold text-indigo-900 mb-3">Coming Soon</h3>
-                  <ul className="space-y-2 text-indigo-700">
-                    <li className="flex items-center">
-                      <svg className="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Customizable analysis preferences
-                    </li>
-                    <li className="flex items-center">
-                      <svg className="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Response style personalization
-                    </li>
-                    <li className="flex items-center">
-                      <svg className="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Accessibility options
-                    </li>
-                    <li className="flex items-center">
-                      <svg className="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Privacy controls
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="pt-6">
+              </Link>
+              
+              {/* Navigation Tabs */}
+              <div className="flex items-center space-x-1 bg-neutral-100 rounded-xl p-1">
+                {[
+                  { name: 'Dashboard', icon: '📊' },
+                  { name: 'Kairoo LIVE', icon: '💬' },
+                  { name: 'Settings', icon: '⚙️' }
+                ].map((item) => (
                   <button
+                    key={item.name}
                     onClick={() => {
-                      setIsTransitioning(true);
-                      setTimeout(() => {
-                        setActiveNav('Dashboard');
-                        setIsTransitioning(false);
-                      }, 150);
+                      if (item.name !== activeNav) {
+                        setIsTransitioning(true);
+                        setTimeout(() => {
+                          setActiveNav(item.name);
+                          setIsTransitioning(false);
+                        }, 150);
+                      }
                     }}
-                    className="inline-flex items-center px-6 py-3 text-base font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-smooth ${
+                      activeNav === item.name
+                        ? 'bg-white text-primary-600 shadow-sm'
+                        : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
+                    }`}
                   >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back to Dashboard
+                    <span className="text-base">{item.icon}</span>
+                    <span>{item.name}</span>
                   </button>
-                </div>
+                ))}
               </div>
             </div>
+          </div>
+        </nav>
+
+        {/* Main Content */}
+        <main className="max-w-6xl mx-auto px-6 py-8">
+          <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-neutral-900 mb-2">Settings</h1>
+              <p className="text-neutral-600">
+                Customize your Kairoo experience and preferences.
+              </p>
+            </div>
+
+            {/* Settings Content */}
+            <div className="max-w-3xl mx-auto">
+              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
+                <div className="text-center space-y-6">
+                  <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg className="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  
+                  <div>
+                    <h2 className="text-2xl font-bold text-neutral-900 mb-4">Coming Soon</h2>
+                    <p className="text-neutral-600 mb-8">
+                      We're building this section with care to give you the best experience.
+                    </p>
+                  </div>
+
+                  <div className="bg-primary-50 rounded-xl p-6 text-left">
+                    <h3 className="font-semibold text-primary-900 mb-4">Planned Features</h3>
+                    <ul className="space-y-3 text-primary-700">
+                      <li className="flex items-center">
+                        <svg className="w-5 h-5 mr-3 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Customizable analysis preferences
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="w-5 h-5 mr-3 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Response style personalization
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="w-5 h-5 mr-3 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Accessibility options
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="w-5 h-5 mr-3 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Privacy controls
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </main>
@@ -1433,5 +1443,14 @@ export default function App() {
         </div>
       </main>
     </div>
+  );
+}
+
+// Export App wrapped with ErrorBoundary
+export default function AppWithErrorBoundary() {
+  return (
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   );
 } 
