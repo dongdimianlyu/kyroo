@@ -1,0 +1,35 @@
+<svg width="400" height="120" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="120" rx="16" fill="#fefefe"/>
+  <rect x="1" y="1" width="398" height="118" rx="15" stroke="#e5e7eb" stroke-width="2"/>
+  
+  <!-- Header -->
+  <text x="20" y="28" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#374151">Social Intelligence Progress</text>
+  
+  <!-- Level indicator -->
+  <circle cx="340" cy="22" r="16" fill="#8b5cf6"/>
+  <text x="340" y="27" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="white" text-anchor="middle">7</text>
+  <text x="340" y="45" font-family="Inter, sans-serif" font-size="10" font-weight="500" fill="#6b7280" text-anchor="middle">Level</text>
+  
+  <!-- XP Bar Background -->
+  <rect x="20" y="55" width="300" height="12" rx="6" fill="#f3f4f6"/>
+  
+  <!-- XP Bar Progress -->
+  <rect x="20" y="55" width="180" height="12" rx="6" fill="url(#gradient)"/>
+  
+  <!-- XP Text -->
+  <text x="20" y="85" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#6b7280">1,240 / 2,000 XP</text>
+  <text x="320" y="85" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#6b7280" text-anchor="end">Next: Level 8</text>
+  
+  <!-- Recent achievement -->
+  <rect x="20" y="95" width="200" height="20" rx="10" fill="#ecfdf5"/>
+  <text x="30" y="107" font-family="Inter, sans-serif" font-size="10" font-weight="500" fill="#059669">+50 XP • Completed simulation</text>
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg> 

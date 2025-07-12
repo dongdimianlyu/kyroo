@@ -1,0 +1,44 @@
+<svg width="500" height="350" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="500" height="350" rx="20" fill="#fefefe"/>
+  <rect x="1" y="1" width="498" height="348" rx="19" stroke="#e5e7eb" stroke-width="2"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="500" height="50" rx="20" fill="#f8fafc"/>
+  <rect x="0" y="40" width="500" height="2" fill="#e5e7eb"/>
+  <text x="24" y="30" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#374151">Social Simulation Coach</text>
+  
+  <!-- Scenario Setup -->
+  <rect x="20" y="65" width="460" height="40" rx="12" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1"/>
+  <text x="30" y="82" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#0369a1">Scenario: Group Project Meeting at 10am</text>
+  <text x="30" y="96" font-family="Inter, sans-serif" font-size="11" fill="#0369a1">Practice navigating team dynamics and contribution discussions</text>
+  
+  <!-- Conversation Messages -->
+  <!-- AI Message -->
+  <rect x="30" y="125" width="320" height="45" rx="12" fill="#f3f4f6"/>
+  <circle cx="45" cy="135" r="8" fill="#8b5cf6"/>
+  <text x="45" y="139" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="white" text-anchor="middle">AI</text>
+  <text x="65" y="140" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#374151">"Hey everyone, let's discuss task distribution.</text>
+  <text x="65" y="155" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#374151">What would you like to work on?"</text>
+  
+  <!-- User Response Options -->
+  <rect x="150" y="185" width="320" height="35" rx="12" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="160" y="200" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#065f46">Your Response (Direct):</text>
+  <text x="160" y="213" font-family="Inter, sans-serif" font-size="11" fill="#065f46">"I'd prefer to handle the research section."</text>
+  
+  <!-- Coaching Insight -->
+  <rect x="30" y="235" width="440" height="50" rx="12" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="40" y="250" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#92400e">💡 Coaching Insight:</text>
+  <text x="40" y="265" font-family="Inter, sans-serif" font-size="11" fill="#92400e">Great directness! This shows confidence and clarity about your</text>
+  <text x="40" y="277" font-family="Inter, sans-serif" font-size="11" fill="#92400e">preferences, which helps the team organize efficiently.</text>
+  
+  <!-- Progress Indicator -->
+  <rect x="30" y="300" width="200" height="8" rx="4" fill="#f3f4f6"/>
+  <rect x="30" y="300" width="120" height="8" rx="4" fill="#8b5cf6"/>
+  <text x="30" y="325" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#6b7280">Simulation Progress: 60% Complete</text>
+  
+  <!-- XP Indicator -->
+  <rect x="350" y="300" width="120" height="30" rx="8" fill="#ecfdf5"/>
+  <text x="360" y="315" font-family="Inter, sans-serif" font-size="10" font-weight="500" fill="#059669">+25 XP Earned</text>
+  <text x="360" y="325" font-family="Inter, sans-serif" font-size="9" fill="#6b7280">Social Confidence</text>
+</svg> 

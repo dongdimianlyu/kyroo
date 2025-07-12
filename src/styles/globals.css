@@ -20,6 +20,10 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -48,6 +52,7 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #e2e8f0;
   border-radius: 4px;
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -85,25 +90,27 @@ select:focus {
   }
   
   .card-hover {
-    @apply transition-smooth hover:shadow-xl hover:-translate-y-2;
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-2;
   }
   
   .button-primary {
     @apply bg-gradient-to-r from-violet-600 to-purple-600 text-white font-medium px-8 py-4 rounded-2xl 
            hover:from-violet-700 hover:to-purple-700 hover:shadow-lg hover:scale-105
-           active:scale-95 transition-all duration-200 focus:ring-2 focus:ring-violet-500 focus:ring-offset-2;
+           active:scale-95 transition-all duration-300 ease-out focus:ring-2 focus:ring-violet-500 focus:ring-offset-2
+           transform-gpu;
   }
   
   .button-secondary {
     @apply bg-white/80 backdrop-blur-sm text-neutral-700 font-medium px-8 py-4 rounded-2xl border border-neutral-200/50
            hover:bg-white hover:shadow-md hover:scale-105 active:scale-95 
-           transition-all duration-200 focus:ring-2 focus:ring-violet-500 focus:ring-offset-2;
+           transition-all duration-300 ease-out focus:ring-2 focus:ring-violet-500 focus:ring-offset-2
+           transform-gpu;
   }
   
   .input-field {
     @apply w-full px-6 py-4 border border-neutral-200/50 rounded-2xl bg-white/50 backdrop-blur-sm
            focus:ring-2 focus:ring-violet-500 focus:border-violet-500 focus:bg-white
-           transition-all duration-200 placeholder:text-neutral-400;
+           transition-all duration-300 ease-out placeholder:text-neutral-400;
   }
 
   .fade-in-up {
