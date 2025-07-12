@@ -111,35 +111,40 @@ Respond with valid JSON only:
       throw new Error('No response content from OpenAI');
     }
 
-    let evaluation: ProgressEvaluation;
+    // Sanitize the response to handle potential markdown code blocks
+    const sanitizedResponse = responseContent.replace(/```json\n?|\n?```/g, '').trim();
+
+    // Parse the JSON response
+    let evaluationResult: ProgressEvaluation;
     try {
-      evaluation = JSON.parse(responseContent);
+      evaluationResult = JSON.parse(sanitizedResponse);
     } catch (parseError) {
       console.error('Failed to parse OpenAI response:', responseContent);
       throw new Error('Invalid response format from AI service');
     }
 
     // Validate the response structure
-    if (typeof evaluation.progressScore !== 'number' || 
-        evaluation.progressScore < 0 || 
-        evaluation.progressScore > 100) {
+    if (typeof evaluationResult.progressScore !== 'number' || 
+        evaluationResult.progressScore < 0 || 
+        evaluationResult.progressScore > 100) {
       throw new Error('Invalid progress score from AI service');
     }
 
-    if (!evaluation.feedback || typeof evaluation.feedback !== 'string') {
+    if (!evaluationResult.feedback || typeof evaluationResult.feedback !== 'string') {
       throw new Error('Invalid feedback from AI service');
     }
 
-    if (!Array.isArray(evaluation.strengths) || !Array.isArray(evaluation.improvements)) {
+    if (!Array.isArray(evaluationResult.strengths) || !Array.isArray(evaluationResult.improvements)) {
       throw new Error('Invalid strengths or improvements from AI service');
     }
 
-    return res.status(200).json(evaluation);
+    return res.status(200).json(evaluationResult);
 
-  } catch (error) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     console.error('Error evaluating conversation progress:', error);
     return res.status(500).json({ 
-      error: error instanceof Error ? error.message : 'Failed to evaluate progress' 
+      error: errorMessage 
     });
   }
 } 

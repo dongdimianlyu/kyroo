@@ -240,9 +240,9 @@ function App() {
       // Non-misleading filler data
       return {
         analysis: {
-          emotionalWarmth: 50, // Neutral middle values
-          manipulationRisk: 50,
-          passiveAggressive: 50,
+          emotionalWarmth: 0,
+          manipulationRisk: 0,
+          passiveAggressive: 0,
         },
         responses: [
           { tone: 'Direct' as const, text: "Your response options will appear here after analysis." },
@@ -340,8 +340,8 @@ function App() {
         </div>
         <div className="w-full bg-neutral-200 rounded-full h-2.5">
           <div 
-            className={`h-2.5 rounded-full transition-smooth ${
-              hasResults ? 'bg-primary-600' : 'bg-neutral-400'
+            className={`h-2.5 rounded-full transition-all duration-300 ${
+              hasResults ? 'bg-secondary-600' : 'bg-neutral-400'
             }`}
             style={{ width: `${value}%` }}
           ></div>
@@ -598,45 +598,6 @@ function App() {
     }
   };
 
-  const handleRephrase = async (tone: 'softer' | 'stronger' | 'different' | 'curious') => {
-    if (!currentInput.trim()) {
-      setError('Please enter a message to rephrase.');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-
-    try {
-      const response = await fetch('/api/rephrase', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: currentInput.trim(),
-          tone,
-          anonId,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to get rephrase suggestions');
-      }
-
-      const data = await response.json();
-      
-      // Show the suggestions in an alert for now (could be improved with a modal)
-      const suggestionText = data.suggestions.map((s: string, i: number) => `${i + 1}. ${s}`).join('\n\n');
-      alert(`Here are some ${tone} alternatives:\n\n${suggestionText}`);
-      
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to get rephrase suggestions');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const evaluateProgress = async () => {
     if (messages.length === 0) return;
 
@@ -664,25 +625,6 @@ function App() {
     } catch (err) {
       console.error('Progress evaluation error:', err);
       // Don't show error to user, just log it
-    }
-  };
-
-  const resetSimulation = () => {
-    setIsSimulationActive(false);
-    setMessages([]);
-    setScenario('');
-    setSceneDescription('');
-    setLastCoaching(null);
-    setProgressEvaluation(null);
-    setCurrentInput('');
-    setError('');
-    setIsConversationalMode(false);
-    setIsWaitingForSpeech(false);
-    stopSpeaking();
-    
-    // Stop any ongoing speech recognition
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop();
     }
   };
 
@@ -843,7 +785,7 @@ function App() {
               {/* Progress Bar */}
               <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-neutral-900">Conversation Progress</h3>
+                  <h3 className="font-semibold text-neutral-900">XP bar</h3>
                   <span className="text-sm text-primary-600">
                     {progressEvaluation ? `${progressEvaluation.progressScore}%` : 'Starting...'}
                   </span>
@@ -1012,47 +954,6 @@ function App() {
                     </div>
                   </div>
                 )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
-                <h3 className="font-semibold text-neutral-900 mb-4">Need help with your response?</h3>
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    onClick={() => handleRephrase('different')}
-                    className="px-4 py-2 bg-primary-100 text-primary-700 font-medium rounded-lg hover:bg-primary-200 transition-smooth"
-                    disabled={loading || !currentInput.trim()}
-                  >
-                    📝 Rephrase
-                  </button>
-                  <button
-                    onClick={() => handleRephrase('softer')}
-                    className="px-4 py-2 bg-success-100 text-success-700 font-medium rounded-lg hover:bg-success-200 transition-smooth"
-                    disabled={loading || !currentInput.trim()}
-                  >
-                    🌸 Softer Tone
-                  </button>
-                  <button
-                    onClick={() => handleRephrase('stronger')}
-                    className="px-4 py-2 bg-warning-100 text-warning-700 font-medium rounded-lg hover:bg-warning-200 transition-smooth"
-                    disabled={loading || !currentInput.trim()}
-                  >
-                    💪 Stronger Tone
-                  </button>
-                  <button
-                    onClick={() => handleRephrase('curious')}
-                    className="px-4 py-2 bg-secondary-100 text-secondary-700 font-medium rounded-lg hover:bg-secondary-200 transition-smooth"
-                    disabled={loading || !currentInput.trim()}
-                  >
-                    🤔 Curious Tone
-                  </button>
-                  <button
-                    onClick={resetSimulation}
-                    className="px-4 py-2 bg-neutral-100 text-neutral-700 font-medium rounded-lg hover:bg-neutral-200 transition-smooth"
-                  >
-                    🔄 New Scenario
-                  </button>
-                </div>
               </div>
 
               {error && (
@@ -1269,7 +1170,7 @@ function App() {
                 {/* Context Input */}
                 <div className="space-y-4">
                   <label htmlFor="context" className="block text-sm font-medium text-neutral-700">
-                    Context (Optional)
+                    Context (Required)
                   </label>
                   <input
                     type="text"
@@ -1277,7 +1178,7 @@ function App() {
                     value={context}
                     onChange={(e) => setContext(e.target.value)}
                     className="input-field"
-                    placeholder="Add context (optional but helpful)"
+                    placeholder="Add context (required)"
                     disabled={loading}
                   />
                   
