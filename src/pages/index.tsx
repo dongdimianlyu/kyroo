@@ -14,7 +14,7 @@ export default function Home() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">Kairoo</h1>
-                <p className="text-xs text-neutral-500 -mt-1 font-medium">Social Intelligence</p>
+                <p className="text-xs text-neutral-500 -mt-1 font-medium">Growth Companion</p>
               </div>
             </Link>
             <Link
@@ -42,15 +42,15 @@ export default function Home() {
               <div className="space-y-6">
                 <div className="inline-flex items-center px-5 py-3 rounded-full bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200/50 text-violet-700 text-sm font-semibold shadow-soft">
                   <span className="w-2 h-2 bg-violet-500 rounded-full mr-3 animate-pulse"></span>
-                  Free • Private • No Sign-up Required
+                  Emotionally Safe • Dignity-Preserving • Private
                 </div>
                 <h1 className="text-5xl lg:text-6xl font-bold text-neutral-900 tracking-tight leading-[1.1]">
-                  Navigate social situations with{" "}
+                  Practice social situations with{" "}
                   <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">confidence</span>
                 </h1>
                 <p className="text-xl text-neutral-600 leading-relaxed max-w-2xl font-light">
-                  When social situations feel confusing or overwhelming, Kairoo helps you understand tone, 
-                  spot manipulation, and find the right words to respond thoughtfully.
+                  A growth companion for those who feel misunderstood in social settings. Practice real conversations, 
+                  receive gentle feedback, and build confidence through immersive simulations—no judgment, just understanding.
                 </p>
               </div>
 
@@ -59,7 +59,7 @@ export default function Home() {
                   href="/app"
                   className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-violet-600 to-purple-600 rounded-2xl hover:from-violet-700 hover:to-purple-700 hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg"
                 >
-                  Start analyzing situations
+                  Start practicing conversations
                   <svg className="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
@@ -77,19 +77,19 @@ export default function Home() {
                   <svg className="w-4 h-4 text-success-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  No data stored
+                  No judgment zone
                 </div>
                 <div className="flex items-center">
                   <svg className="w-4 h-4 text-success-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  Anonymous by design
+                  Dignity-preserving growth
                 </div>
                 <div className="flex items-center">
                   <svg className="w-4 h-4 text-success-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  Always free
+                  Real-life preparation
                 </div>
               </div>
             </div>
@@ -166,96 +166,96 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 fade-in-up">
             <h2 className="text-4xl font-bold text-neutral-900 mb-6 tracking-tight">
-              Powerful tools for social intelligence
+              Practice and grow with confidence
             </h2>
             <p className="text-xl text-neutral-600 max-w-3xl mx-auto font-light leading-relaxed">
-              Whether you're neurodivergent, dealing with social anxiety, or just want clearer communication, 
-              Kairoo provides comprehensive insights and practice opportunities.
+              For those who feel misunderstood in social settings, experience loneliness despite wanting connection, 
+              or need a safe space to prepare for upcoming conversations.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {/* Feature 1 - Situation Analyzer */}
+            {/* Feature 1 - Conversation Simulations */}
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-neutral-200/50 card-hover fade-in-up-delay-1">
               <div className="w-14 h-14 bg-gradient-to-br from-violet-100 to-purple-100 rounded-2xl flex items-center justify-center mb-6">
                 <svg className="w-7 h-7 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Situation Analyzer</h3>
-              <p className="text-neutral-600 leading-relaxed">
-                Paste any message and get AI interpretation of tone, emotional warmth, manipulation risk, 
-                and passive-aggressiveness. Know if your concerns are valid.
-              </p>
-            </div>
-
-            {/* Feature 2 - Context-Aware Feedback */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-neutral-200/50 card-hover fade-in-up-delay-2">
-              <div className="w-14 h-14 bg-gradient-to-br from-success-100 to-success-200 rounded-2xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Context-Aware Feedback</h3>
-              <p className="text-neutral-600 leading-relaxed">
-                Add personal context like "this was after I said no" for more nuanced analysis. 
-                Get insights that consider your specific situation and relationship dynamics.
-              </p>
-            </div>
-
-            {/* Feature 3 - Suggested Replies */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-neutral-200/50 card-hover fade-in-up-delay-3">
-              <div className="w-14 h-14 bg-gradient-to-br from-warm-100 to-warm-200 rounded-2xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-warm-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Suggested Replies</h3>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Conversation Simulations</h3>
               <p className="text-neutral-600 leading-relaxed">
-                Get 3 emotionally intelligent response options—Direct, Diplomatic, and Assertive—
-                ready to copy. Choose the tone that feels right for your situation.
+                Describe upcoming or hypothetical social scenarios. Practice realistic dialogue simulations 
+                with voice interaction that feels immersive, non-clinical, and calming.
               </p>
             </div>
 
-            {/* Feature 4 - Outcome Advisor */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-neutral-200/50 card-hover fade-in-up-delay-1">
-              <div className="w-14 h-14 bg-gradient-to-br from-lavender-100 to-lavender-200 rounded-2xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-lavender-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Outcome Advisor</h3>
-              <p className="text-neutral-600 leading-relaxed">
-                Get recommendations on what to do next in the relationship—"Clarify", "Distance", 
-                "Set Boundaries"—with clear explanations for each suggestion.
-              </p>
-            </div>
-
-            {/* Feature 5 - XP Progress System */}
+            {/* Feature 2 - Real-Time Feedback */}
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-neutral-200/50 card-hover fade-in-up-delay-2">
-              <div className="w-14 h-14 bg-gradient-to-br from-violet-100 to-purple-100 rounded-2xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-gradient-to-br from-success-100 to-success-200 rounded-2xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-neutral-900 mb-4">XP Progress System</h3>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Real-Time Coaching Insights</h3>
               <p className="text-neutral-600 leading-relaxed">
-                Earn XP and level up as you practice social skills. Track your progress with a calming 
-                XP bar that celebrates your growth in social confidence.
+                XP bar tracks conversation flow smoothly. Gentle, non-overwhelming micro-feedback about 
+                tone and social cues, with supportive summaries of what went well and areas to improve.
               </p>
             </div>
 
-            {/* Feature 6 - Social Simulation Coach */}
+            {/* Feature 3 - Scenario-Based Practice */}
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-neutral-200/50 card-hover fade-in-up-delay-3">
-              <div className="w-14 h-14 bg-gradient-to-br from-success-100 to-success-200 rounded-2xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-gradient-to-br from-warm-100 to-warm-200 rounded-2xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-warm-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Social Simulation Coach</h3>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Real-Life Preparation</h3>
               <p className="text-neutral-600 leading-relaxed">
-                Practice upcoming social events like "group project at 10am". Simulate conversations 
-                and learn what could come up, specially designed for autistic teens.
+                Prepare for specific upcoming conversations or social events. Practice in a safe space 
+                that helps you express yourself clearly and feel more confident in real interactions.
+              </p>
+            </div>
+
+            {/* Feature 4 - Adaptive Context Understanding */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-neutral-200/50 card-hover fade-in-up-delay-1">
+              <div className="w-14 h-14 bg-gradient-to-br from-lavender-100 to-lavender-200 rounded-2xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-lavender-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Context-Aware Support</h3>
+              <p className="text-neutral-600 leading-relaxed">
+                Not just general skills, but preparation adapted to your specific real-life situations. 
+                Understanding tone, emotional warmth, and helping you navigate social complexity.
+              </p>
+            </div>
+
+            {/* Feature 5 - Emotionally Safe Environment */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-neutral-200/50 card-hover fade-in-up-delay-2">
+              <div className="w-14 h-14 bg-gradient-to-br from-violet-100 to-purple-100 rounded-2xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Emotional Safety</h3>
+              <p className="text-neutral-600 leading-relaxed">
+                No fear of judgment, shame, or misunderstanding. You don't feel "fixed"—you feel understood 
+                and served. A companion for growth, not therapy.
+              </p>
+            </div>
+
+            {/* Feature 6 - Voice Interaction */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-neutral-200/50 card-hover fade-in-up-delay-3">
+              <div className="w-14 h-14 bg-gradient-to-br from-success-100 to-success-200 rounded-2xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-4">Natural Voice Practice</h3>
+              <p className="text-neutral-600 leading-relaxed">
+                Practice conversations using your voice in real-time. The AI responds naturally, 
+                creating an immersive experience that prepares you for real-world interactions.
               </p>
             </div>
           </div>
@@ -345,27 +345,73 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Mission Section */}
+      {/* Mission & Purpose Section */}
       <section className="px-6 py-16 bg-gradient-to-br from-white to-lavender-50/30">
         <div className="max-w-4xl mx-auto text-center fade-in-up">
           <div className="bg-gradient-to-br from-violet-50/80 to-purple-50/80 backdrop-blur-sm rounded-4xl p-12 border border-violet-200/30 shadow-soft-lg">
             <h2 className="text-4xl font-bold text-neutral-900 mb-8 tracking-tight">
-              Built with care, not commerce
+              Our Mission & Purpose
             </h2>
-            <div className="space-y-6 text-lg text-neutral-700 leading-relaxed font-light">
+            <div className="space-y-6 text-lg text-neutral-700 leading-relaxed font-light text-left">
               <p>
-                <strong className="font-semibold">We believe social intelligence tools should be accessible to everyone.</strong> 
-                That's why Kairoo is completely free to use. We're not here to monetize your struggles 
-                or profit from difficult moments.
+                <strong className="font-semibold">Kairoo exists to serve those who:</strong>
               </p>
-              <p>
-                Whether you're neurodivergent, dealing with anxiety, or just want to communicate more effectively, 
-                you deserve tools that help you navigate social situations with dignity and confidence.
+              <ul className="space-y-3 list-disc list-inside ml-4">
+                <li>Feel misunderstood or misaligned in social settings</li>
+                <li>Experience deep loneliness, despite the desire for connection</li>
+                <li>Don't know how to express themselves clearly</li>
+                <li>Want to prepare for specific, upcoming conversations or social events but lack a safe place to practice</li>
+                <li>Often pretend they don't need support—not because they don't want it, but because they value dignity</li>
+              </ul>
+              <p className="text-center font-semibold pt-4">
+                We serve people who struggle socially—especially those with social anxiety, autism, or conversational uncertainty—by helping them grow into more confident, connected, and expressive individuals through immersive, emotionally intelligent AI simulations and guidance.
               </p>
-              <p>
-                This isn't about productivity or optimization—it's about understanding, empathy, and giving you 
-                the support you need to engage with the world on your own terms.
+              <p className="text-center italic">
+                We don't "fix" people. We serve them by giving them the tools and safe spaces to grow into the version of themselves they've always wanted to be—someone who can express thoughts freely, connect meaningfully, and feel seen.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Upcoming Features Section */}
+      <section className="px-6 py-16 bg-gradient-to-br from-neutral-50/50 to-warm-50/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16 fade-in-up">
+            <div className="w-16 h-16 bg-gradient-to-br from-violet-100 to-purple-200 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-soft">
+              <svg className="w-8 h-8 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h2 className="text-4xl font-bold text-neutral-900 mb-6 tracking-tight">
+              Coming Soon
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-3xl mx-auto font-light leading-relaxed">
+              We're continuously evolving to better serve your social growth journey.
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-soft-lg border border-neutral-200/50 fade-in-up">
+              <div className="flex items-start space-x-6">
+                <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-violet-100 to-purple-200 rounded-3xl flex items-center justify-center">
+                  <svg className="w-8 h-8 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-semibold text-neutral-900 mb-4">Live Video Call Support</h3>
+                  <p className="text-lg text-neutral-600 leading-relaxed">
+                    Kairoo will soon include a live, optional overlay for video calls that helps users better interpret 
+                    social cues, tone, and intent in real time—supporting more confident, meaningful connection without 
+                    disrupting dignity or flow.
+                  </p>
+                  <div className="mt-6 inline-flex items-center text-violet-600 font-medium">
+                    <span className="w-2 h-2 bg-violet-500 rounded-full mr-3 animate-pulse"></span>
+                    In Development
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -400,7 +446,7 @@ export default function Home() {
                 <div>
                   <h3 className="font-semibold text-neutral-900 mb-2">No storage, no training</h3>
                   <p className="text-neutral-600">
-                    Your situations are analyzed and immediately discarded. We never store your content 
+                    Your conversations are analyzed and immediately discarded. We never store your content 
                     or use it to train AI models.
                   </p>
                 </div>
@@ -418,7 +464,7 @@ export default function Home() {
                   <h3 className="font-semibold text-neutral-900 mb-2">Anonymous by design</h3>
                   <p className="text-neutral-600">
                     A unique anonymous ID is auto-generated in localStorage. We never know who you are 
-                    or what you're analyzing.
+                    or what you're practicing.
                   </p>
                 </div>
               </div>
@@ -434,7 +480,7 @@ export default function Home() {
                 <div>
                   <h3 className="font-semibold text-neutral-900 mb-2">Secure processing</h3>
                   <p className="text-neutral-600">
-                    All analysis happens through encrypted connections. Your inputs are processed 
+                    All practice sessions happen through encrypted connections. Your inputs are processed 
                     securely and temporarily.
                   </p>
                 </div>
@@ -452,7 +498,7 @@ export default function Home() {
                   <h3 className="font-semibold text-neutral-900 mb-2">No sign-up required</h3>
                   <p className="text-neutral-600">
                     Start using Kairoo immediately. No email, no password, no personal information needed. 
-                    Just the help you're looking for.
+                    Just the growth support you're looking for.
                   </p>
                 </div>
               </div>
@@ -475,14 +521,14 @@ export default function Home() {
               You don't have to navigate this alone
             </h2>
             <p className="text-xl text-violet-100 mb-8 max-w-3xl mx-auto font-light leading-relaxed">
-              Whether you're feeling overwhelmed by a message, unsure about someone's intentions, 
-              or just want to respond thoughtfully, Kairoo is here to help.
+              Whether you're preparing for an important conversation, feeling uncertain about social cues, 
+              or wanting to practice expressing yourself clearly, Kairoo is here to support your growth.
             </p>
             <Link
               href="/app"
               className="inline-flex items-center px-10 py-4 text-lg font-semibold text-violet-600 bg-white rounded-2xl hover:bg-neutral-50 hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg"
             >
-              Get help understanding situations
+              Start your growth journey
               <svg className="ml-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
@@ -500,12 +546,12 @@ export default function Home() {
             </div>
             <div>
               <h3 className="text-xl font-bold text-violet-600 tracking-tight">KAIROO</h3>
-              <p className="text-xs text-neutral-500 -mt-1 font-medium">Social Intelligence</p>
+              <p className="text-xs text-neutral-500 -mt-1 font-medium">Growth Companion</p>
             </div>
           </div>
           <p className="text-neutral-600 font-light">
-            Built with care for anyone who finds social communication challenging. 
-            Free to use, private by design.
+            A growth companion for anyone who finds social communication challenging. 
+            Supporting your journey with dignity and understanding.
           </p>
         </div>
       </footer>
