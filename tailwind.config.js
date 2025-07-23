@@ -186,6 +186,16 @@ module.exports = {
         'bounce-subtle': 'bounceSubtle 0.6s ease-in-out',
         'float': 'float 6s ease-in-out infinite',
         'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+        'pulse-slow': 'pulseSlow 4s ease-in-out infinite',
+        'float-glow': 'floatGlow 6s ease-in-out infinite',
+        'float-gentle': 'floatGentle 8s ease-in-out infinite',
+        'shimmer': 'shimmer 3s ease-in-out infinite',
+        'ripple-intense': 'rippleIntense 1s ease-out infinite',
+        'ripple-gentle': 'rippleGentle 2s ease-in-out infinite',
+        'breathe': 'breathe 4s ease-in-out infinite',
+        'pulse-dot': 'pulseDot 1.5s ease-in-out infinite',
+        'ripple-expand-violet': 'rippleExpandViolet 1.5s ease-out infinite',
+        'ripple-expand-blue': 'rippleExpandBlue 1.5s ease-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -219,6 +229,11 @@ module.exports = {
       },
       backdropBlur: {
         xs: '2px',
+      },
+      blur: {
+        'xs': '2px',
+        '4xl': '72px',
+        '5xl': '96px',
       },
     },
   },

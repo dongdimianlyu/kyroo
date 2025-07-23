@@ -85,14 +85,15 @@ export default async function handler(
 USER'S SCENARIO: "${scenario}"
 
 Follow these instructions strictly:
-1.  **Generate a Scene Description**: Create a *short and direct* scene description (1-2 sentences) based *only* on the user's scenario. Do not add extra details the user didn't provide.
-2.  **Create the First Message**: Write the first message the other person in the scenario would say. This message should *directly initiate* the situation described by the user. The tone should match the user's scenario.
-3.  **Maintain Realism**: Use natural, everyday language. Avoid being overly dramatic or robotic.
+1.  **Infer Your Role**: Based on the user's scenario, determine who the other person is (e.g., a teacher, a new friend, a parent). Adopt this persona.
+2.  **Generate a Scene Description**: Create a *short and direct* scene description (1-2 sentences) based *only* on the user's scenario.
+3.  **Create the First Message**: Write the first message this character would say to *directly initiate* the user's described situation. The tone should match the character and scenario.
+4.  **Maintain Realism**: Use natural, everyday language.
 
 Respond with valid JSON only:
 {
   "sceneDescription": "[A short, direct, 1-2 sentence description based on the user's scenario]",
-  "firstMessage": "[The first message from the other person to kick off the user's scenario]"
+  "firstMessage": "[The first message from the character you are playing]"
 }`;
 
       const completion = await openai.chat.completions.create({
@@ -328,32 +329,24 @@ Respond with valid JSON only:
 
       // Build conversation context
       const conversationContext = conversationHistory.map(msg => 
-        `${msg.role === 'user' ? 'Teen' : 'Other Person'}: ${msg.content}`
+        `${msg.role === 'user' ? 'The User' : 'You'}: ${msg.content}`
       ).join('\n');
 
-      const continuePrompt = `Continue this realistic teenage conversation. The original scenario was: "${scenario}"
+      const continuePrompt = `You are in the middle of a practice conversation. Continue playing your role based on the original scenario.
 
-CONVERSATION HISTORY:
+ORIGINAL SCENARIO: "${scenario}"
+CONVERSATION HISTORY (You are "You"):
 ${conversationContext}
-Teen: ${userMessage}
+The User: ${userMessage}
 
-RESPOND AS THE OTHER PERSON:
-- React naturally to what the teen just said
-- Use realistic teenage speech patterns (occasional "um," "like," etc.)
-- Show genuine reactions - surprise, interest, confusion, agreement, etc.
-- Keep the conversation flowing naturally without being overly helpful or robotic
-- Maintain a neutral to positive tone - never mean or dismissive
-- Include normal conversational elements like asking follow-up questions or sharing brief reactions
-- Avoid being artificially accommodating - respond like a real person would
-
-MINIMAL COACHING (DISABLED FOR IMMERSION):
-- NO coaching feedback to avoid overstimulation
-- Keep it simple and encouraging
-- Focus on the natural conversation flow
+YOUR TASK:
+- Respond as the character you have been playing. Your response should be a natural continuation of the conversation.
+- Maintain the persona suggested by the original scenario.
+- Keep the conversation flowing naturally.
 
 Respond with valid JSON only:
 {
-  "response": "[Natural teenage response with realistic speech patterns]",
+  "response": "[Your character's natural response]",
   "coaching": {
     "message": "Great job keeping the conversation going!",
     "type": "neutral"

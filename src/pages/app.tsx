@@ -732,74 +732,114 @@ function App() {
     stopSpeaking();
   };
 
-  // Floating Orb Component
+  // Enhanced Floating Orb Component with Premium Design
   const FloatingOrb = () => {
-    const orbClass = `
-      w-32 h-32 rounded-full 
-      bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 
-      shadow-2xl border-4 border-white/30 
-      transition-all duration-300 ease-in-out
-      ${isSpeaking ? 'animate-pulse scale-110' : ''}
-      ${isListening ? 'ring-4 ring-blue-400/50 animate-bounce' : ''}
-      ${!isSpeaking && !isListening ? 'animate-float' : ''}
-    `;
-
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
-        {/* Floating Orb */}
+        {/* Premium Floating Orb */}
         <div className="relative">
-          <div className={orbClass}>
-            <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/40 to-transparent" />
-            <div className="absolute inset-8 rounded-full bg-gradient-to-br from-white/60 to-transparent" />
+          {/* Main Orb Container */}
+          <div className="relative w-40 h-40 group">
+            {/* Outer Glow Layers */}
+            <div className="absolute inset-0 rounded-full opacity-40">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-500/30 via-blue-500/30 to-purple-500/30 blur-2xl scale-150 animate-pulse-slow"></div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400/20 via-indigo-500/20 to-purple-600/20 blur-3xl scale-125 animate-float-glow"></div>
+            </div>
             
-            {/* Status indicator */}
+            {/* Main Orb Sphere */}
+            <div className={`
+              absolute inset-4 rounded-full overflow-hidden
+              bg-gradient-to-br from-slate-100 via-white to-slate-50
+              shadow-2xl border border-white/50
+              transition-all duration-700 ease-out
+              ${isSpeaking ? 'scale-110 shadow-violet-500/30' : ''}
+              ${isListening ? 'scale-105 shadow-blue-500/40 ring-2 ring-blue-400/30' : ''}
+              ${!isSpeaking && !isListening ? 'animate-float-gentle' : ''}
+            `}>
+              {/* Inner Gradient Layers for Depth */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-transparent via-white/40 to-transparent"></div>
+              <div className="absolute inset-2 rounded-full bg-gradient-to-tl from-transparent via-slate-50/60 to-white/20"></div>
+              
+              {/* Dynamic Core */}
+              <div className={`
+                absolute inset-6 rounded-full
+                bg-gradient-to-br from-violet-200/60 via-blue-200/40 to-purple-200/60
+                transition-all duration-500 ease-out
+                ${isSpeaking ? 'animate-ripple-intense from-violet-400/80 via-blue-400/60 to-purple-400/80' : ''}
+                ${isListening ? 'animate-ripple-gentle from-blue-300/70 via-cyan-300/50 to-indigo-300/70' : ''}
+                ${!isSpeaking && !isListening ? 'animate-shimmer' : ''}
+              `}>
+                {/* Inner Shine */}
+                <div className="absolute inset-2 rounded-full bg-gradient-to-br from-white/80 via-transparent to-transparent opacity-60"></div>
+              </div>
+              
+              {/* Ambient Light Reflection */}
+              <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-white/90 blur-sm animate-breathe"></div>
+              <div className="absolute top-6 left-6 w-4 h-4 rounded-full bg-white/70 blur-xs"></div>
+            </div>
+            
+            {/* Status Indicator - Subtle and Elegant */}
             <div className="absolute inset-0 flex items-center justify-center">
               {isSpeaking && (
-                <div className="text-2xl animate-pulse">🗣️</div>
+                <div className="text-slate-600/60 transition-all duration-300">
+                  <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse-dot"></div>
+                </div>
               )}
               {isListening && (
-                <div className="text-2xl animate-bounce">👂</div>
-              )}
-              {!isSpeaking && !isListening && !loading && (
-                <div className="text-2xl opacity-60">💭</div>
+                <div className="flex space-x-1">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse-dot"></div>
+                  <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse-dot animation-delay-200"></div>
+                  <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse-dot animation-delay-400"></div>
+                </div>
               )}
               {loading && (
-                <div className="text-2xl animate-spin">⏳</div>
+                <div className="w-3 h-3 border border-slate-400/40 border-t-violet-500 rounded-full animate-spin"></div>
               )}
             </div>
+            
+            {/* Interactive Ripple Effects */}
+            {(isSpeaking || isListening) && (
+              <>
+                <div className={`
+                  absolute inset-0 rounded-full border-2 border-white/20
+                  ${isSpeaking ? 'animate-ripple-expand-violet' : 'animate-ripple-expand-blue'}
+                `}></div>
+                <div className={`
+                  absolute inset-0 rounded-full border border-white/10
+                  ${isSpeaking ? 'animate-ripple-expand-violet animation-delay-300' : 'animate-ripple-expand-blue animation-delay-300'}
+                `}></div>
+              </>
+            )}
           </div>
-          
-          {/* Ambient glow */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-300/20 via-purple-300/20 to-pink-300/20 blur-xl scale-150" />
         </div>
 
-        {/* Live transcript */}
+        {/* Live transcript with premium styling */}
         {(lastUserTranscript || currentTranscript) && (
           <div className="max-w-md text-center">
-            <p className="text-sm text-neutral-500 mb-2">
-              {isListening && currentTranscript ? "Speaking..." : "You said:"}
+            <p className="text-sm text-slate-500/80 mb-3 font-medium">
+              {isListening && currentTranscript ? "Listening..." : "You said"}
             </p>
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-neutral-200/50">
-              <p className="text-neutral-700 italic">
+            <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/50 transition-all duration-300 hover:shadow-2xl">
+              <p className="text-slate-700 italic leading-relaxed">
                 "{currentTranscript || lastUserTranscript}"
               </p>
             </div>
           </div>
         )}
 
-        {/* Status text */}
+        {/* Status text with premium typography */}
         <div className="text-center max-w-md">
           {isSpeaking && (
-            <p className="text-neutral-600">The AI is speaking...</p>
+            <p className="text-slate-600 font-medium">Kairoo is speaking...</p>
           )}
           {isListening && (
-            <p className="text-blue-600 font-medium">Listening... speak naturally</p>
+            <p className="text-blue-600 font-semibold">Listening attentively...</p>
           )}
           {!isSpeaking && !isListening && !loading && isSimulationActive && (
-            <p className="text-neutral-500">Ready to listen when you're ready to speak</p>
+            <p className="text-slate-500">Ready when you are</p>
           )}
           {loading && (
-            <p className="text-neutral-600">Processing your response...</p>
+            <p className="text-slate-600 font-medium">Processing thoughtfully...</p>
           )}
         </div>
       </div>
@@ -934,7 +974,7 @@ function App() {
                   <div className="text-center mb-8">
                     <div className="w-16 h-16 bg-success-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
                       <svg className="w-8 h-8 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                     </div>
                     <h2 className="text-2xl font-bold text-neutral-900 mb-4">Great Practice Session!</h2>
@@ -1028,14 +1068,6 @@ function App() {
                           </button>
                       </div>
                       
-                {/* End Simulation Button */}
-                      <button
-                  onClick={endSimulation}
-                  disabled={loading}
-                  className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-smooth disabled:opacity-50"
-                      >
-                  End Simulation
-                      </button>
                     </div>
 
               {/* XP Progress Bar */}
