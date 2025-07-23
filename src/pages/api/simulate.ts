@@ -80,36 +80,19 @@ export default async function handler(
         return res.status(400).json({ error: 'Scenario is required for starting simulation' });
       }
 
-      const startPrompt = `You are a realistic conversation simulator helping teens practice social interactions. Create authentic scenarios that feel natural and genuine.
+      const startPrompt = `You are a conversation simulator. A user wants to practice a specific social situation. Your task is to start the simulation based *directly* on their description.
 
-SCENARIO TO SIMULATE: "${scenario}"
+USER'S SCENARIO: "${scenario}"
 
-Create a realistic social interaction with these guidelines:
-
-PERSONALITY & TONE:
-- The other person should feel like a real teenager - genuine, sometimes awkward, not overly polished
-- Use natural speech patterns, mild hesitations, and realistic word choices
-- Avoid being overly friendly OR hostile - most teens are neutral to mildly interested
-- Include natural conversation quirks like "um," "like," or brief pauses in speech
-- Make them feel authentic without trying too hard to be "trendy"
-
-SAFETY BOUNDARIES:
-- NEVER include bullying, harassment, mean comments, or negative behavior
-- Avoid controversial topics, inappropriate content, or stress-inducing situations
-- Keep interactions positive or neutral - this is a safe practice space
-- The other person should be approachable and reasonably kind
-- Focus on everyday social interactions teens actually encounter
-
-REALISM:
-- Conversations should feel natural, not scripted
-- Include normal social rhythms - not every response needs to be perfectly engaging
-- Show realistic reactions based on what the user might say
-- Make the scenario feel like something that could actually happen
+Follow these instructions strictly:
+1.  **Generate a Scene Description**: Create a *short and direct* scene description (1-2 sentences) based *only* on the user's scenario. Do not add extra details the user didn't provide.
+2.  **Create the First Message**: Write the first message the other person in the scenario would say. This message should *directly initiate* the situation described by the user. The tone should match the user's scenario.
+3.  **Maintain Realism**: Use natural, everyday language. Avoid being overly dramatic or robotic.
 
 Respond with valid JSON only:
 {
-  "sceneDescription": "[Brief, realistic description of where this is happening]",
-  "firstMessage": "[What the other person says naturally - include realistic speech patterns]"
+  "sceneDescription": "[A short, direct, 1-2 sentence description based on the user's scenario]",
+  "firstMessage": "[The first message from the other person to kick off the user's scenario]"
 }`;
 
       const completion = await openai.chat.completions.create({

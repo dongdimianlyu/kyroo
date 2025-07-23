@@ -861,98 +861,87 @@ function App() {
         <main className="max-w-6xl mx-auto px-6 py-8">
           <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
             {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-neutral-900 mb-2">Kairoo LIVE</h1>
-              <p className="text-neutral-600">
-                Practice real-life conversations in a safe, supportive environment.
-              </p>
+            <div className="mb-8 flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-neutral-900 mb-2">Kairoo LIVE</h1>
+                <p className="text-neutral-600">
+                  Practice real-life conversations in a safe, supportive environment.
+                </p>
+              </div>
+              {isSimulationActive && (
+                <button
+                  onClick={endSimulation}
+                  disabled={loading}
+                  className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-smooth disabled:opacity-50 self-center"
+                >
+                  End Simulation
+                </button>
+              )}
             </div>
 
-          {/* Audio Controls */}
-          {isSimulationActive && (
-            <div className="flex justify-end items-center gap-3 mb-6">
-              {speechEnabled && (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-neutral-600">Mode:</span>
-              <button
-                onClick={() => {
-                  setIsAudioMuted(!isAudioMuted);
-                  if (!isAudioMuted) stopSpeaking();
-                }}
-                    className="px-3 py-1.5 text-xs font-medium rounded-lg transition-smooth"
-                title={isAudioMuted ? "Enable audio" : "Mute audio"}
-              >
-                {isAudioMuted ? '🔇' : '🔈'}
-              </button>
-            </div>
-          )}
-
-            </div>
-          )}
-
-          {!isSimulationActive && !showSummary ? (
-            /* Scenario Setup */
-            <div className="max-w-3xl mx-auto">
-              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
-                <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-secondary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <svg className="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </div>
-                  <h2 className="text-2xl font-bold text-neutral-900 mb-4">Start a Practice Session</h2>
-                  <p className="text-neutral-600">
-                    Practice conversations in a safe space with AI coaching and feedback.
-                  </p>
-                </div>
-
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-3">
-                      What situation would you like to practice?
-                    </label>
-                    <textarea
-                      value={scenario}
-                      onChange={(e) => setScenario(e.target.value)}
-                      placeholder="e.g., Having lunch with a new classmate, Texting a friend who might be upset, Asking for help with homework..."
-                      className="input-field h-32 resize-none"
-                      disabled={loading}
-                    />
-                  </div>
-
-                  {error && (
-                    <div className="bg-error-50 border border-error-200 rounded-xl p-4">
-                      <p className="text-error-600 text-sm">{error}</p>
+            {!isSimulationActive && !showSummary ? (
+              /* Scenario Setup */
+              <div className="max-w-3xl mx-auto">
+                <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
+                  <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-secondary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                      <svg className="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
                     </div>
-                  )}
+                    <h2 className="text-2xl font-bold text-neutral-900 mb-4">Start a Practice Session</h2>
+                    <p className="text-neutral-600">
+                      Practice conversations in a safe space with AI coaching and feedback.
+                    </p>
+                  </div>
 
-                  <div className="pt-4">
-                    <button
-                      onClick={startSimulation}
-                      disabled={loading || !scenario.trim()}
-                      className="w-full button-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {loading ? 'Starting practice session...' : 'Begin Practice'}
-                    </button>
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium text-neutral-700 mb-3">
+                        What situation would you like to practice?
+                      </label>
+                      <textarea
+                        value={scenario}
+                        onChange={(e) => setScenario(e.target.value)}
+                        placeholder="e.g., Having lunch with a new classmate, Texting a friend who might be upset, Asking for help with homework..."
+                        className="input-field h-32 resize-none"
+                        disabled={loading}
+                      />
+                    </div>
+
+                    {error && (
+                      <div className="bg-error-50 border border-error-200 rounded-xl p-4">
+                        <p className="text-error-600 text-sm">{error}</p>
+                      </div>
+                    )}
+
+                    <div className="pt-4">
+                      <button
+                        onClick={startSimulation}
+                        disabled={loading || !scenario.trim()}
+                        className="w-full button-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loading ? 'Starting practice session...' : 'Begin Practice'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ) : showSummary && simulationSummary ? (
-            /* Simulation Summary */
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
-                <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-success-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <svg className="w-8 h-8 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+            ) : showSummary && simulationSummary ? (
+              /* Simulation Summary */
+              <div className="max-w-4xl mx-auto">
+                <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
+                  <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-success-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                      <svg className="w-8 h-8 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h2 className="text-2xl font-bold text-neutral-900 mb-4">Great Practice Session!</h2>
+                    <p className="text-neutral-600">
+                      Here's how your conversation went and what to focus on next time.
+                    </p>
                   </div>
-                  <h2 className="text-2xl font-bold text-neutral-900 mb-4">Great Practice Session!</h2>
-                  <p className="text-neutral-600">
-                    Here's how your conversation went and what to focus on next time.
-                  </p>
-                </div>
 
             <div className="space-y-6">
                   {/* Smoothness Score */}
