@@ -20,16 +20,11 @@ interface AnalysisResult {
   advice: string;
 }
 
-// Initialize OpenAI client - this will be created fresh for each request
-const getOpenAIClient = () => {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error('OpenAI API key not configured');
-  }
-  return new OpenAI({
-    apiKey: apiKey,
-  });
-};
+// Create a single, cached OpenAI client instance.
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -107,9 +102,8 @@ IMPORTANT GUIDELINES:
 - Be specific about what makes something manipulative vs just awkward
 - Help build confidence in normal social situations while staying alert to real red flags`;
 
-    const openai = getOpenAIClient();
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system", 
@@ -170,14 +164,15 @@ IMPORTANT GUIDELINES:
     console.error('Analysis error:', error);
     
     // Handle specific OpenAI errors
-    if (error && typeof error === 'object' && 'status' in error) {
-      const errorWithStatus = error as { status?: number };
-      if (errorWithStatus.status === 401) {
-        return res.status(500).json({ error: 'Service authentication failed. Please check configuration.' });
-      } else if (errorWithStatus.status === 429) {
+    if (error instanceof OpenAI.APIError) {
+      if (error.status === 401) {
+        return res.status(500).json({ error: 'Service authentication failed. Please check your API key.' });
+      }
+      if (error.code === 'insufficient_quota') {
+        return res.status(429).json({ error: 'You have exceeded your OpenAI quota. Please check your plan and billing details.' });
+      }
+      if (error.status === 429) {
         return res.status(429).json({ error: 'Service is busy. Please try again in a moment.' });
-      } else if (errorWithStatus.status === 403) {
-        return res.status(500).json({ error: 'Service quota exceeded. Please try again later.' });
       }
     }
     

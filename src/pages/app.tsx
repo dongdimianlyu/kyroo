@@ -1,12 +1,14 @@
-import { useState, useEffect, useRef, Component, ReactNode } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
+import React from 'react';
 
 // Error Boundary Component
-class ErrorBoundary extends Component<
-  { children: ReactNode },
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
   { hasError: boolean; error?: Error }
 > {
-  constructor(props: { children: ReactNode }) {
+  constructor(props: { children: React.ReactNode }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -86,6 +88,13 @@ interface ProgressEvaluation {
   improvements: string[];
 }
 
+interface SimulationSummary {
+  smoothnessScore: number;
+  whatWentWell: string;
+  improvementAreas: string[];
+  encouragingMessage: string;
+}
+
 function App() {
   const [message, setMessage] = useState('');
   const [context, setContext] = useState('');
@@ -95,7 +104,7 @@ function App() {
   const [error, setError] = useState('');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [anonId, setAnonId] = useState('');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true); // Initially collapsed
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   // Simulation state
   const [scenario, setScenario] = useState('');
@@ -105,15 +114,17 @@ function App() {
   const [sceneDescription, setSceneDescription] = useState('');
   const [lastCoaching, setLastCoaching] = useState<CoachingInsight | null>(null);
   const [progressEvaluation, setProgressEvaluation] = useState<ProgressEvaluation | null>(null);
+  const [simulationSummary, setSimulationSummary] = useState<SimulationSummary | null>(null);
+  const [showSummary, setShowSummary] = useState(false);
+  const [lastUserTranscript, setLastUserTranscript] = useState('');
   
   // Speech features
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [speechEnabled, setSpeechEnabled] = useState(false);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
-  const [isConversationalMode, setIsConversationalMode] = useState(false);
-  const [isWaitingForSpeech, setIsWaitingForSpeech] = useState(false);
-  const [shouldAutoSend, setShouldAutoSend] = useState(false);
+  const [currentTranscript, setCurrentTranscript] = useState('');
+  const [silenceTimer, setSilenceTimer] = useState<NodeJS.Timeout | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthesisRef = useRef<SpeechSynthesis | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -136,101 +147,91 @@ function App() {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = false;
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
       recognitionRef.current.lang = 'en-US';
       
       recognitionRef.current.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setCurrentInput(transcript);
-        setIsListening(false);
+        let finalTranscript = '';
+        let interimTranscript = '';
         
-        // Trigger auto-send for voice input in simulation mode
-        setShouldAutoSend(true);
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+        
+        const fullTranscript = finalTranscript || interimTranscript;
+        if (fullTranscript.trim()) {
+          setCurrentTranscript(fullTranscript.trim());
+          setLastUserTranscript(fullTranscript.trim());
+          
+          // Clear any existing silence timer
+          if (silenceTimer) {
+            clearTimeout(silenceTimer);
+          }
+          
+          // Set a new timer for 3 seconds of silence
+          const timer = setTimeout(() => {
+            if (fullTranscript.trim() && isSimulationActive) {
+              setIsListening(false);
+              sendVoiceMessage(fullTranscript.trim());
+              setCurrentTranscript('');
+            }
+          }, 3000);
+          
+          setSilenceTimer(timer);
+        }
       };
       
       recognitionRef.current.onend = () => {
         setIsListening(false);
+        // Restart listening if simulation is still active and AI isn't speaking
+        if (isSimulationActive && !isSpeaking && !loading) {
+          setTimeout(() => {
+            startListening();
+          }, 500);
+        }
       };
       
       recognitionRef.current.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
+        // Restart listening on error if simulation is still active
+        if (isSimulationActive && !isSpeaking && !loading) {
+          setTimeout(() => {
+            startListening();
+          }, 1000);
+        }
       };
       
       setSpeechEnabled(true);
     }
   }, []);
 
-  // Auto-send message when voice input is received
+    // Auto-start listening after AI finishes speaking
   useEffect(() => {
-    if (shouldAutoSend && currentInput.trim() && isSimulationActive) {
-      setShouldAutoSend(false);
-      // Create a synthetic send action
-      const sendVoiceMessage = async () => {
-        if (!currentInput.trim() || loading) return;
-
-        const userMessage: Message = {
-          id: crypto.randomUUID(),
-          role: 'user',
-          content: currentInput.trim(),
-          timestamp: new Date(),
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-        setCurrentInput('');
-        setLoading(true);
-        setError('');
-
-        try {
-          const response = await fetch('/api/simulate', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              action: 'continue',
-              userMessage: userMessage.content,
-              conversationHistory: messages,
-              scenario,
-              anonId,
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to get response');
-          }
-
-          const data: SimulationResponse = await response.json();
-          
-          const aiMessage: Message = {
-            id: crypto.randomUUID(),
-            role: 'ai',
-            content: data.aiResponse,
-            timestamp: new Date(),
-          };
-
-          setMessages(prev => [...prev, aiMessage]);
-          setLastCoaching(data.coaching);
-          
-          // Speak the AI response
-          speakText(data.aiResponse);
-          
-          // Evaluate progress after each exchange
-          setTimeout(() => {
-            evaluateProgress();
-          }, 500);
-          
-        } catch (err) {
-          setError(err instanceof Error ? err.message : 'Failed to get response');
-        } finally {
-          setLoading(false);
-        }
-      };
+    if (!isSpeaking && isSimulationActive && !loading && !showSummary && !isListening) {
+      // Small delay to allow for natural conversation flow
+      const timer = setTimeout(() => {
+        startListening();
+      }, 1000);
       
-      sendVoiceMessage();
+      return () => clearTimeout(timer);
     }
-  }, [shouldAutoSend, currentInput, isSimulationActive, loading, messages, scenario, anonId]);
+  }, [isSpeaking, isSimulationActive, loading, showSummary, isListening]);
+
+  // Cleanup silence timer on unmount
+  useEffect(() => {
+    return () => {
+      if (silenceTimer) {
+        clearTimeout(silenceTimer);
+      }
+    };
+  }, [silenceTimer]);
 
   // Get analysis results - shows fillers when no analysis, real results when analyzed
   const getDisplayResults = () => {
@@ -359,36 +360,69 @@ function App() {
 
   // Simulation functions
   const startListening = () => {
-    if (recognitionRef.current && !isListening) {
+    if (recognitionRef.current && !isListening && !isSpeaking && speechEnabled) {
       setIsListening(true);
       recognitionRef.current.start();
     }
   };
 
-  const startListeningConversational = () => {
-    if (recognitionRef.current && !isListening && !isSpeaking) {
-      setIsWaitingForSpeech(true);
-      setIsListening(true);
+  const sendVoiceMessage = async (transcript: string) => {
+    if (!transcript.trim() || loading) return;
+
+    const userMessage: Message = {
+      id: crypto.randomUUID(),
+      role: 'user',
+      content: transcript.trim(),
+      timestamp: new Date(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setCurrentInput('');
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/simulate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'continue',
+          userMessage: userMessage.content,
+          conversationHistory: messages,
+          scenario,
+          anonId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
+      const data: SimulationResponse = await response.json();
       
-      // Set up one-time listeners for conversational mode
-      recognitionRef.current.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setCurrentInput(transcript);
-        setIsListening(false);
-        setIsWaitingForSpeech(false);
+      const aiMessage: Message = {
+        id: crypto.randomUUID(),
+        role: 'ai',
+        content: data.aiResponse,
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => [...prev, aiMessage]);
         
-        // Automatically send the message in conversational mode
+      // Speak the AI response
+      speakText(data.aiResponse);
+      
+      // Evaluate progress after each exchange
         setTimeout(() => {
-          sendMessage();
-        }, 100);
-      };
+        evaluateProgress();
+      }, 500);
       
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-        setIsWaitingForSpeech(false);
-      };
-      
-      recognitionRef.current.start();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to get response');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -431,13 +465,6 @@ function App() {
       audio.onended = () => {
         setIsSpeaking(false);
         URL.revokeObjectURL(audioUrl);
-        
-        // In conversational mode, start listening after speech ends
-        if (isConversationalMode && isSimulationActive) {
-          setTimeout(() => {
-            startListeningConversational();
-          }, 500); // Small delay before listening
-        }
       };
       
       audio.onerror = () => {
@@ -460,14 +487,7 @@ function App() {
         utterance.volume = 0.7;
         
         utterance.onstart = () => setIsSpeaking(true);
-        utterance.onend = () => {
-          setIsSpeaking(false);
-          if (isConversationalMode && isSimulationActive) {
-            setTimeout(() => {
-              startListeningConversational();
-            }, 500);
-          }
-        };
+        utterance.onend = () => setIsSpeaking(false);
         utterance.onerror = () => setIsSpeaking(false);
         
         synthesisRef.current.speak(utterance);
@@ -537,21 +557,23 @@ function App() {
     }
   };
 
-  const sendMessage = async () => {
-    if (!currentInput.trim() || loading) return;
+  const endSimulation = async () => {
+    if (messages.length === 0) return;
 
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content: currentInput.trim(),
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setCurrentInput('');
     setLoading(true);
-    setError('');
-
+    setIsListening(false);
+    
+    // Clear silence timer
+    if (silenceTimer) {
+      clearTimeout(silenceTimer);
+      setSilenceTimer(null);
+    }
+    
+    // Stop speech recognition
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    
     try {
       const response = await fetch('/api/simulate', {
         method: 'POST',
@@ -559,8 +581,7 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          action: 'continue',
-          userMessage: userMessage.content,
+          action: 'end',
           conversationHistory: messages,
           scenario,
           anonId,
@@ -568,34 +589,46 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response');
+        throw new Error('Failed to generate summary');
       }
 
-      const data: SimulationResponse = await response.json();
+      const summary: SimulationSummary = await response.json();
+      setSimulationSummary(summary);
+      setShowSummary(true);
       
-      const aiMessage: Message = {
-        id: crypto.randomUUID(),
-        role: 'ai',
-        content: data.aiResponse,
-        timestamp: new Date(),
-      };
-
-      setMessages(prev => [...prev, aiMessage]);
-      setLastCoaching(data.coaching);
-      
-      // Speak the AI response
-      speakText(data.aiResponse);
-      
-      // Evaluate progress after each exchange
-      setTimeout(() => {
-        evaluateProgress();
-      }, 500);
+      // Stop any ongoing audio
+      stopSpeaking();
       
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to get response');
+      setError(err instanceof Error ? err.message : 'Failed to generate summary');
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetSimulation = () => {
+    setMessages([]);
+    setIsSimulationActive(false);
+    setShowSummary(false);
+    setSimulationSummary(null);
+    setProgressEvaluation(null);
+    setLastUserTranscript('');
+    setCurrentTranscript('');
+    setScenario('');
+    setIsListening(false);
+    
+    // Clear silence timer
+    if (silenceTimer) {
+      clearTimeout(silenceTimer);
+      setSilenceTimer(null);
+    }
+    
+    // Stop speech recognition
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    
+    stopSpeaking();
   };
 
   const evaluateProgress = async () => {
@@ -616,7 +649,7 @@ function App() {
 
       if (!response.ok) {
         console.warn('Progress evaluation failed:', response.status, response.statusText);
-        return; // Silently fail - progress evaluation is not critical
+        return;
       }
 
       const data: ProgressEvaluation = await response.json();
@@ -624,8 +657,81 @@ function App() {
       
     } catch (err) {
       console.error('Progress evaluation error:', err);
-      // Don't show error to user, just log it
     }
+  };
+
+  // Floating Orb Component
+  const FloatingOrb = () => {
+    const orbClass = `
+      w-32 h-32 rounded-full 
+      bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 
+      shadow-2xl border-4 border-white/30 
+      transition-all duration-300 ease-in-out
+      ${isSpeaking ? 'animate-pulse scale-110' : ''}
+      ${isListening ? 'ring-4 ring-blue-400/50 animate-bounce' : ''}
+      ${!isSpeaking && !isListening ? 'animate-float' : ''}
+    `;
+
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
+        {/* Floating Orb */}
+        <div className="relative">
+          <div className={orbClass}>
+            <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white/40 to-transparent" />
+            <div className="absolute inset-8 rounded-full bg-gradient-to-br from-white/60 to-transparent" />
+            
+            {/* Status indicator */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {isSpeaking && (
+                <div className="text-2xl animate-pulse">🗣️</div>
+              )}
+              {isListening && (
+                <div className="text-2xl animate-bounce">👂</div>
+              )}
+              {!isSpeaking && !isListening && !loading && (
+                <div className="text-2xl opacity-60">💭</div>
+              )}
+              {loading && (
+                <div className="text-2xl animate-spin">⏳</div>
+              )}
+            </div>
+          </div>
+          
+          {/* Ambient glow */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-300/20 via-purple-300/20 to-pink-300/20 blur-xl scale-150" />
+        </div>
+
+        {/* Live transcript */}
+        {(lastUserTranscript || currentTranscript) && (
+          <div className="max-w-md text-center">
+            <p className="text-sm text-neutral-500 mb-2">
+              {isListening && currentTranscript ? "Speaking..." : "You said:"}
+            </p>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-neutral-200/50">
+              <p className="text-neutral-700 italic">
+                "{currentTranscript || lastUserTranscript}"
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Status text */}
+        <div className="text-center max-w-md">
+          {isSpeaking && (
+            <p className="text-neutral-600">The AI is speaking...</p>
+          )}
+          {isListening && (
+            <p className="text-blue-600 font-medium">Listening... speak naturally</p>
+          )}
+          {!isSpeaking && !isListening && !loading && isSimulationActive && (
+            <p className="text-neutral-500">Ready to listen when you're ready to speak</p>
+          )}
+          {loading && (
+            <p className="text-neutral-600">Processing your response...</p>
+          )}
+        </div>
+      </div>
+    );
   };
 
   // Render Kairoo LIVE page
@@ -696,34 +802,12 @@ function App() {
               {speechEnabled && (
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-neutral-600">Mode:</span>
-                  <button
-                    onClick={() => {
-                      setIsConversationalMode(!isConversationalMode);
-                      if (isConversationalMode) {
-                        setIsWaitingForSpeech(false);
-                        if (recognitionRef.current) {
-                          recognitionRef.current.stop();
-                        }
-                      }
-                    }}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-smooth ${
-                      isConversationalMode
-                        ? 'bg-success-100 text-success-700 border border-success-200'
-                        : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                    }`}
-                    title={isConversationalMode ? "Switch to typing mode" : "Switch to conversational mode - speak directly to AI"}
-                  >
-                    {isConversationalMode ? '🗣️ Voice' : '⌨️ Type'}
-                  </button>
-                </div>
-              )}
-              
               <button
                 onClick={() => {
                   setIsAudioMuted(!isAudioMuted);
                   if (!isAudioMuted) stopSpeaking();
                 }}
-                className="p-2 text-neutral-600 hover:text-secondary-600 hover:bg-secondary-50 rounded-lg transition-smooth"
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg transition-smooth"
                 title={isAudioMuted ? "Enable audio" : "Mute audio"}
               >
                 {isAudioMuted ? '🔇' : '🔈'}
@@ -731,7 +815,10 @@ function App() {
             </div>
           )}
 
-          {!isSimulationActive ? (
+            </div>
+          )}
+
+          {!isSimulationActive && !showSummary ? (
             /* Scenario Setup */
             <div className="max-w-3xl mx-auto">
               <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
@@ -779,13 +866,121 @@ function App() {
                 </div>
               </div>
             </div>
-          ) : (
-            /* Active Simulation */
+          ) : showSummary && simulationSummary ? (
+            /* Simulation Summary */
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-success-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg className="w-8 h-8 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h2 className="text-2xl font-bold text-neutral-900 mb-4">Great Practice Session!</h2>
+                  <p className="text-neutral-600">
+                    Here's how your conversation went and what to focus on next time.
+                  </p>
+                </div>
+
             <div className="space-y-6">
-              {/* Progress Bar */}
+                  {/* Smoothness Score */}
+                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-neutral-900">Conversation Smoothness</h3>
+                      <span className="text-2xl font-bold text-purple-600">{simulationSummary.smoothnessScore}%</span>
+                </div>
+                    <div className="w-full bg-white/50 rounded-full h-3">
+                  <div 
+                        className="bg-gradient-to-r from-purple-500 to-blue-500 h-3 rounded-full transition-all duration-1000"
+                        style={{ width: `${simulationSummary.smoothnessScore}%` }}
+                  />
+                </div>
+              </div>
+
+                  {/* What Went Well */}
+                  <div className="bg-success-50 rounded-2xl p-6">
+                    <h3 className="text-lg font-semibold text-success-900 mb-3 flex items-center">
+                      <span className="w-6 h-6 bg-success-200 rounded-full flex items-center justify-center mr-3 text-sm">✨</span>
+                      What Went Well
+                  </h3>
+                    <p className="text-success-800 leading-relaxed">{simulationSummary.whatWentWell}</p>
+                </div>
+
+                  {/* Areas to Improve */}
+                  {simulationSummary.improvementAreas.length > 0 && (
+                    <div className="bg-blue-50 rounded-2xl p-6">
+                      <h3 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
+                        <span className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center mr-3 text-sm">🎯</span>
+                        Focus Areas for Next Time
+                      </h3>
+                      <ul className="space-y-2">
+                        {simulationSummary.improvementAreas.map((area, index) => (
+                          <li key={index} className="text-blue-800 flex items-start">
+                            <span className="text-blue-400 mr-2 mt-1">•</span>
+                            <span>{area}</span>
+                          </li>
+                        ))}
+                      </ul>
+                  </div>
+                )}
+
+                  {/* Encouraging Message */}
+                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6 text-center">
+                    <h3 className="text-lg font-semibold text-neutral-900 mb-3">Keep Going! 🌟</h3>
+                    <p className="text-neutral-700 leading-relaxed italic">{simulationSummary.encouragingMessage}</p>
+                </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4 pt-4">
+                        <button
+                      onClick={resetSimulation}
+                      className="flex-1 button-secondary py-3"
+                        >
+                      Practice Another Scenario
+                        </button>
+                    <button
+                      onClick={() => setActiveNav('Dashboard')}
+                      className="flex-1 button-primary py-3"
+                    >
+                      Back to Dashboard
+                    </button>
+                  </div>
+                </div>
+                    </div>
+                  </div>
+                ) : (
+            /* Active Simulation with Floating Orb */
+            <div className="space-y-6">
+              {/* Top Controls */}
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                  {/* Audio Mute Toggle */}
+                          <button
+                    onClick={() => {
+                      setIsAudioMuted(!isAudioMuted);
+                      if (!isAudioMuted) stopSpeaking();
+                    }}
+                    className="p-2 text-neutral-600 hover:text-secondary-600 hover:bg-secondary-50 rounded-lg transition-smooth"
+                    title={isAudioMuted ? "Enable audio" : "Mute audio"}
+                          >
+                    {isAudioMuted ? '🔇' : '🔈'}
+                          </button>
+                      </div>
+                      
+                {/* End Simulation Button */}
+                      <button
+                  onClick={endSimulation}
+                  disabled={loading}
+                  className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-smooth disabled:opacity-50"
+                      >
+                  End Simulation
+                      </button>
+                    </div>
+
+              {/* XP Progress Bar */}
               <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-neutral-900">XP bar</h3>
+                  <h3 className="font-semibold text-neutral-900">XP Progress</h3>
                   <span className="text-sm text-primary-600">
                     {progressEvaluation ? `${progressEvaluation.progressScore}%` : 'Starting...'}
                   </span>
@@ -796,11 +991,6 @@ function App() {
                     style={{ width: `${progressEvaluation?.progressScore || 0}%` }}
                   />
                 </div>
-                {progressEvaluation && (
-                  <p className="text-sm text-neutral-600 mt-2">
-                    {progressEvaluation.feedback}
-                  </p>
-                )}
               </div>
 
               {/* Scene Description */}
@@ -811,149 +1001,12 @@ function App() {
                     Scene Setting
                   </h3>
                   <p className="text-neutral-600 italic">{sceneDescription}</p>
-                </div>
-              )}
-
-              {/* Conversation Cards */}
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div key={message.id} className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
-                    <div className="flex items-start space-x-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        message.role === 'user' 
-                          ? 'bg-primary-100 text-primary-600' 
-                          : 'bg-secondary-100 text-secondary-600'
-                      }`}>
-                        {message.role === 'user' ? '👤' : (
-                          <span className="text-sm font-bold text-secondary-600">AI</span>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-neutral-900 mb-2">
-                          {message.role === 'user' ? 'You' : 'Alex'}
-                        </h4>
-                        <p className="text-neutral-700">{message.content}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                {loading && (
-                  <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-secondary-100 text-secondary-600">
-                        <span className="text-sm font-bold text-secondary-600">AI</span>
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-neutral-900 mb-2">Alex is thinking...</h4>
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 )}
-              </div>
 
-              {/* Coaching Insights */}
-              {lastCoaching && (
-                <div className="bg-success-50 rounded-2xl border border-success-200 p-6">
-                  <h3 className="font-semibold text-success-800 mb-3 flex items-center">
-                    <span className="w-6 h-6 bg-success-100 rounded-lg flex items-center justify-center mr-2 text-sm">💡</span>
-                    Coaching Insight
-                  </h3>
-                  <p className={`${
-                    lastCoaching.type === 'positive' ? 'text-success-700' :
-                    lastCoaching.type === 'suggestion' ? 'text-warning-700' :
-                    'text-neutral-700'
-                  }`}>
-                    {lastCoaching.message}
-                  </p>
-                </div>
-              )}
-
-              {/* Input Area */}
-              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
-                <h3 className="font-semibold text-neutral-900 mb-4">Your Response</h3>
-                
-                {isConversationalMode ? (
-                  <div className="text-center space-y-4">
-                    <div className="bg-success-50 rounded-xl p-6 border border-success-200">
-                      <h4 className="font-semibold text-neutral-900 mb-2">🗣️ Voice Mode Active</h4>
-                      <p className="text-sm text-neutral-600 mb-4">
-                        Speak naturally and the AI will respond with voice.
-                      </p>
-                      
-                      {isWaitingForSpeech ? (
-                        <div className="flex items-center justify-center space-x-2 text-success-600">
-                          <div className="w-3 h-3 bg-success-500 rounded-full animate-pulse"></div>
-                          <span className="text-sm font-medium">Listening...</span>
-                        </div>
-                      ) : isSpeaking ? (
-                        <div className="flex items-center justify-center space-x-2 text-primary-600">
-                          <div className="w-3 h-3 bg-primary-500 rounded-full animate-pulse"></div>
-                          <span className="text-sm font-medium">AI is speaking...</span>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={startListeningConversational}
-                          disabled={loading || isListening || isSpeaking}
-                          className="button-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          Start Speaking
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <textarea
-                      value={currentInput}
-                      onChange={(e) => setCurrentInput(e.target.value)}
-                      placeholder="Type your response..."
-                      className="input-field h-24 resize-none"
-                      disabled={loading}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          sendMessage();
-                        }
-                      }}
-                    />
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        {speechEnabled && (
-                          <button
-                            onClick={startListening}
-                            disabled={loading || isListening}
-                            className={`p-2 rounded-lg transition-smooth ${
-                              isListening
-                                ? 'bg-error-500 text-white'
-                                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                            }`}
-                            title="Voice input"
-                          >
-                            🎤
-                          </button>
-                        )}
-                        <span className="text-sm text-neutral-500">
-                          {isListening ? 'Listening...' : 'Press Enter to send'}
-                        </span>
-                      </div>
-                      
-                      <button
-                        onClick={sendMessage}
-                        disabled={loading || !currentInput.trim()}
-                        className="button-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Send Response
-                      </button>
-                    </div>
-                  </div>
-                )}
+              {/* Main Floating Orb Interface */}
+              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm">
+                <FloatingOrb />
               </div>
 
               {error && (

@@ -62,9 +62,28 @@ export default async function handler(
     });
 
     if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}));
+      const errorDetail = errorBody?.detail?.message || 'No specific error message provided.';
+
+      console.error(`ElevenLabs API Error: ${response.status} - ${errorDetail}`, {
+        status: response.status,
+        statusText: response.statusText,
+        errorBody: errorBody,
+      });
+      
+      // Provide more specific error feedback
+      if (response.status === 401) {
+        console.error('ElevenLabs API error: Unauthorized. Check your API key.');
+        return res.status(401).json({ error: 'Invalid ElevenLabs API key. Please check your configuration.' });
+      }
+      
+      if (response.status === 400) {
+        return res.status(400).json({ error: `Voice generation failed due to a bad request: ${errorDetail}` });
+      }
+
       const errorText = await response.text();
       console.error('ElevenLabs API error:', response.status, errorText);
-      return res.status(500).json({ error: 'Voice generation failed' });
+      return res.status(500).json({ error: 'Voice generation failed due to an API error.' });
     }
 
     // Get the audio data
