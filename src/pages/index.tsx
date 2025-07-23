@@ -94,7 +94,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right side - Product Screenshot */}
+            {/* Right side - Live Orb Demo */}
             <div className="relative fade-in-up-delay-1">
               <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-soft-lg border border-neutral-200/50 overflow-hidden floating-animation">
                 <div className="absolute top-0 left-0 right-0 h-10 bg-gradient-to-r from-neutral-100/80 to-neutral-50/80 backdrop-blur-sm flex items-center justify-center space-x-2">
@@ -102,15 +102,55 @@ export default function Home() {
                   <div className="w-3 h-3 bg-warning-400 rounded-full"></div>
                   <div className="w-3 h-3 bg-success-400 rounded-full"></div>
                 </div>
-                <div className="pt-10">
-                  <Image
-                    src="/Screenshot 2025-07-01 at 9.41.31 PM.png"
-                    alt="Kairoo app interface showing message analysis with tone insights and suggested replies"
-                    width={600}
-                    height={400}
-                    className="w-full h-auto"
-                    priority
-                  />
+                <div className="pt-10 pb-8 px-8">
+                  {/* Demo Orb Component */}
+                  <div className="flex flex-col items-center justify-center min-h-[300px] space-y-6">
+                    {/* Premium Floating Orb */}
+                    <div className="relative">
+                      {/* Main Orb Container */}
+                      <div className="relative w-32 h-32 group">
+                        {/* Outer Glow Layers */}
+                        <div className="absolute inset-0 rounded-full opacity-60">
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400/40 via-purple-400/40 to-pink-400/40 blur-2xl scale-150 animate-pulse-slow"></div>
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-teal-300/30 via-violet-400/30 to-rose-400/30 blur-3xl scale-125 animate-float-glow"></div>
+                        </div>
+                        
+                        {/* Main Orb Sphere - Iridescent Bubble */}
+                        <div className="absolute inset-3 rounded-full overflow-hidden bg-gradient-to-br from-white/90 via-cyan-50/80 to-purple-50/70 shadow-2xl border border-white/60 animate-float-gentle">
+                          {/* Iridescent Surface Layers */}
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-200/60 via-transparent via-purple-200/60 via-transparent to-pink-200/60 opacity-70"></div>
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-bl from-transparent via-teal-100/40 via-transparent via-violet-100/40 to-transparent"></div>
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-100/30 via-transparent via-cyan-100/30 to-purple-100/30 opacity-80"></div>
+                          
+                          {/* Dynamic Flowing Colors */}
+                          <div className="absolute inset-2 rounded-full bg-gradient-to-br from-cyan-200/50 via-purple-200/40 to-pink-200/50 animate-shimmer">
+                            {/* Inner Iridescent Shine */}
+                            <div className="absolute inset-1 rounded-full bg-gradient-to-br from-white/60 via-cyan-50/30 via-transparent to-purple-50/20 opacity-80"></div>
+                          </div>
+                          
+                          {/* Bubble-like Light Reflections */}
+                          <div className="absolute top-2 left-4 w-8 h-8 rounded-full bg-gradient-to-br from-white/80 via-cyan-100/60 to-transparent blur-sm animate-breathe"></div>
+                          <div className="absolute top-4 left-6 w-4 h-4 rounded-full bg-white/90 blur-xs opacity-70"></div>
+                          <div className="absolute bottom-6 right-4 w-3 h-6 rounded-full bg-gradient-to-t from-purple-100/50 to-pink-100/30 blur-sm opacity-60"></div>
+                        </div>
+                        
+                        {/* Status Indicator */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="flex space-x-1">
+                            <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse-dot"></div>
+                            <div className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse-dot animation-delay-200"></div>
+                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse-dot animation-delay-400"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Demo Status Text */}
+                    <div className="text-center">
+                      <p className="text-cyan-600 font-semibold text-sm">Listening attentively...</p>
+                      <p className="text-neutral-500 text-xs mt-1">Interactive voice interface</p>
+                    </div>
+                  </div>
                 </div>
               </div>
               {/* Floating elements */}
@@ -230,14 +270,16 @@ export default function Home() {
                   Watch your social confidence grow with our calming XP system. Every interaction, 
                   simulation, and practice session helps you level up.
                 </p>
-                <div className="rounded-2xl overflow-hidden shadow-soft">
-                  <Image
-                    src="/xp-progress-mockup.svg"
-                    alt="XP Progress System showing level 7 with calming progress bar"
-                    width={400}
-                    height={120}
-                    className="w-full h-auto"
-                  />
+                <div className="rounded-2xl overflow-hidden shadow-soft bg-white p-6">
+                  {/* Real XP Progress Component */}
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-semibold text-neutral-900">XP Progress</h4>
+                    <span className="text-sm text-primary-600">67%</span>
+                  </div>
+                  <div className="w-full bg-neutral-200 rounded-full h-2 mb-4">
+                    <div className="bg-primary-600 h-2 rounded-full transition-smooth animate-pulse" style={{ width: '67%' }}></div>
+                  </div>
+                  <div className="text-sm text-neutral-500">Level 7 • Continue practicing to reach Level 8</div>
                 </div>
               </div>
             </div>
@@ -250,14 +292,52 @@ export default function Home() {
                   Simulate upcoming social situations in a safe space. Get coaching insights 
                   and build confidence before the real interaction.
                 </p>
-                <div className="rounded-2xl overflow-hidden shadow-soft">
-                  <Image
-                    src="/simulation-coach-mockup.svg"
-                    alt="Social Simulation Coach showing group project scenario with AI coaching"
-                    width={500}
-                    height={350}
-                    className="w-full h-auto"
-                  />
+                <div className="rounded-2xl overflow-hidden shadow-soft bg-white">
+                  {/* Real Kairoo LIVE Interface */}
+                  <div className="p-6">
+                    {/* Scene Description */}
+                    <div className="bg-neutral-50 rounded-xl p-4 mb-6">
+                      <h4 className="font-semibold text-neutral-900 mb-2 flex items-center">
+                        <span className="w-5 h-5 bg-secondary-100 rounded-lg flex items-center justify-center mr-2 text-xs">📍</span>
+                        Scene Setting
+                      </h4>
+                      <p className="text-neutral-600 text-sm italic">You're in the school library working on a group project. Sarah, your teammate, approaches you to discuss the assignment deadline.</p>
+                    </div>
+                    
+                    {/* Orb Interface */}
+                    <div className="flex flex-col items-center space-y-4">
+                      {/* Premium Floating Orb - Smaller for showcase */}
+                      <div className="relative">
+                        <div className="relative w-20 h-20 group">
+                          {/* Outer Glow */}
+                          <div className="absolute inset-0 rounded-full opacity-60">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400/40 via-pink-400/40 to-violet-400/40 blur-xl scale-150 animate-pulse-slow"></div>
+                          </div>
+                          
+                          {/* Main Orb */}
+                          <div className="absolute inset-2 rounded-full overflow-hidden bg-gradient-to-br from-white/90 via-purple-50/80 to-pink-50/70 shadow-xl border border-white/60 animate-float-gentle">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-200/60 via-transparent to-pink-200/60 opacity-70"></div>
+                            <div className="absolute inset-1 rounded-full bg-gradient-to-br from-purple-200/50 via-pink-200/40 to-violet-200/50 animate-shimmer">
+                              <div className="absolute inset-1 rounded-full bg-gradient-to-br from-white/60 via-purple-50/30 to-transparent opacity-80"></div>
+                            </div>
+                            <div className="absolute top-1 left-2 w-4 h-4 rounded-full bg-gradient-to-br from-white/80 via-purple-100/60 to-transparent blur-sm animate-breathe"></div>
+                          </div>
+                          
+                          {/* Speaking indicator */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse-dot"></div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <p className="text-purple-600 font-medium text-sm">Kairoo is speaking...</p>
+                      
+                      {/* Sample conversation bubble */}
+                      <div className="bg-neutral-50 rounded-xl p-3 max-w-xs">
+                        <p className="text-neutral-700 text-sm">"Hey! I wanted to check in about our project timeline. Do you think we're on track for the deadline?"</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

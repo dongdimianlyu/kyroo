@@ -91,16 +91,23 @@ Respond with a JSON object in this exact format:
       "text": "[A confident response that protects the user's interests without being aggressive]"
     }
   ],
-  "advice": "[Specific guidance about whether this situation requires concern or if the user might be overthinking. Include red flags to watch for OR reassurance that this seems like normal social interaction. Give practical next steps for handling similar situations.]"
+  "advice": "[SURGICAL GUIDANCE: 1-2 sentences maximum. Start with VERDICT: 'Normal interaction' or 'Red flag detected' or 'Proceed with caution'. Then ONE specific action: what to do next. No fluff, just actionable guidance.]"
 }
 
-IMPORTANT GUIDELINES:
+IMPORTANT GUIDELINES FOR ADVICE:
+- Maximum 2 sentences total
+- Start with clear verdict: "Normal interaction", "Red flag detected", or "Proceed with caution"
+- Follow with ONE specific action the user should take
+- No lengthy explanations or background information
+- Be direct and actionable
+- Examples: "Normal interaction. Respond naturally and don't overthink it." OR "Red flag detected. Set clear boundaries and consider limiting contact."
+
+GENERAL GUIDELINES:
 - If you detect manipulation (score 70+), prioritize user safety in responses
 - If scores are low (under 30), reassure user they may be overthinking 
 - For passive-aggression, teach user to recognize the patterns
 - Responses should be practical and actually usable by someone who struggles with social cues
-- Be specific about what makes something manipulative vs just awkward
-- Help build confidence in normal social situations while staying alert to real red flags`;
+- Be specific about what makes something manipulative vs just awkward`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",

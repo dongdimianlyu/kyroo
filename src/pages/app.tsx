@@ -732,7 +732,7 @@ function App() {
     stopSpeaking();
   };
 
-  // Enhanced Floating Orb Component with Premium Design
+  // Enhanced Floating Orb Component with Iridescent Bubble Design
   const FloatingOrb = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
@@ -741,59 +741,64 @@ function App() {
           {/* Main Orb Container */}
           <div className="relative w-40 h-40 group">
             {/* Outer Glow Layers */}
-            <div className="absolute inset-0 rounded-full opacity-40">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-500/30 via-blue-500/30 to-purple-500/30 blur-2xl scale-150 animate-pulse-slow"></div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400/20 via-indigo-500/20 to-purple-600/20 blur-3xl scale-125 animate-float-glow"></div>
+            <div className="absolute inset-0 rounded-full opacity-60">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400/40 via-purple-400/40 to-pink-400/40 blur-2xl scale-150 animate-pulse-slow"></div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-teal-300/30 via-violet-400/30 to-rose-400/30 blur-3xl scale-125 animate-float-glow"></div>
             </div>
             
-            {/* Main Orb Sphere */}
+            {/* Main Orb Sphere - Iridescent Bubble */}
             <div className={`
               absolute inset-4 rounded-full overflow-hidden
-              bg-gradient-to-br from-slate-100 via-white to-slate-50
-              shadow-2xl border border-white/50
+              bg-gradient-to-br from-white/90 via-cyan-50/80 to-purple-50/70
+              shadow-2xl border border-white/60
               transition-all duration-700 ease-out
-              ${isSpeaking ? 'scale-110 shadow-violet-500/30' : ''}
-              ${isListening ? 'scale-105 shadow-blue-500/40 ring-2 ring-blue-400/30' : ''}
+              ${isSpeaking ? 'scale-110 shadow-purple-500/40' : ''}
+              ${isListening ? 'scale-105 shadow-cyan-500/40 ring-2 ring-cyan-400/30' : ''}
               ${!isSpeaking && !isListening ? 'animate-float-gentle' : ''}
             `}>
-              {/* Inner Gradient Layers for Depth */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-transparent via-white/40 to-transparent"></div>
-              <div className="absolute inset-2 rounded-full bg-gradient-to-tl from-transparent via-slate-50/60 to-white/20"></div>
+              {/* Iridescent Surface Layers */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-200/60 via-transparent via-purple-200/60 via-transparent to-pink-200/60 opacity-70"></div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-bl from-transparent via-teal-100/40 via-transparent via-violet-100/40 to-transparent"></div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-100/30 via-transparent via-cyan-100/30 to-purple-100/30 opacity-80"></div>
               
-              {/* Dynamic Core */}
+              {/* Dynamic Flowing Colors */}
               <div className={`
-                absolute inset-6 rounded-full
-                bg-gradient-to-br from-violet-200/60 via-blue-200/40 to-purple-200/60
+                absolute inset-2 rounded-full
+                bg-gradient-to-br from-cyan-200/50 via-purple-200/40 to-pink-200/50
                 transition-all duration-500 ease-out
-                ${isSpeaking ? 'animate-ripple-intense from-violet-400/80 via-blue-400/60 to-purple-400/80' : ''}
-                ${isListening ? 'animate-ripple-gentle from-blue-300/70 via-cyan-300/50 to-indigo-300/70' : ''}
+                ${isSpeaking ? 'animate-ripple-intense from-purple-300/70 via-pink-300/60 to-violet-300/70' : ''}
+                ${isListening ? 'animate-ripple-gentle from-cyan-300/70 via-teal-300/50 to-blue-300/60' : ''}
                 ${!isSpeaking && !isListening ? 'animate-shimmer' : ''}
               `}>
-                {/* Inner Shine */}
-                <div className="absolute inset-2 rounded-full bg-gradient-to-br from-white/80 via-transparent to-transparent opacity-60"></div>
+                {/* Inner Iridescent Shine */}
+                <div className="absolute inset-1 rounded-full bg-gradient-to-br from-white/60 via-cyan-50/30 via-transparent to-purple-50/20 opacity-80"></div>
               </div>
               
-              {/* Ambient Light Reflection */}
-              <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-white/90 blur-sm animate-breathe"></div>
-              <div className="absolute top-6 left-6 w-4 h-4 rounded-full bg-white/70 blur-xs"></div>
+              {/* Bubble-like Light Reflections */}
+              <div className="absolute top-3 left-6 w-12 h-12 rounded-full bg-gradient-to-br from-white/80 via-cyan-100/60 to-transparent blur-sm animate-breathe"></div>
+              <div className="absolute top-6 left-8 w-6 h-6 rounded-full bg-white/90 blur-xs opacity-70"></div>
+              <div className="absolute bottom-8 right-6 w-4 h-8 rounded-full bg-gradient-to-t from-purple-100/50 to-pink-100/30 blur-sm opacity-60"></div>
+              
+              {/* Soap Bubble Edge Highlights */}
+              <div className="absolute inset-0 rounded-full border-2 border-gradient-to-r from-cyan-200/40 via-purple-200/30 to-pink-200/40"></div>
             </div>
             
             {/* Status Indicator - Subtle and Elegant */}
             <div className="absolute inset-0 flex items-center justify-center">
               {isSpeaking && (
-                <div className="text-slate-600/60 transition-all duration-300">
-                  <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse-dot"></div>
+                <div className="text-purple-600/70 transition-all duration-300">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse-dot"></div>
                 </div>
               )}
               {isListening && (
                 <div className="flex space-x-1">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse-dot"></div>
-                  <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse-dot animation-delay-200"></div>
-                  <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse-dot animation-delay-400"></div>
+                  <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse-dot"></div>
+                  <div className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse-dot animation-delay-200"></div>
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse-dot animation-delay-400"></div>
                 </div>
               )}
               {loading && (
-                <div className="w-3 h-3 border border-slate-400/40 border-t-violet-500 rounded-full animate-spin"></div>
+                <div className="w-3 h-3 border border-purple-400/40 border-t-pink-500 rounded-full animate-spin"></div>
               )}
             </div>
             
@@ -801,11 +806,11 @@ function App() {
             {(isSpeaking || isListening) && (
               <>
                 <div className={`
-                  absolute inset-0 rounded-full border-2 border-white/20
+                  absolute inset-0 rounded-full border-2 border-white/30
                   ${isSpeaking ? 'animate-ripple-expand-violet' : 'animate-ripple-expand-blue'}
                 `}></div>
                 <div className={`
-                  absolute inset-0 rounded-full border border-white/10
+                  absolute inset-0 rounded-full border border-white/20
                   ${isSpeaking ? 'animate-ripple-expand-violet animation-delay-300' : 'animate-ripple-expand-blue animation-delay-300'}
                 `}></div>
               </>
@@ -833,7 +838,7 @@ function App() {
             <p className="text-slate-600 font-medium">Kairoo is speaking...</p>
           )}
           {isListening && (
-            <p className="text-blue-600 font-semibold">Listening attentively...</p>
+            <p className="text-cyan-600 font-semibold">Listening attentively...</p>
           )}
           {!isSpeaking && !isListening && !loading && isSimulationActive && (
             <p className="text-slate-500">Ready when you are</p>
