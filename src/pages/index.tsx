@@ -293,7 +293,7 @@ export default function Home() {
                   and build confidence before the real interaction.
                 </p>
                 <div className="rounded-2xl overflow-hidden shadow-soft bg-white">
-                  {/* Real Kairoo LIVE Interface */}
+                  {/* Real Practice Scenarios Interface */}
                   <div className="p-6">
                     {/* Scene Description */}
                     <div className="bg-neutral-50 rounded-xl p-4 mb-6">
@@ -363,9 +363,9 @@ export default function Home() {
                 <li>Want to prepare for specific, upcoming conversations or social events but lack a safe place to practice</li>
                 <li>Often pretend they don't need support—not because they don't want it, but because they value dignity</li>
               </ul>
-              <p className="text-center font-semibold pt-4">
-                We serve people who struggle socially—especially those with social anxiety, autism, or conversational uncertainty—by helping them grow into more confident, connected, and expressive individuals through immersive, emotionally intelligent AI simulations and guidance.
-              </p>
+                             <p className="text-center font-semibold pt-4">
+                 Kairoo helps people grow into more confident, connected, and expressive individuals through immersive, emotionally intelligent AI simulations and guidance.
+               </p>
               <p className="text-center italic">
                 We don't "fix" people. We serve them by giving them the tools and safe spaces to grow into the version of themselves they've always wanted to be—someone who can express thoughts freely, connect meaningfully, and feel seen.
               </p>

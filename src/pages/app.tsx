@@ -851,8 +851,8 @@ function App() {
     );
   };
 
-  // Render Kairoo LIVE page
-  if (activeNav === 'Kairoo LIVE') {
+  // Render Practice Scenarios page
+  if (activeNav === 'Practice Scenarios') {
     return (
       <div className="min-h-screen bg-neutral-50">
         {/* Top Navigation */}
@@ -873,7 +873,7 @@ function App() {
               <div className="flex items-center space-x-1 bg-neutral-100 rounded-xl p-1">
                 {[
                   { name: 'Dashboard', icon: '📊' },
-                  { name: 'Kairoo LIVE', icon: '💬' },
+                  { name: 'Practice Scenarios', icon: '💬' },
                   { name: 'Settings', icon: '⚙️' }
                 ].map((item) => (
                   <button
@@ -908,7 +908,7 @@ function App() {
             {/* Header */}
             <div className="mb-8 flex justify-between items-center">
               <div>
-                <h1 className="text-3xl font-bold text-neutral-900 mb-2">Kairoo LIVE</h1>
+                <h1 className="text-3xl font-bold text-neutral-900 mb-2">Practice Scenarios</h1>
                 <p className="text-neutral-600">
                   Practice real-life conversations in a safe, supportive environment.
                 </p>
@@ -1142,7 +1142,7 @@ function App() {
               <div className="flex items-center space-x-1 bg-neutral-100 rounded-xl p-1">
                 {[
                   { name: 'Dashboard', icon: '📊' },
-                  { name: 'Kairoo LIVE', icon: '💬' },
+                  { name: 'Practice Scenarios', icon: '💬' },
                   { name: 'Settings', icon: '⚙️' }
                 ].map((item) => (
                   <button
@@ -1258,7 +1258,7 @@ function App() {
             <div className="flex items-center space-x-1 bg-neutral-100 rounded-xl p-1">
               {[
                 { name: 'Dashboard', icon: '📊' },
-                { name: 'Kairoo LIVE', icon: '💬' },
+                { name: 'Practice Scenarios', icon: '💬' },
                 { name: 'Settings', icon: '⚙️' }
               ].map((item) => (
                 <button
@@ -1308,11 +1308,12 @@ function App() {
                   <label htmlFor="message" className="block text-sm font-medium text-neutral-700">
                     What happened?
                   </label>
-                  <textarea
+                  <input
+                    type="text"
                     id="message"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="input-field h-40 resize-none"
+                    className="input-field"
                     placeholder="Paste the message you received or describe what happened…"
                     disabled={loading}
                   />
@@ -1321,15 +1322,14 @@ function App() {
                 {/* Context Input */}
                 <div className="space-y-4">
                   <label htmlFor="context" className="block text-sm font-medium text-neutral-700">
-                    Context (Required)
+                    Context
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     id="context"
                     value={context}
                     onChange={(e) => setContext(e.target.value)}
-                    className="input-field"
-                    placeholder="Add context (required)"
+                    className="input-field h-40 resize-none"
+                    placeholder="Add context"
                     disabled={loading}
                   />
                   

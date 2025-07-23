@@ -21,7 +21,7 @@ export default function Settings() {
             <div className="flex items-center space-x-1 bg-neutral-100 rounded-xl p-1">
               {[
                 { name: 'Dashboard', icon: '📊', href: '/app' },
-                { name: 'Kairoo LIVE', icon: '💬', href: '/app' },
+                { name: 'Practice Scenarios', icon: '💬', href: '/app' },
                 { name: 'Settings', icon: '⚙️', active: true }
               ].map((item) => (
                 item.href ? (
