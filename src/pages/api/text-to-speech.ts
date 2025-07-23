@@ -27,8 +27,8 @@ export default async function handler(
 
     // Check for ElevenLabs API key
     const apiKey = process.env.ELEVENLABS_API_KEY;
-    if (!apiKey) {
-      console.error('ElevenLabs API key not configured');
+    if (!apiKey || apiKey.trim() === '') {
+      console.error('ElevenLabs API key not configured or is empty');
       return res.status(500).json({ error: 'Voice service not configured' });
     }
 
@@ -42,6 +42,7 @@ export default async function handler(
       .trim();
 
     // Call ElevenLabs API
+    console.log('Attempting to call ElevenLabs API...');
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
       headers: {
@@ -51,11 +52,11 @@ export default async function handler(
       },
       body: JSON.stringify({
         text: cleanText,
-        model_id: 'eleven_monolingual_v1',
+        model_id: 'eleven_multilingual_v2',
         voice_settings: {
           stability: 0.5, // Moderate stability for natural variation
           similarity_boost: 0.8, // High similarity to base voice
-          style: 0.2, // Slight style variation for naturalness
+          style: 0.45, // Increased style variation for more expressive speech
           use_speaker_boost: true
         }
       }),
@@ -89,6 +90,8 @@ export default async function handler(
     // Get the audio data
     const audioBuffer = await response.arrayBuffer();
     
+    console.log('Successfully received audio from ElevenLabs.');
+
     // Set appropriate headers for audio response
     res.setHeader('Content-Type', 'audio/mpeg');
     res.setHeader('Content-Length', audioBuffer.byteLength.toString());
