@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
@@ -125,115 +125,33 @@ function App() {
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [currentTranscript, setCurrentTranscript] = useState('');
   const [silenceTimer, setSilenceTimer] = useState<NodeJS.Timeout | null>(null);
+  const [transcriptToSend, setTranscriptToSend] = useState('');
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthesisRef = useRef<SpeechSynthesis | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Generate anonymous ID on first visit
+  // Ref to hold the latest state for callbacks to prevent stale closures
+  const stateRef = useRef({
+    isSimulationActive, 
+    isSpeaking, 
+    loading, 
+    currentTranscript, 
+    silenceTimer,
+    isListening
+  });
+
+  // Keep the ref updated with the latest state on every render
   useEffect(() => {
-    let id = localStorage.getItem('anonId');
-    if (!id) {
-      id = crypto.randomUUID();
-      localStorage.setItem('anonId', id);
-    }
-    setAnonId(id);
-
-    // Initialize speech synthesis
-    if ('speechSynthesis' in window) {
-      synthesisRef.current = window.speechSynthesis;
-    }
-
-    // Initialize speech recognition
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = 'en-US';
-      
-      recognitionRef.current.onresult = (event) => {
-        let finalTranscript = '';
-        let interimTranscript = '';
-        
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript;
-          } else {
-            interimTranscript += transcript;
-          }
-        }
-        
-        const fullTranscript = finalTranscript || interimTranscript;
-        if (fullTranscript.trim()) {
-          setCurrentTranscript(fullTranscript.trim());
-          setLastUserTranscript(fullTranscript.trim());
-          
-          // Clear any existing silence timer
-          if (silenceTimer) {
-            clearTimeout(silenceTimer);
-          }
-          
-          // Set a new timer for 3 seconds of silence
-          const timer = setTimeout(() => {
-            if (fullTranscript.trim() && isSimulationActive) {
-              setIsListening(false);
-              sendVoiceMessage(fullTranscript.trim());
-              setCurrentTranscript('');
-            }
-          }, 3000);
-          
-          setSilenceTimer(timer);
-        }
-      };
-      
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-        // Restart listening if simulation is still active and AI isn't speaking
-        if (isSimulationActive && !isSpeaking && !loading) {
-          setTimeout(() => {
-            startListening();
-          }, 500);
-        }
-      };
-      
-      recognitionRef.current.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        setIsListening(false);
-        // Restart listening on error if simulation is still active
-        if (isSimulationActive && !isSpeaking && !loading) {
-          setTimeout(() => {
-            startListening();
-          }, 1000);
-        }
-      };
-      
-      setSpeechEnabled(true);
-    }
-  }, []);
-
-    // Auto-start listening after AI finishes speaking
-  useEffect(() => {
-    if (!isSpeaking && isSimulationActive && !loading && !showSummary && !isListening) {
-      // Small delay to allow for natural conversation flow
-      const timer = setTimeout(() => {
-        startListening();
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isSpeaking, isSimulationActive, loading, showSummary, isListening]);
-
-  // Cleanup silence timer on unmount
-  useEffect(() => {
-    return () => {
-      if (silenceTimer) {
-        clearTimeout(silenceTimer);
-      }
+    stateRef.current = {
+      isSimulationActive, 
+      isSpeaking, 
+      loading, 
+      currentTranscript, 
+      silenceTimer,
+      isListening
     };
-  }, [silenceTimer]);
+  });
 
-  // Get analysis results - shows fillers when no analysis, real results when analyzed
   const getDisplayResults = () => {
     if (analysisResult) {
       return analysisResult;
@@ -358,16 +276,142 @@ function App() {
     </div>
   );
 
-  // Simulation functions
   const startListening = () => {
-    if (recognitionRef.current && !isListening && !isSpeaking && speechEnabled) {
+    if (recognitionRef.current && !stateRef.current.isListening && !stateRef.current.isSpeaking && speechEnabled) {
       setIsListening(true);
       recognitionRef.current.start();
     }
   };
 
-  const sendVoiceMessage = async (transcript: string) => {
-    if (!transcript.trim() || loading) return;
+  const evaluateProgress = useCallback(async () => {
+    if (messages.length === 0) return;
+
+    try {
+      const response = await fetch('/api/evaluate-progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          conversationHistory: messages,
+          scenario,
+          anonId,
+        }),
+      });
+
+      if (!response.ok) {
+        console.warn('Progress evaluation failed:', response.status, response.statusText);
+        return;
+      }
+
+      const data: ProgressEvaluation = await response.json();
+      setProgressEvaluation(data);
+      
+    } catch (err) {
+      console.error('Progress evaluation error:', err);
+    }
+  }, [messages, scenario, anonId]);
+
+  const speakText = useCallback(async (text: string) => {
+    console.log('🔊 speakText called with text:', text);
+    console.log('🔇 Audio muted?', isAudioMuted);
+    
+    if (isAudioMuted) {
+      console.log('🔇 Audio is muted, skipping TTS');
+      return;
+    }
+
+    try {
+      console.log('🎵 Setting isSpeaking to true');
+      setIsSpeaking(true);
+      
+      // Stop any currently playing audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        console.log('⏹️ Stopped previous audio');
+      }
+
+      console.log('📞 Calling ElevenLabs API...');
+      // Call ElevenLabs API for text-to-speech
+      const response = await fetch('/api/text-to-speech', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: text,
+          anonId: anonId
+        }),
+      });
+
+      console.log('📡 ElevenLabs API response status:', response.status);
+
+      if (!response.ok) {
+        console.error('❌ ElevenLabs TTS failed, using browser fallback');
+        throw new Error('Voice generation failed');
+      }
+
+      // Create audio from the response
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      console.log('🎵 Created audio blob, size:', audioBlob.size);
+      
+      // Create and play audio element
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+      
+      audio.onended = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+        console.log('✅ ElevenLabs audio finished playing, isSpeaking set to false');
+      };
+      
+      audio.onerror = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(audioUrl);
+        console.error('❌ Audio playback error');
+      };
+      
+      await audio.play();
+      console.log('▶️ ElevenLabs audio started playing');
+      
+    } catch (error) {
+      console.error('❌ Text-to-speech error:', error);
+      console.log('🌐 Falling back to browser TTS');
+      
+      // Fallback to browser TTS if ElevenLabs fails
+      if (synthesisRef.current) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.85;
+        utterance.pitch = 0.9;
+        utterance.volume = 0.7;
+        
+        utterance.onstart = () => {
+          setIsSpeaking(true);
+          console.log('▶️ Browser TTS started playing, isSpeaking set to true');
+        };
+        utterance.onend = () => {
+          setIsSpeaking(false);
+          console.log('✅ Browser TTS finished playing, isSpeaking set to false');
+        };
+        utterance.onerror = () => {
+          setIsSpeaking(false);
+          console.error('❌ Browser TTS error, isSpeaking set to false');
+        };
+        
+        synthesisRef.current.speak(utterance);
+        console.log('🌐 Browser TTS utterance queued');
+      } else {
+        // If no TTS available, just mark as finished speaking
+        setIsSpeaking(false);
+        console.log('❌ No TTS available, marking as finished speaking');
+      }
+    }
+  }, [isAudioMuted, anonId]);
+
+  const sendVoiceMessage = useCallback(async (transcript: string) => {
+    if (!transcript.trim() || stateRef.current.loading) return;
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -375,8 +419,12 @@ function App() {
       content: transcript.trim(),
       timestamp: new Date(),
     };
+    
+    // Create the updated history for the API call
+    const updatedHistory = [...messages, userMessage];
 
-    setMessages(prev => [...prev, userMessage]);
+    // Optimistically update the UI
+    setMessages(updatedHistory);
     setCurrentInput('');
     setLoading(true);
     setError('');
@@ -390,7 +438,7 @@ function App() {
         body: JSON.stringify({
           action: 'continue',
           userMessage: userMessage.content,
-          conversationHistory: messages,
+          conversationHistory: updatedHistory, // Send the complete history
           scenario,
           anonId,
         }),
@@ -410,12 +458,10 @@ function App() {
       };
 
       setMessages(prev => [...prev, aiMessage]);
-        
-      // Speak the AI response
-      speakText(data.aiResponse);
       
-      // Evaluate progress after each exchange
-        setTimeout(() => {
+      await speakText(data.aiResponse);
+      
+      setTimeout(() => {
         evaluateProgress();
       }, 500);
       
@@ -424,76 +470,131 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [messages, scenario, anonId, evaluateProgress, speakText]);
 
-    const speakText = async (text: string) => {
-    if (isAudioMuted) return;
-
-    try {
-      setIsSpeaking(true);
-      
-      // Stop any currently playing audio
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
-
-      // Call ElevenLabs API for text-to-speech
-      const response = await fetch('/api/text-to-speech', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text: text,
-          anonId: anonId
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Voice generation failed');
-      }
-
-      // Create audio from the response
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      
-      // Create and play audio element
-      const audio = new Audio(audioUrl);
-      audioRef.current = audio;
-      
-      audio.onended = () => {
-        setIsSpeaking(false);
-        URL.revokeObjectURL(audioUrl);
-      };
-      
-      audio.onerror = () => {
-        setIsSpeaking(false);
-        URL.revokeObjectURL(audioUrl);
-        console.error('Audio playback error');
-      };
-      
-      await audio.play();
-      
-    } catch (error) {
-      console.error('Text-to-speech error:', error);
-      setIsSpeaking(false);
-      
-      // Fallback to browser TTS if ElevenLabs fails
-      if (synthesisRef.current) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.85;
-        utterance.pitch = 0.9;
-        utterance.volume = 0.7;
-        
-        utterance.onstart = () => setIsSpeaking(true);
-        utterance.onend = () => setIsSpeaking(false);
-        utterance.onerror = () => setIsSpeaking(false);
-        
-        synthesisRef.current.speak(utterance);
-      }
+  // Generate anonymous ID and set up speech recognition
+  useEffect(() => {
+    let id = localStorage.getItem('anonId');
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem('anonId', id);
     }
-  };
+    setAnonId(id);
+
+    // Initialize speech synthesis
+    if ('speechSynthesis' in window) {
+      synthesisRef.current = window.speechSynthesis;
+    }
+
+    // Initialize speech recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
+      
+      recognitionRef.current.onresult = (event) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+        
+        const fullTranscript = finalTranscript || interimTranscript;
+        if (fullTranscript.trim()) {
+          setCurrentTranscript(fullTranscript.trim());
+          setLastUserTranscript(fullTranscript.trim());
+          
+          if (stateRef.current.silenceTimer) {
+            clearTimeout(stateRef.current.silenceTimer);
+          }
+          
+          const timer = setTimeout(() => {
+            setTranscriptToSend(fullTranscript.trim());
+          }, 1500); // Changed to 1.5 seconds
+          
+          setSilenceTimer(timer);
+        }
+      };
+      
+      recognitionRef.current.onend = () => {
+        const { currentTranscript, isSimulationActive, isSpeaking, loading } = stateRef.current;
+        setIsListening(false);
+        
+        // If recognition ends and we have a transcript that hasn't been sent by timer, send it now.
+        if (currentTranscript.trim() && !loading) {
+          setTranscriptToSend(currentTranscript.trim());
+        } else {
+          // Otherwise, restart listening if appropriate
+          if (isSimulationActive && !isSpeaking && !loading) {
+            setTimeout(() => {
+              startListening();
+            }, 500);
+          }
+        }
+      };
+      
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+        // Restart listening on error if simulation is still active
+        if (stateRef.current.isSimulationActive && !stateRef.current.isSpeaking && !stateRef.current.loading) {
+          setTimeout(() => {
+            startListening();
+          }, 1000);
+        }
+      };
+      
+      setSpeechEnabled(true);
+    }
+  }, [sendVoiceMessage]);
+
+  // Auto-start listening after AI finishes speaking
+  useEffect(() => {
+    if (!isSpeaking && isSimulationActive && !loading && !showSummary && !isListening) {
+      // Small delay to allow for natural conversation flow
+      const timer = setTimeout(() => {
+        startListening();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isSpeaking, isSimulationActive, loading, showSummary, isListening]);
+
+  // Cleanup silence timer on unmount
+  useEffect(() => {
+    return () => {
+      if (silenceTimer) {
+        clearTimeout(silenceTimer);
+      }
+    };
+  }, [silenceTimer]);
+
+  // This useEffect now safely triggers the sending logic
+  useEffect(() => {
+    if (transcriptToSend) {
+      if (stateRef.current.silenceTimer) {
+        clearTimeout(stateRef.current.silenceTimer);
+        setSilenceTimer(null);
+      }
+      if (stateRef.current.isListening) {
+        setIsListening(false);
+        if (recognitionRef.current) {
+          recognitionRef.current.stop();
+        }
+      }
+      sendVoiceMessage(transcriptToSend);
+      setCurrentTranscript('');
+      setTranscriptToSend('');
+    }
+  }, [transcriptToSend, sendVoiceMessage]);
 
   const stopSpeaking = () => {
     // Stop ElevenLabs audio
@@ -548,7 +649,7 @@ function App() {
       setIsSimulationActive(true);
       
       // Speak the first AI message
-      speakText(data.aiResponse);
+      await speakText(data.aiResponse);
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to start simulation');
@@ -629,35 +730,6 @@ function App() {
     }
     
     stopSpeaking();
-  };
-
-  const evaluateProgress = async () => {
-    if (messages.length === 0) return;
-
-    try {
-      const response = await fetch('/api/evaluate-progress', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          conversationHistory: messages,
-          scenario,
-          anonId,
-        }),
-      });
-
-      if (!response.ok) {
-        console.warn('Progress evaluation failed:', response.status, response.statusText);
-        return;
-      }
-
-      const data: ProgressEvaluation = await response.json();
-      setProgressEvaluation(data);
-      
-    } catch (err) {
-      console.error('Progress evaluation error:', err);
-    }
   };
 
   // Floating Orb Component
