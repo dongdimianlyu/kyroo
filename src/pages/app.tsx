@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
+import NewOrb from '../components/NewOrb';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -732,90 +733,16 @@ function App() {
     stopSpeaking();
   };
 
-  // Enhanced Floating Orb Component with Iridescent Bubble Design
+  // Advanced Futuristic Orb Component
   const FloatingOrb = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
-        {/* Premium Floating Orb */}
-        <div className="relative">
-          {/* Main Orb Container */}
-          <div className="relative w-40 h-40 group">
-            {/* Outer Glow Layers */}
-            <div className="absolute inset-0 rounded-full opacity-60">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400/40 via-purple-400/40 to-pink-400/40 blur-2xl scale-150 animate-pulse-slow"></div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-teal-300/30 via-violet-400/30 to-rose-400/30 blur-3xl scale-125 animate-float-glow"></div>
-            </div>
-            
-            {/* Main Orb Sphere - Iridescent Bubble */}
-            <div className={`
-              absolute inset-4 rounded-full overflow-hidden
-              bg-gradient-to-br from-white/90 via-cyan-50/80 to-purple-50/70
-              shadow-2xl border border-white/60
-              transition-all duration-700 ease-out
-              ${isSpeaking ? 'scale-110 shadow-purple-500/40' : ''}
-              ${isListening ? 'scale-105 shadow-cyan-500/40 ring-2 ring-cyan-400/30' : ''}
-              ${!isSpeaking && !isListening ? 'animate-float-gentle' : ''}
-            `}>
-              {/* Iridescent Surface Layers */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-200/60 via-transparent via-purple-200/60 via-transparent to-pink-200/60 opacity-70"></div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-bl from-transparent via-teal-100/40 via-transparent via-violet-100/40 to-transparent"></div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-100/30 via-transparent via-cyan-100/30 to-purple-100/30 opacity-80"></div>
-              
-              {/* Dynamic Flowing Colors */}
-              <div className={`
-                absolute inset-2 rounded-full
-                bg-gradient-to-br from-cyan-200/50 via-purple-200/40 to-pink-200/50
-                transition-all duration-500 ease-out
-                ${isSpeaking ? 'animate-ripple-intense from-purple-300/70 via-pink-300/60 to-violet-300/70' : ''}
-                ${isListening ? 'animate-ripple-gentle from-cyan-300/70 via-teal-300/50 to-blue-300/60' : ''}
-                ${!isSpeaking && !isListening ? 'animate-shimmer' : ''}
-              `}>
-                {/* Inner Iridescent Shine */}
-                <div className="absolute inset-1 rounded-full bg-gradient-to-br from-white/60 via-cyan-50/30 via-transparent to-purple-50/20 opacity-80"></div>
-              </div>
-              
-              {/* Bubble-like Light Reflections */}
-              <div className="absolute top-3 left-6 w-12 h-12 rounded-full bg-gradient-to-br from-white/80 via-cyan-100/60 to-transparent blur-sm animate-breathe"></div>
-              <div className="absolute top-6 left-8 w-6 h-6 rounded-full bg-white/90 blur-xs opacity-70"></div>
-              <div className="absolute bottom-8 right-6 w-4 h-8 rounded-full bg-gradient-to-t from-purple-100/50 to-pink-100/30 blur-sm opacity-60"></div>
-              
-              {/* Soap Bubble Edge Highlights */}
-              <div className="absolute inset-0 rounded-full border-2 border-gradient-to-r from-cyan-200/40 via-purple-200/30 to-pink-200/40"></div>
-            </div>
-            
-            {/* Status Indicator - Subtle and Elegant */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              {isSpeaking && (
-                <div className="text-purple-600/70 transition-all duration-300">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse-dot"></div>
-                </div>
-              )}
-              {isListening && (
-                <div className="flex space-x-1">
-                  <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse-dot"></div>
-                  <div className="w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse-dot animation-delay-200"></div>
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse-dot animation-delay-400"></div>
-                </div>
-              )}
-              {loading && (
-                <div className="w-3 h-3 border border-purple-400/40 border-t-pink-500 rounded-full animate-spin"></div>
-              )}
-            </div>
-            
-            {/* Interactive Ripple Effects */}
-            {(isSpeaking || isListening) && (
-              <>
-                <div className={`
-                  absolute inset-0 rounded-full border-2 border-white/30
-                  ${isSpeaking ? 'animate-ripple-expand-violet' : 'animate-ripple-expand-blue'}
-                `}></div>
-                <div className={`
-                  absolute inset-0 rounded-full border border-white/20
-                  ${isSpeaking ? 'animate-ripple-expand-violet animation-delay-300' : 'animate-ripple-expand-blue animation-delay-300'}
-                `}></div>
-              </>
-            )}
-          </div>
+        {/* Advanced Futuristic Orb */}
+        <div className="w-64 h-64">
+          <NewOrb 
+            isSpeaking={isSpeaking}
+            isListening={isListening}
+          />
         </div>
 
         {/* Live transcript with premium styling */}
