@@ -16,7 +16,7 @@ const Orb: React.FC<NewOrbProps> = ({ isSpeaking, isListening }) => {
   const uniforms = useMemo(
     () => ({
       u_time: { value: 0 },
-      u_intensity: { value: 0.3 },
+      u_intensity: { value: 0.15 }, // Reduced from 0.3 for a calmer effect
       u_isSpeaking: { value: false },
       u_isListening: { value: false },
     }),
@@ -51,6 +51,7 @@ const NewOrb: React.FC<NewOrbProps> = (props) => {
     <Canvas
       camera={{ position: [0, 0, 2.5], fov: 50 }}
       style={{ width: '100%', height: '100%' }}
+      gl={{ alpha: true }}
     >
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
