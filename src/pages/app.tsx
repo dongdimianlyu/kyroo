@@ -130,6 +130,7 @@ function App() {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthesisRef = useRef<SpeechSynthesis | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const recognitionRunningRef = useRef<boolean>(false);
 
   // Ref to hold the latest state for callbacks to prevent stale closures
   const stateRef = useRef({
@@ -278,9 +279,23 @@ function App() {
   );
 
   const startListening = () => {
-    if (recognitionRef.current && !stateRef.current.isListening && !stateRef.current.isSpeaking && speechEnabled) {
-      setIsListening(true);
-      recognitionRef.current.start();
+    const recognition = recognitionRef.current;
+    if (!recognition || !speechEnabled) return;
+
+    // Only start if not already running and not currently speaking/loading
+    if (!recognitionRunningRef.current && !stateRef.current.isSpeaking && !stateRef.current.loading) {
+      try {
+        recognition.start();
+        recognitionRunningRef.current = true;
+        setIsListening(true);
+      } catch (err) {
+        // Ignore InvalidStateError which means recognition is already started
+        if (err instanceof DOMException && err.name === 'InvalidStateError') {
+          console.warn('SpeechRecognition already running, skip start()');
+        } else {
+          console.error('SpeechRecognition start error:', err);
+        }
+      }
     }
   };
 
@@ -525,8 +540,13 @@ function App() {
         }
       };
       
+      recognitionRef.current.onstart = () => {
+        recognitionRunningRef.current = true;
+        setIsListening(true);
+      };
+      
       recognitionRef.current.onend = () => {
-        const { currentTranscript, isSimulationActive, isSpeaking, loading } = stateRef.current;
+        recognitionRunningRef.current = false;
         setIsListening(false);
         
         // If recognition ends and we have a transcript that hasn't been sent by timer, send it now.
@@ -544,6 +564,7 @@ function App() {
       
       recognitionRef.current.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
+        recognitionRunningRef.current = false;
         setIsListening(false);
         // Restart listening on error if simulation is still active
         if (stateRef.current.isSimulationActive && !stateRef.current.isSpeaking && !stateRef.current.loading) {
