@@ -86,7 +86,7 @@ export const vertexShader = `
     vUv = uv;
     vNormal = normal;
     vec3 newPosition = position;
-    float noise = snoise(position * 3.0 + u_time * 0.5);
+    float noise = snoise(position * 1.8 + u_time * 0.1);
     newPosition += normal * noise * u_intensity;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
   }
@@ -100,34 +100,21 @@ export const fragmentShader = `
   varying vec3 vNormal;
 
   void main() {
-    // Vibrant colors inspired by the reference
-    vec3 color_pink = vec3(1.0, 0.3, 0.5);
-    vec3 color_blue = vec3(0.2, 0.5, 1.0);
-    vec3 color_purple = vec3(0.6, 0.2, 1.0);
+    // Stable gradient colors (top light blue, bottom light purple)
+    vec3 color_top = vec3(0.85, 0.93, 1.0);
+    vec3 color_bottom = vec3(0.8, 0.65, 1.0);
 
-    // A smooth, time-varying blend of colors
-    vec3 base_color = mix(color_pink, color_blue, vUv.y + sin(u_time * 0.5) * 0.1);
-    base_color = mix(base_color, color_purple, vUv.x + cos(u_time * 0.3) * 0.1);
+    vec3 base_color = mix(color_bottom, color_top, vUv.y);
 
-    // A soft fresnel effect for a gentle glow on the edges
-    float fresnel = pow(1.0 - abs(dot(vNormal, vec3(0, 0, 1.0))), 2.0);
-    
-    vec3 final_color = base_color + fresnel * vec3(1.0, 1.0, 1.0) * 0.8;
+    // Subtle fresnel for edge glow
+    float fresnel = pow(1.0 - abs(dot(vNormal, vec3(0, 0, 1.0))), 2.5);
+    vec3 final_color = base_color + fresnel * vec3(1.0) * 0.6;
 
+    // Slight brightness boost when speaking / listening (no pulsing)
     if (u_isSpeaking) {
-      // Pulse with white light when speaking
-      float pulse = sin(u_time * 6.0) * 0.5 + 0.5;
-      final_color += vec3(1.0, 1.0, 1.0) * pulse * 0.4;
-    }
-
-    if (u_isListening) {
-        // When listening, slightly desaturate and add a subtle inner glow.
-        float gray = dot(final_color, vec3(0.299, 0.587, 0.114));
-        final_color = mix(final_color, vec3(gray), 0.2);
-        
-        // Add a soft inverse fresnel to make center slightly brighter
-        float inner_glow = dot(vNormal, vec3(0,0,1.0));
-        final_color += inner_glow * 0.2;
+      final_color += vec3(0.2);
+    } else if (u_isListening) {
+      final_color += vec3(0.1);
     }
 
     gl_FragColor = vec4(final_color, 1.0);

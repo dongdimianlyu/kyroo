@@ -16,7 +16,7 @@ const Orb: React.FC<NewOrbProps> = ({ isSpeaking, isListening }) => {
   const uniforms = useMemo(
     () => ({
       u_time: { value: 0 },
-      u_intensity: { value: 0.3 },
+      u_intensity: { value: 0.25 },
       u_isSpeaking: { value: false },
       u_isListening: { value: false },
     }),
