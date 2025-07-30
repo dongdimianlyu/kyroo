@@ -290,14 +290,14 @@ const HeroSection = () => {
         <LinearReveal delay={0.9} className="mt-16">
           <div className="relative max-w-4xl mx-auto">
             <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
-              <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <MessageCircle className="w-8 h-8 text-violet-600" />
-                  </div>
-                  <p className="text-gray-600 font-medium">Interactive Conversation Practice</p>
-                </div>
-              </div>
+              <Image 
+                src="/orb.png"
+                alt="Kairoo Orb"
+                width={1200}
+                height={675}
+                layout="responsive"
+                priority
+              />
             </div>
           </div>
         </LinearReveal>
@@ -457,14 +457,13 @@ const ProductShowcase = () => {
 
           <LinearReveal delay={0.4}>
             <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
-              <div className="aspect-video bg-gradient-to-br from-violet-50 to-purple-50 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <TrendingUp className="w-8 h-8 text-violet-600" />
-                  </div>
-                  <p className="text-gray-600 font-medium">Progress Dashboard</p>
-                </div>
-              </div>
+              <Image 
+                src="/phil.png"
+                alt="User testimonial"
+                width={1200}
+                height={675}
+                layout="responsive"
+              />
             </div>
           </LinearReveal>
         </div>
