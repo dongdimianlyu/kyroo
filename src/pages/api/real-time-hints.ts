@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
+import { generatePersonalizedContext } from './save-profile';
 
 // Create a single, cached OpenAI client instance
 let openai: OpenAI | null = null;
@@ -74,8 +75,13 @@ export default async function handler(
     }
 
     // Don't generate hints too frequently or for very short conversations
-    if (conversationHistory.length < 3 || timeSinceLastMessage < 20000) {
-      return res.status(200).json({});
+    if (conversationHistory.length < 2) {
+      return res.status(200).json({
+        hint: {
+          message: "It's a bit early for a hint. Try to get the conversation started first!",
+          type: 'tip'
+        }
+      });
     }
 
     const openai = getOpenAIClient();
@@ -87,7 +93,7 @@ export default async function handler(
 
     // Get the last few user messages to analyze patterns
     const userMessages = conversationHistory.filter(msg => msg.role === 'user').slice(-3);
-    const avgUserMessageLength = userMessages.reduce((sum, msg) => sum + msg.content.length, 0) / userMessages.length;
+    const avgUserMessageLength = userMessages.length > 0 ? userMessages.reduce((sum, msg) => sum + msg.content.length, 0) / userMessages.length : 0;
     
     // Determine if conversation might need encouragement
     const longPause = timeSinceLastMessage > 45000; // More than 45 seconds

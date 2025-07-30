@@ -193,10 +193,10 @@ const Navigation = () => {
         </Link>
         
         <Link 
-          href="/app?view=practice" 
+          href="/onboarding" 
           className="px-6 py-3 bg-gray-900 text-white text-sm font-medium rounded-xl hover:bg-gray-800 transition-colors duration-300 shadow-lg"
         >
-          Try Kairoo
+          Get Started
         </Link>
       </nav>
     </motion.header>
@@ -269,7 +269,7 @@ const HeroSection = () => {
 
           <LinearReveal delay={1.0} className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link 
-              href="/app?view=practice" 
+              href="/onboarding" 
               className="group px-8 py-4 bg-gray-900 text-white font-medium rounded-xl shadow-lg hover:bg-gray-800 transition-all duration-300 flex items-center gap-2"
             >
               Start practicing conversations
@@ -511,7 +511,7 @@ const CTASection = () => {
             
             <LinearReveal delay={0.6}>
               <Link 
-                href="/app?view=practice" 
+                href="/onboarding" 
                 className="inline-flex items-center gap-3 px-8 py-4 bg-white text-gray-900 font-semibold rounded-xl shadow-lg hover:bg-gray-50 transition-colors duration-300"
               >
                 Start your growth journey

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React from 'react';
 import NewOrb from '../components/NewOrb';
 import { useRouter } from 'next/router';
+import Sidebar from '../components/Sidebar';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -201,6 +202,7 @@ function App() {
   const [recentHints, setRecentHints] = useState<RealTimeHint[]>([]);
   const [lastHintCheck, setLastHintCheck] = useState<Date | null>(null);
   const [showHintPopup, setShowHintPopup] = useState(false);
+  const [isGeneratingHint, setIsGeneratingHint] = useState(false);
   
   // Speech features
   const [isListening, setIsListening] = useState(false);
@@ -221,6 +223,24 @@ function App() {
       setActiveNav('Practice Scenarios');
     }
   }, [router.query]);
+
+  // Check if user needs onboarding
+  useEffect(() => {
+    const checkOnboarding = () => {
+      const hasCompletedOnboarding = localStorage.getItem('onboardingCompleted');
+      const userProfile = localStorage.getItem('userProfile');
+      
+      // Redirect to onboarding if not completed, unless they're already there
+      if (!hasCompletedOnboarding && !router.pathname.includes('onboarding')) {
+        router.push('/onboarding');
+      }
+    };
+
+    // Only check on client side and after router is ready
+    if (typeof window !== 'undefined' && router.isReady) {
+      checkOnboarding();
+    }
+  }, [router.isReady, router.pathname]);
 
   // Ref to hold the latest state for callbacks to prevent stale closures
   const stateRef = useRef({
@@ -294,12 +314,11 @@ function App() {
   ];
 
   // Function to check for real-time hints
-  const checkForHints = useCallback(async () => {
-    if (!hintsEnabled || !isSimulationActive || messages.length < 2) return;
+  const getHint = useCallback(async () => {
+    if (!isSimulationActive || messages.length < 1) return;
 
-    const now = new Date();
-    // Only check for hints every 30 seconds to avoid spam
-    if (lastHintCheck && (now.getTime() - lastHintCheck.getTime()) < 30000) return;
+    setIsGeneratingHint(true);
+    setCurrentHint(null);
 
     try {
       const response = await fetch('/api/real-time-hints', {
@@ -312,7 +331,7 @@ function App() {
           scenario,
           difficulty: selectedDifficulty,
           feeling: selectedFeeling,
-          timeSinceLastMessage: now.getTime() - (messages[messages.length - 1]?.timestamp.getTime() || 0),
+          timeSinceLastMessage: new Date().getTime() - (messages[messages.length - 1]?.timestamp.getTime() || 0),
           anonId,
         }),
       });
@@ -324,27 +343,32 @@ function App() {
             id: crypto.randomUUID(),
             message: data.hint.message,
             type: data.hint.type,
-            timestamp: now,
+            timestamp: new Date(),
           };
           setCurrentHint(newHint);
-          setRecentHints(prev => [...prev.slice(-4), newHint]); // Keep last 5 hints
-          setShowHintPopup(false); // Close popup to show new hint is available
+          setShowHintPopup(true);
+        } else {
+          // If no hint is returned, show a generic message
+          setCurrentHint({
+            id: crypto.randomUUID(),
+            message: "Keep up the great work! You're doing just fine.",
+            type: 'encouragement',
+            timestamp: new Date(),
+          });
+          setShowHintPopup(true);
         }
       }
     } catch (error) {
       console.error('Error checking for hints:', error);
     } finally {
-      setLastHintCheck(now);
+      setIsGeneratingHint(false);
     }
-  }, [hintsEnabled, isSimulationActive, messages, scenario, selectedDifficulty, selectedFeeling, lastHintCheck, anonId]);
+  }, [isSimulationActive, messages, scenario, selectedDifficulty, selectedFeeling, anonId]);
 
-  // Check for hints periodically during conversation
-  useEffect(() => {
-    if (isSimulationActive && hintsEnabled && !isSpeaking && !loading) {
-      const interval = setInterval(checkForHints, 15000); // Check every 15 seconds
-      return () => clearInterval(interval);
-    }
-  }, [isSimulationActive, hintsEnabled, isSpeaking, loading, checkForHints]);
+  // This effect is no longer needed as hints are on-demand
+  // useEffect(() => {
+  // ...
+  // }, [isSimulationActive, hintsEnabled, isSpeaking, loading, checkForHints]);
 
   const getDisplayResults = () => {
     if (analysisResult) {
@@ -965,289 +989,307 @@ function App() {
     stopSpeaking();
   };
 
+  // Check if this is their first time after onboarding
+  const isFirstTime = router.query.first_time === 'true';
+  const [showWelcomeBanner, setShowWelcomeBanner] = useState(isFirstTime);
+
+  // Get user profile for personalized welcome
+  const [userProfile, setUserProfile] = useState<any>(null);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('userProfile');
+      if (stored) {
+        setUserProfile(JSON.parse(stored));
+      }
+    }
+  }, []);
+
   // Render Practice Scenarios page
   if (activeNav === 'Practice Scenarios') {
     return (
-      <div className="min-h-screen bg-neutral-50">
-        {/* Top Navigation */}
-        <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex justify-between items-center">
-              <Link href="/" className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">K</span>
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-neutral-900">Kairoo</h1>
-                  <p className="text-xs text-neutral-500 -mt-1">Social Intelligence</p>
-                </div>
-              </Link>
-              
-              {/* Navigation Tabs */}
-              <div className="flex items-center space-x-1 bg-neutral-100 rounded-xl p-1">
-                {[
-                  { name: 'Dashboard', icon: '📊' },
-                  { name: 'Practice Scenarios', icon: '💬' },
-                  { name: 'Settings', icon: '⚙️' }
-                ].map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => {
-                      if (item.name !== activeNav) {
-                        setIsTransitioning(true);
-                        setTimeout(() => {
-                          setActiveNav(item.name);
-                          setIsTransitioning(false);
-                        }, 150);
-                      }
-                    }}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-smooth ${
-                      activeNav === item.name
-                        ? 'bg-white text-primary-600 shadow-sm'
-                        : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
-                    }`}
-                  >
-                    <span className="text-base">{item.icon}</span>
-                    <span>{item.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </nav>
-
-        {/* Main Content */}
-        <main className="max-w-6xl mx-auto px-6 py-8">
-          <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            {/* Header */}
-            <div className="mb-8 flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold text-neutral-900 mb-2">Practice Scenarios</h1>
-                <p className="text-neutral-600">
-                  Practice real-life conversations in a safe, supportive environment.
-                </p>
-              </div>
-              {isSimulationActive && (
-                <button
-                  onClick={endSimulation}
-                  disabled={loading}
-                  className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-smooth disabled:opacity-50 self-center"
-                >
-                  End Simulation
-                </button>
-              )}
-            </div>
-
-            {!isSimulationActive && !showSummary ? (
-              /* Enhanced Scenario Setup */
-              <div className="max-w-4xl mx-auto">
-                <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
-                  <div className="text-center mb-8">
-                    <div className="w-16 h-16 bg-secondary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                      <svg className="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                      </svg>
-                    </div>
-                    <h2 className="text-2xl font-bold text-neutral-900 mb-4">Start a Practice Session</h2>
-                    <p className="text-neutral-600">
-                      Practice conversations in a safe space with personalized AI coaching and feedback.
+      <div className="min-h-screen bg-neutral-50 flex">
+        <Sidebar 
+          activeNav={activeNav}
+          setActiveNav={setActiveNav}
+          isTransitioning={isTransitioning}
+          setIsTransitioning={setIsTransitioning}
+        />
+        <div className="flex-1 flex flex-col">
+          
+          {/* Welcome Banner for First-Time Users */}
+          {showWelcomeBanner && userProfile && (
+            <div className="bg-gradient-to-r from-purple-600 to-violet-600 text-white p-6 border-b border-purple-500">
+              <div className="max-w-4xl mx-auto flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <span className="text-2xl">🎉</span>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">Welcome to Kairoo, {userProfile.name}!</h2>
+                    <p className="text-purple-100">
+                      Your personalized practice space is ready. Let's start building your confidence!
                     </p>
                   </div>
+                </div>
+                <button
+                  onClick={() => setShowWelcomeBanner(false)}
+                  className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
 
-                  <div className="space-y-8">
-                    {/* Scenario Description */}
-                    <div>
-                      <label className="block text-sm font-medium text-neutral-700 mb-3">
-                        What situation would you like to practice?
-                      </label>
-                      <textarea
-                        value={scenario}
-                        onChange={(e) => setScenario(e.target.value)}
-                        placeholder="e.g., Having lunch with a new classmate, Texting a friend who might be upset, Asking for help with homework..."
-                        className="input-field h-32 resize-none"
-                        disabled={loading}
-                      />
-                    </div>
+          {/* Main Content */}
+          <main className="flex-1 overflow-y-auto p-8">
+            <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+              {/* Header */}
+              <div className="mb-8 flex justify-between items-center">
+                <div>
+                  <h1 className="text-3xl font-bold text-neutral-900 mb-2">Practice Scenarios</h1>
+                  <p className="text-neutral-600">
+                    Practice real-life conversations in a safe, supportive environment.
+                  </p>
+                </div>
+                {isSimulationActive && (
+                  <button
+                    onClick={endSimulation}
+                    disabled={loading}
+                    className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-medium transition-smooth disabled:opacity-50 self-center"
+                  >
+                    End Simulation
+                  </button>
+                )}
+              </div>
 
-                    {/* Difficulty Level Selection */}
-                    <div>
-                      <label className="block text-sm font-medium text-neutral-700 mb-4">
-                        Choose difficulty level
-                      </label>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {difficultyLevels.map((level) => (
-                          <button
-                            key={level.id}
-                            onClick={() => setSelectedDifficulty(level.id)}
-                            className={`p-4 rounded-xl border-2 transition-all text-left ${
-                              selectedDifficulty === level.id
-                                ? 'border-primary-500 bg-primary-50'
-                                : 'border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-25'
-                            }`}
-                            disabled={loading}
-                          >
-                            <div className="flex items-center space-x-3 mb-2">
-                              <span className="text-2xl">{level.icon}</span>
-                              <span className="font-semibold text-neutral-900">{level.label}</span>
-                            </div>
-                            <p className="text-sm text-neutral-600">{level.description}</p>
-                          </button>
-                        ))}
+              {!isSimulationActive && !showSummary ? (
+                /* Enhanced Scenario Setup */
+                <div className="max-w-4xl mx-auto">
+                  <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
+                    <div className="text-center mb-8">
+                      <div className="w-16 h-16 bg-secondary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg className="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
                       </div>
+                      <h2 className="text-2xl font-bold text-neutral-900 mb-4">Start a Practice Session</h2>
+                      <p className="text-neutral-600">
+                        Practice conversations in a safe space with personalized AI coaching and feedback.
+                      </p>
                     </div>
 
-                    {/* Feeling Check-in */}
-                    <div>
-                      <label className="block text-sm font-medium text-neutral-700 mb-4">
-                        How are you feeling today?
-                      </label>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {feelingStates.map((feeling) => (
-                          <button
-                            key={feeling.id}
-                            type="button"
-                            onClick={() => setSelectedFeeling(feeling.id)}
-                            className={`w-full p-4 rounded-xl border-2 transition-all text-left cursor-pointer ${
-                              selectedFeeling === feeling.id
-                                ? 'border-purple-500 bg-purple-50'
-                                : 'border-neutral-200 bg-white hover:border-purple-300 hover:bg-purple-50'
-                            }`}
-                            disabled={loading}
-                          >
-                            <div className="flex items-center space-x-3 mb-2">
-                              <span className="text-2xl flex-shrink-0">{feeling.icon}</span>
-                              <span className="font-semibold text-neutral-900 flex-1">{feeling.label}</span>
-                            </div>
-                            <p className="text-sm text-neutral-600">{feeling.description}</p>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Real-time Hints Toggle */}
-                    <div className="bg-neutral-50 rounded-xl p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-medium text-neutral-900 mb-1">Real-time Coaching Hints</h3>
-                          <p className="text-sm text-neutral-600">Get gentle suggestions during your conversation</p>
-                        </div>
-                        <button
-                          onClick={() => setHintsEnabled(!hintsEnabled)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                            hintsEnabled ? 'bg-primary-600' : 'bg-neutral-300'
-                          }`}
+                    <div className="space-y-8">
+                      {/* Scenario Description */}
+                      <div>
+                        <label className="block text-sm font-medium text-neutral-700 mb-3">
+                          What situation would you like to practice?
+                        </label>
+                        <textarea
+                          value={scenario}
+                          onChange={(e) => setScenario(e.target.value)}
+                          placeholder="e.g., Having lunch with a new classmate, Texting a friend who might be upset, Asking for help with homework..."
+                          className="input-field h-32 resize-none"
                           disabled={loading}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              hintsEnabled ? 'translate-x-6' : 'translate-x-1'
+                        />
+                      </div>
+
+                      {/* Difficulty Level Selection */}
+                      <div>
+                        <label className="block text-sm font-medium text-neutral-700 mb-4">
+                          Choose difficulty level
+                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {difficultyLevels.map((level) => (
+                            <button
+                              key={level.id}
+                              onClick={() => setSelectedDifficulty(level.id)}
+                              className={`p-4 rounded-xl border-2 transition-all text-left ${
+                                selectedDifficulty === level.id
+                                  ? 'border-primary-500 bg-primary-50'
+                                  : 'border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-25'
+                              }`}
+                              disabled={loading}
+                            >
+                              <div className="flex items-center space-x-3 mb-2">
+                                <span className="text-2xl">{level.icon}</span>
+                                <span className="font-semibold text-neutral-900">{level.label}</span>
+                              </div>
+                              <p className="text-sm text-neutral-600">{level.description}</p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Feeling Check-in */}
+                      <div>
+                        <label className="block text-sm font-medium text-neutral-700 mb-4">
+                          How are you feeling today?
+                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {feelingStates.map((feeling) => (
+                            <button
+                              key={feeling.id}
+                              type="button"
+                              onClick={() => setSelectedFeeling(feeling.id)}
+                              className={`w-full p-4 rounded-xl border-2 transition-all text-left cursor-pointer ${
+                                selectedFeeling === feeling.id
+                                  ? 'border-purple-500 bg-purple-50'
+                                  : 'border-neutral-200 bg-white hover:border-purple-300 hover:bg-purple-50'
+                              }`}
+                              disabled={loading}
+                            >
+                              <div className="flex items-center space-x-3 mb-2">
+                                <span className="text-2xl flex-shrink-0">{feeling.icon}</span>
+                                <span className="font-semibold text-neutral-900 flex-1">{feeling.label}</span>
+                              </div>
+                              <p className="text-sm text-neutral-600">{feeling.description}</p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Real-time Hints Toggle */}
+                      <div className="bg-neutral-50 rounded-xl p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="font-medium text-neutral-900 mb-1">Real-time Coaching Hints</h3>
+                            <p className="text-sm text-neutral-600">Get gentle suggestions during your conversation</p>
+                          </div>
+                          <button
+                            onClick={() => setHintsEnabled(!hintsEnabled)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                              hintsEnabled ? 'bg-primary-600' : 'bg-neutral-300'
                             }`}
-                          />
+                            disabled={loading}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                hintsEnabled ? 'translate-x-6' : 'translate-x-1'
+                              }`}
+                            />
+                          </button>
+                        </div>
+                      </div>
+
+                      {error && (
+                        <div className="bg-error-50 border border-error-200 rounded-xl p-4">
+                          <p className="text-error-600 text-sm">{error}</p>
+                        </div>
+                      )}
+
+                      <div className="pt-4">
+                        <button
+                          onClick={startSimulation}
+                          disabled={loading || !scenario.trim()}
+                          className="w-full button-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {loading ? 'Starting practice session...' : 'Begin Practice'}
                         </button>
                       </div>
                     </div>
-
-                    {error && (
-                      <div className="bg-error-50 border border-error-200 rounded-xl p-4">
-                        <p className="text-error-600 text-sm">{error}</p>
-                      </div>
-                    )}
-
-                    <div className="pt-4">
-                      <button
-                        onClick={startSimulation}
-                        disabled={loading || !scenario.trim()}
-                        className="w-full button-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {loading ? 'Starting practice session...' : 'Begin Practice'}
-                      </button>
-                    </div>
                   </div>
                 </div>
-              </div>
-            ) : showSummary && simulationSummary ? (
-              /* Simulation Summary */
-              <div className="max-w-4xl mx-auto">
-                <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
-                  <div className="text-center mb-8">
-                    <div className="w-16 h-16 bg-success-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                      <svg className="w-8 h-8 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              ) : showSummary && simulationSummary ? (
+                /* Simulation Summary */
+                <div className="max-w-3xl mx-auto py-8">
+                  <div className="text-center mb-12">
+                    <h2 className="text-4xl font-bold text-neutral-900 mb-3">Practice Complete!</h2>
+                    <p className="text-lg text-neutral-600">Here's your performance summary.</p>
+                  </div>
+
+                  {/* Stats Card */}
+                  <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8 mb-8">
+                    <h3 className="text-lg font-semibold text-neutral-900 text-center mb-4">Conversation Smoothness</h3>
+                    <div className="relative w-48 h-48 mx-auto">
+                      <svg className="w-full h-full" viewBox="0 0 36 36">
+                        <path className="text-neutral-200"
+                          d="M18 2.0845
+                        a 15.9155 15.9155 0 0 1 0 31.831
+                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3" />
+                        <path className="text-primary-600"
+                          strokeDasharray={`${simulationSummary.smoothnessScore}, 100`}
+                          d="M18 2.0845
+                        a 15.9155 15.9155 0 0 1 0 31.831
+                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        strokeLinecap="round" />
                       </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-4xl font-bold text-primary-600">{simulationSummary.smoothnessScore}</span>
+                        <span className="text-xl text-primary-500">%</span>
+                      </div>
                     </div>
-                    <h2 className="text-2xl font-bold text-neutral-900 mb-4">Great Practice Session!</h2>
-                    <p className="text-neutral-600">
-                      Here's how your conversation went and what to focus on next time.
-                    </p>
                   </div>
 
-            <div className="space-y-6">
-                  {/* Smoothness Score */}
-                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-neutral-900">Conversation Smoothness</h3>
-                      <span className="text-2xl font-bold text-purple-600">{simulationSummary.smoothnessScore}%</span>
-                </div>
-                    <div className="w-full bg-white/50 rounded-full h-3">
-                  <div 
-                        className="bg-gradient-to-r from-purple-500 to-blue-500 h-3 rounded-full transition-all duration-1000"
-                        style={{ width: `${simulationSummary.smoothnessScore}%` }}
-                  />
-                </div>
-              </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    {/* What Went Well */}
+                    <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+                      <div className="flex items-center mb-4">
+                        <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mr-4">
+                          <span className="text-xl">✅</span>
+                        </div>
+                        <h3 className="text-lg font-semibold text-neutral-900">What Went Well</h3>
+                      </div>
+                      <p className="text-neutral-700 leading-relaxed">{simulationSummary.whatWentWell}</p>
+                    </div>
 
-                  {/* What Went Well */}
-                  <div className="bg-success-50 rounded-2xl p-6">
-                    <h3 className="text-lg font-semibold text-success-900 mb-3 flex items-center">
-                      <span className="w-6 h-6 bg-success-200 rounded-full flex items-center justify-center mr-3 text-sm">✨</span>
-                      What Went Well
-                  </h3>
-                    <p className="text-success-800 leading-relaxed">{simulationSummary.whatWentWell}</p>
-                </div>
-
-                  {/* Areas to Improve */}
-                  {simulationSummary.improvementAreas.length > 0 && (
-                    <div className="bg-blue-50 rounded-2xl p-6">
-                      <h3 className="text-lg font-semibold text-blue-900 mb-3 flex items-center">
-                        <span className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center mr-3 text-sm">🎯</span>
-                        Focus Areas for Next Time
-                      </h3>
-                      <ul className="space-y-2">
-                        {simulationSummary.improvementAreas.map((area, index) => (
-                          <li key={index} className="text-blue-800 flex items-start">
-                            <span className="text-blue-400 mr-2 mt-1">•</span>
-                            <span>{area}</span>
-                          </li>
-                        ))}
-                      </ul>
+                    {/* Areas to Improve */}
+                    <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+                      <div className="flex items-center mb-4">
+                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
+                          <span className="text-xl">🎯</span>
+                        </div>
+                        <h3 className="text-lg font-semibold text-neutral-900">Focus Areas for Next Time</h3>
+                      </div>
+                      {simulationSummary.improvementAreas.length > 0 ? (
+                        <ul className="space-y-3">
+                          {simulationSummary.improvementAreas.map((area, index) => (
+                            <li key={index} className="flex items-start text-neutral-700">
+                              <span className="text-blue-500 mr-3 mt-1">&#8226;</span>
+                              <span>{area}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-neutral-600 italic">No specific areas for improvement noted. Great job!</p>
+                      )}
+                    </div>
                   </div>
-                )}
 
                   {/* Encouraging Message */}
-                  <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-2xl p-6 text-center">
-                    <h3 className="text-lg font-semibold text-neutral-900 mb-3">Keep Going! 🌟</h3>
-                    <p className="text-neutral-700 leading-relaxed italic">{simulationSummary.encouragingMessage}</p>
-                </div>
+                  <div className="bg-gradient-to-tr from-purple-50 to-blue-50 border border-purple-100 rounded-2xl p-8 text-center">
+                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow">
+                      <span className="text-2xl">🌟</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-neutral-900 mb-3">Keep Going!</h3>
+                    <p className="text-neutral-700 leading-relaxed max-w-2xl mx-auto">{simulationSummary.encouragingMessage}</p>
+                  </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-4 pt-4">
-                        <button
+                  <div className="flex justify-center gap-4 mt-12">
+                    <button
                       onClick={resetSimulation}
-                      className="flex-1 button-secondary py-3"
-                        >
+                      className="button-secondary py-3 px-6"
+                    >
                       Practice Another Scenario
-                        </button>
+                    </button>
                     <button
                       onClick={() => setActiveNav('Dashboard')}
-                      className="flex-1 button-primary py-3"
+                      className="button-primary py-3 px-6"
                     >
                       Back to Dashboard
                     </button>
                   </div>
                 </div>
-                    </div>
-                  </div>
-                ) : (
+              ) : (
             /* Active Simulation with Floating Orb */
             <div className="space-y-6">
               {/* Top Controls */}
@@ -1317,57 +1359,66 @@ function App() {
         </main>
 
         {/* Floating Hint Button - Bottom of page */}
-        {isSimulationActive && hintsEnabled && currentHint && (
+        {isSimulationActive && !showSummary && (
+          <div className="p-4 bg-white border-t border-neutral-200 flex justify-center">
+            <button
+              onClick={getHint}
+              disabled={isGeneratingHint}
+              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            >
+              {isGeneratingHint ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Generating...</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-xl">💡</span>
+                  <span>Get a Hint</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Hint Popup */}
+        {showHintPopup && currentHint && (
           <div 
-            className="fixed bottom-0 left-0 right-0 z-50 p-4 flex justify-center"
-            style={{ pointerEvents: 'none' }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+            onClick={() => setShowHintPopup(false)}
           >
             <div 
-              className={`bg-purple-600 text-white rounded-2xl shadow-2xl transition-all duration-300 ease-in-out transform cursor-pointer ${showHintPopup ? 'w-full max-w-lg' : 'w-auto'}`}
-              onClick={() => setShowHintPopup(!showHintPopup)}
-              style={{ pointerEvents: 'all' }}
+              className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-auto"
+              onClick={(e) => e.stopPropagation()}
             >
-              {!showHintPopup ? (
-                <div className="p-4 flex items-center space-x-3">
-                  <span className="text-2xl">💡</span>
-                  <div>
-                    <h3 className="font-semibold">New Hint Available</h3>
-                    <p className="text-sm text-purple-200">Click to view</p>
-                  </div>
-                  <div className="w-2 h-2 bg-purple-300 rounded-full animate-pulse"></div>
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl text-purple-600">
+                    {currentHint.type === 'suggestion' ? '💡' : 
+                      currentHint.type === 'encouragement' ? '🌟' : '💭'}
+                  </span>
                 </div>
-              ) : (
-                <div className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <span className="text-2xl">
-                        {currentHint.type === 'suggestion' ? '💡' : 
-                          currentHint.type === 'encouragement' ? '🌟' : '💭'}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg mb-2">Conversation Insight</h3>
-                      <p className="text-purple-100 leading-relaxed">{currentHint.message}</p>
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCurrentHint(null);
-                        setShowHintPopup(false);
-                      }}
-                      className="text-purple-300 hover:text-white transition-colors"
-                      title="Dismiss hint"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-xl text-neutral-900 mb-2">Conversation Insight</h3>
+                  <p className="text-neutral-700 leading-relaxed">{currentHint.message}</p>
                 </div>
-              )}
+                <button
+                  onClick={() => setShowHintPopup(false)}
+                  className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                  title="Close"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         )}
+        </div>
       </div>
     );
   }
@@ -1375,54 +1426,15 @@ function App() {
   // Render Settings page
   if (activeNav === 'Settings') {
     return (
-      <div className="min-h-screen bg-neutral-50">
-        {/* Top Navigation */}
-        <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex justify-between items-center">
-              <Link href="/" className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">K</span>
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-neutral-900">Kairoo</h1>
-                  <p className="text-xs text-neutral-500 -mt-1">Social Intelligence</p>
-                </div>
-              </Link>
-              
-              {/* Navigation Tabs */}
-              <div className="flex items-center space-x-1 bg-neutral-100 rounded-xl p-1">
-                {[
-                  { name: 'Dashboard', icon: '📊' },
-                  { name: 'Practice Scenarios', icon: '💬' },
-                  { name: 'Settings', icon: '⚙️' }
-                ].map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => {
-                      if (item.name !== activeNav) {
-                        setIsTransitioning(true);
-                        setTimeout(() => {
-                          setActiveNav(item.name);
-                          setIsTransitioning(false);
-                        }, 150);
-                      }
-                    }}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-smooth ${
-                      activeNav === item.name
-                        ? 'bg-white text-primary-600 shadow-sm'
-                        : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
-                    }`}
-                  >
-                    <span className="text-base">{item.icon}</span>
-                    <span>{item.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </nav>
-
+      <div className="min-h-screen bg-neutral-50 flex">
+        <Sidebar 
+          activeNav={activeNav}
+          setActiveNav={setActiveNav}
+          isTransitioning={isTransitioning}
+          setIsTransitioning={setIsTransitioning}
+        />
+        <div className="flex-1">
+        
         {/* Main Content */}
         <main className="max-w-6xl mx-auto px-6 py-8">
           <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
@@ -1486,59 +1498,21 @@ function App() {
             </div>
           </div>
         </main>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      {/* Top Navigation */}
-      <nav className="sticky top-0 z-50 bg-white border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">K</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-neutral-900">Kairoo</h1>
-                <p className="text-xs text-neutral-500 -mt-1">Social Intelligence</p>
-              </div>
-            </Link>
-            
-            {/* Navigation Tabs */}
-            <div className="flex items-center space-x-1 bg-neutral-100 rounded-xl p-1">
-              {[
-                { name: 'Dashboard', icon: '📊' },
-                { name: 'Practice Scenarios', icon: '💬' },
-                { name: 'Settings', icon: '⚙️' }
-              ].map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => {
-                    if (item.name !== activeNav) {
-                      setIsTransitioning(true);
-                      setTimeout(() => {
-                        setActiveNav(item.name);
-                        setIsTransitioning(false);
-                      }, 150);
-                    }
-                  }}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-smooth ${
-                    activeNav === item.name
-                      ? 'bg-white text-primary-600 shadow-sm'
-                      : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
-                  }`}
-                >
-                  <span className="text-base">{item.icon}</span>
-                  <span>{item.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-screen bg-neutral-50 flex">
+      <Sidebar 
+        activeNav={activeNav}
+        setActiveNav={setActiveNav}
+        isTransitioning={isTransitioning}
+        setIsTransitioning={setIsTransitioning}
+      />
+      <div className="flex-1">
+      
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
@@ -1746,6 +1720,7 @@ function App() {
         </div>
         </div>
       </main>
+      </div>
     </div>
   );
 }

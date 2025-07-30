@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
+import { generatePersonalizedContext } from './save-profile';
 
 // Create a single, cached OpenAI client instance
 let openai: OpenAI | null = null;
@@ -99,18 +100,20 @@ export default async function handler(
       const selectedDifficulty = difficulty || 'medium';
       const selectedFeeling = feeling || 'okay';
 
-      const startPrompt = `You are a conversation simulator. A user wants to practice a specific social situation. Your task is to start the simulation based *directly* on their description.
+      const startPrompt = `You are a sophisticated conversation simulator. Your primary role is to act as the "other person" in a practice scenario that the user provides. The user is the one practicing the conversation. You must deduce your persona from their description and engage with them from that perspective. **You are NOT the person practicing.**
 
-USER'S SCENARIO: "${scenario}"
-DIFFICULTY LEVEL: ${selectedDifficulty} - ${difficultyPersonality[selectedDifficulty]}
-USER'S FEELING: ${selectedFeeling} - ${feelingAdjustment[selectedFeeling]}
+USER'S SCENARIO (this is the situation the user wants to practice):
+"${scenario}"
+
+DIFFICULTY LEVEL (this should affect your personality): ${selectedDifficulty} - ${difficultyPersonality[selectedDifficulty]}
+USER'S CURRENT FEELING (be mindful of this in your tone): ${selectedFeeling} - ${feelingAdjustment[selectedFeeling]}
 
 Follow these instructions strictly:
-1.  **Infer Your Role**: Based on the user's scenario, determine who the other person is (e.g., a teacher, a new friend, a parent). Adopt this persona.
+1.  **Analyze and Adopt Persona**: Read the user's scenario carefully. Determine who you are supposed to be (e.g., if the user wants to "ask a teacher for help", you are the TEACHER). Embody this character. You are the conversation partner.
 2.  **Adjust Your Personality**: ${difficultyPersonality[selectedDifficulty]} ${feelingAdjustment[selectedFeeling]}
-3.  **Generate a Scene Description**: Create a *short and direct* scene description (1-2 sentences) based *only* on the user's scenario.
-4.  **Create the First Message**: Write the first message this character would say to *directly initiate* the user's described situation. The tone should match both the character/scenario AND the difficulty/feeling adjustments.
-5.  **Maintain Realism**: Use natural, everyday language while incorporating the personality adjustments.
+3.  **Generate a Scene Description**: Create a *short and direct* scene description (1-2 sentences) that sets the stage for the interaction.
+4.  **Create the First Message**: As the character you are playing, write the first line that would realistically start this conversation. Your message should prompt the user to begin their practice.
+5.  **Maintain Realism**: Use natural, everyday language appropriate for your adopted persona and the specified difficulty.
 
 Respond with valid JSON only:
 {
