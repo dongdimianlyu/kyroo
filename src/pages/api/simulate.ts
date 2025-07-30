@@ -18,6 +18,8 @@ interface SimulationRequest {
   scenario?: string;
   userMessage?: string;
   conversationHistory?: Message[];
+  difficulty?: 'easy' | 'medium' | 'hard';
+  feeling?: 'confident' | 'okay' | 'anxious' | 'rough';
   anonId: string;
 }
 
@@ -55,7 +57,7 @@ export default async function handler(
   }
 
   try {
-    const { action, scenario, userMessage, conversationHistory, anonId }: SimulationRequest = req.body;
+    const { action, scenario, userMessage, conversationHistory, difficulty, feeling, anonId }: SimulationRequest = req.body;
 
     // Validate input
     if (!anonId || typeof anonId !== 'string') {
@@ -80,20 +82,40 @@ export default async function handler(
         return res.status(400).json({ error: 'Scenario is required for starting simulation' });
       }
 
+      // Build personality adjustments based on difficulty and feeling
+      const difficultyPersonality = {
+        easy: "Be extremely patient, understanding, and supportive. Speak slowly and give the user plenty of time to respond. Use encouraging body language cues in your responses.",
+        medium: "Act naturally with typical social responses. Be friendly but don't go out of your way to make things easier. Respond at a normal pace.",
+        hard: "Be slightly less patient, more direct, and occasionally show mild irritation or hurry. Use more complex social cues and expect quicker responses."
+      };
+
+      const feelingAdjustment = {
+        confident: "The user is feeling confident today, so you can engage at a normal or slightly challenging level.",
+        okay: "The user is in a typical mood, so maintain standard social interaction patterns.",
+        anxious: "The user is feeling anxious, so be extra gentle, speak a bit slower, and be more encouraging in your responses.",
+        rough: "The user is having a difficult day, so be very patient, kind, and understanding. Avoid any challenging social dynamics."
+      };
+
+      const selectedDifficulty = difficulty || 'medium';
+      const selectedFeeling = feeling || 'okay';
+
       const startPrompt = `You are a conversation simulator. A user wants to practice a specific social situation. Your task is to start the simulation based *directly* on their description.
 
 USER'S SCENARIO: "${scenario}"
+DIFFICULTY LEVEL: ${selectedDifficulty} - ${difficultyPersonality[selectedDifficulty]}
+USER'S FEELING: ${selectedFeeling} - ${feelingAdjustment[selectedFeeling]}
 
 Follow these instructions strictly:
 1.  **Infer Your Role**: Based on the user's scenario, determine who the other person is (e.g., a teacher, a new friend, a parent). Adopt this persona.
-2.  **Generate a Scene Description**: Create a *short and direct* scene description (1-2 sentences) based *only* on the user's scenario.
-3.  **Create the First Message**: Write the first message this character would say to *directly initiate* the user's described situation. The tone should match the character and scenario.
-4.  **Maintain Realism**: Use natural, everyday language.
+2.  **Adjust Your Personality**: ${difficultyPersonality[selectedDifficulty]} ${feelingAdjustment[selectedFeeling]}
+3.  **Generate a Scene Description**: Create a *short and direct* scene description (1-2 sentences) based *only* on the user's scenario.
+4.  **Create the First Message**: Write the first message this character would say to *directly initiate* the user's described situation. The tone should match both the character/scenario AND the difficulty/feeling adjustments.
+5.  **Maintain Realism**: Use natural, everyday language while incorporating the personality adjustments.
 
 Respond with valid JSON only:
 {
   "sceneDescription": "[A short, direct, 1-2 sentence description based on the user's scenario]",
-  "firstMessage": "[The first message from the character you are playing]"
+  "firstMessage": "[The first message from the character you are playing, adjusted for difficulty and user's feeling]"
 }`;
 
       const completion = await openai.chat.completions.create({
@@ -199,15 +221,34 @@ Respond with valid JSON only:
         `${msg.role === 'user' ? 'Teen' : 'Other Person'}: ${msg.content}`
       ).join('\n');
 
+      // Get the session parameters for personalized feedback
+      const selectedDifficulty = difficulty || 'medium';
+      const selectedFeeling = feeling || 'okay';
+
+      const difficultyContext = {
+        easy: "Remember, this was set to Easy mode, so focus on celebrating their courage to practice.",
+        medium: "This was a Medium difficulty session, so acknowledge their willingness to engage in typical social situations.",
+        hard: "This was a Hard difficulty session, so especially celebrate their bravery in tackling challenging social dynamics."
+      };
+
+      const feelingContext = {
+        confident: "The user started feeling confident today, so build on that momentum.",
+        okay: "The user was feeling okay today, so provide balanced encouragement.",
+        anxious: "The user was feeling anxious today, so be extra gentle and focus on their courage.",
+        rough: "The user was having a rough day, so emphasize their strength and resilience in practicing despite challenges."
+      };
+
       const summaryPrompt = `You are evaluating a completed practice conversation for a teen learning social skills. Generate an encouraging summary that celebrates their growth while providing gentle, specific guidance.
 
 ORIGINAL SCENARIO: "${scenario}"
+DIFFICULTY LEVEL: ${selectedDifficulty} - ${difficultyContext[selectedDifficulty]}
+USER'S FEELING: ${selectedFeeling} - ${feelingContext[selectedFeeling]}
 
 FULL CONVERSATION:
 ${conversationContext}
 
 EVALUATION CRITERIA:
-- Conversation smoothness (0-100): How naturally did the conversation flow?
+- Conversation smoothness (0-100): How naturally did the conversation flow? Adjust expectations based on difficulty level.
 - Communication clarity: Were responses clear and relevant?
 - Engagement level: Did they participate meaningfully?
 - Social awareness: Did they pick up on social cues?
@@ -215,6 +256,8 @@ EVALUATION CRITERIA:
 
 TONE GUIDELINES:
 - Be warm, empowering, and encouraging
+- ${feelingContext[selectedFeeling]}
+- ${difficultyContext[selectedDifficulty]}
 - Focus on specific strengths they demonstrated
 - For improvements, be gentle and actionable
 - Remember this is about serving the user, not fixing them
@@ -223,10 +266,10 @@ TONE GUIDELINES:
 
 Respond with valid JSON only:
 {
-  "smoothnessScore": [0-100 number representing overall conversation flow],
-  "whatWentWell": "[2-3 sentence celebration of specific things they did well]",
+  "smoothnessScore": [0-100 number representing overall conversation flow, adjusted for difficulty level],
+  "whatWentWell": "[2-3 sentence celebration of specific things they did well, considering their starting feeling]",
   "improvementAreas": ["[specific, gentle suggestion 1]", "[specific, gentle suggestion 2 if needed]"],
-  "encouragingMessage": "[Warm, empowering message about their growth and next steps]"
+  "encouragingMessage": "[Warm, empowering message about their growth and next steps, tailored to their difficulty level and feeling]"
 }`;
 
       const completion = await openai.chat.completions.create({
@@ -332,21 +375,43 @@ Respond with valid JSON only:
         `${msg.role === 'user' ? 'The User' : 'You'}: ${msg.content}`
       ).join('\n');
 
-      const continuePrompt = `You are in the middle of a practice conversation. Continue playing your role based on the original scenario.
+      // Get difficulty and feeling from the original simulation start (we'll pass these through)
+      const selectedDifficulty = difficulty || 'medium';
+      const selectedFeeling = feeling || 'okay';
+
+      // Same personality adjustments as start
+      const difficultyPersonality = {
+        easy: "Be extremely patient, understanding, and supportive. Speak slowly and give the user plenty of time to respond. Use encouraging responses.",
+        medium: "Act naturally with typical social responses. Be friendly but don't go out of your way to make things easier.",
+        hard: "Be slightly less patient, more direct, and occasionally show mild irritation. Use more complex social cues."
+      };
+
+      const feelingAdjustment = {
+        confident: "The user is feeling confident, so you can engage normally or slightly more challenging.",
+        okay: "The user is in a typical mood, maintain standard interaction patterns.",
+        anxious: "The user is feeling anxious, so be extra gentle and encouraging.",
+        rough: "The user is having a difficult day, be very patient and understanding."
+      };
+
+      const continuePrompt = `You are in the middle of a practice conversation. Continue playing your role based on the original scenario while maintaining the personality adjustments.
 
 ORIGINAL SCENARIO: "${scenario}"
+DIFFICULTY LEVEL: ${selectedDifficulty} - ${difficultyPersonality[selectedDifficulty]}
+USER'S FEELING: ${selectedFeeling} - ${feelingAdjustment[selectedFeeling]}
+
 CONVERSATION HISTORY (You are "You"):
 ${conversationContext}
 The User: ${userMessage}
 
 YOUR TASK:
-- Respond as the character you have been playing. Your response should be a natural continuation of the conversation.
-- Maintain the persona suggested by the original scenario.
-- Keep the conversation flowing naturally.
+- Respond as the character you have been playing with the same personality adjustments from the start
+- Your response should be a natural continuation that fits both the scenario AND the difficulty/feeling settings
+- Maintain consistency with how you've been behaving based on the difficulty and user's emotional state
+- Keep the conversation flowing naturally while respecting the user's current feeling state
 
 Respond with valid JSON only:
 {
-  "response": "[Your character's natural response]",
+  "response": "[Your character's response, adjusted for difficulty and user's feeling]",
   "coaching": {
     "message": "Great job keeping the conversation going!",
     "type": "neutral"

@@ -51,6 +51,55 @@ class ErrorBoundary extends React.Component<
   }
 }
 
+// Moved FloatingOrb outside of App to prevent re-creation on re-renders
+const FloatingOrb = React.memo(({ isSpeaking, isListening, loading, lastUserTranscript, currentTranscript }: {
+  isSpeaking: boolean;
+  isListening: boolean;
+  loading: boolean;
+  lastUserTranscript: string;
+  currentTranscript: string;
+}) => {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
+      {/* Advanced Futuristic Orb */}
+      <div className="w-64 h-64">
+        <NewOrb />
+      </div>
+
+      {/* Live transcript with premium styling */}
+      {(lastUserTranscript || currentTranscript) && (
+        <div className="max-w-md text-center">
+          <p className="text-sm text-slate-500/80 mb-3 font-medium">
+            {isListening && currentTranscript ? "Listening..." : "You said"}
+          </p>
+          <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/50 transition-all duration-300 hover:shadow-2xl">
+            <p className="text-slate-700 italic leading-relaxed">
+              "{currentTranscript || lastUserTranscript}"
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Status text with premium typography */}
+      <div className="text-center max-w-md">
+        {isSpeaking && (
+          <p className="text-slate-600 font-medium">Kairoo is speaking...</p>
+        )}
+        {isListening && (
+          <p className="text-cyan-600 font-semibold">Listening attentively...</p>
+        )}
+        {!isSpeaking && !isListening && !loading && (
+          <p className="text-slate-500">Ready when you are</p>
+        )}
+        {loading && (
+          <p className="text-slate-600 font-medium">Processing thoughtfully...</p>
+        )}
+      </div>
+    </div>
+  );
+});
+FloatingOrb.displayName = 'FloatingOrb';
+
 interface AnalysisResult {
   analysis: {
     emotionalWarmth: number;
@@ -96,6 +145,28 @@ interface SimulationSummary {
   encouragingMessage: string;
 }
 
+// Add new interfaces for enhanced features
+interface DifficultyLevel {
+  id: 'easy' | 'medium' | 'hard';
+  label: string;
+  description: string;
+  icon: string;
+}
+
+interface FeelingState {
+  id: 'confident' | 'okay' | 'anxious' | 'rough';
+  label: string;
+  description: string;
+  icon: string;
+}
+
+interface RealTimeHint {
+  id: string;
+  message: string;
+  type: 'suggestion' | 'encouragement' | 'tip';
+  timestamp: Date;
+}
+
 function App() {
   const [message, setMessage] = useState('');
   const [context, setContext] = useState('');
@@ -118,6 +189,17 @@ function App() {
   const [simulationSummary, setSimulationSummary] = useState<SimulationSummary | null>(null);
   const [showSummary, setShowSummary] = useState(false);
   const [lastUserTranscript, setLastUserTranscript] = useState('');
+  
+  // Enhanced pre-conversation setup state
+  const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel['id']>('medium');
+  const [selectedFeeling, setSelectedFeeling] = useState<FeelingState['id']>('okay');
+  
+  // Real-time hints state
+  const [hintsEnabled, setHintsEnabled] = useState(true);
+  const [currentHint, setCurrentHint] = useState<RealTimeHint | null>(null);
+  const [recentHints, setRecentHints] = useState<RealTimeHint[]>([]);
+  const [lastHintCheck, setLastHintCheck] = useState<Date | null>(null);
+  const [showHintPopup, setShowHintPopup] = useState(false);
   
   // Speech features
   const [isListening, setIsListening] = useState(false);
@@ -153,6 +235,108 @@ function App() {
       isListening
     };
   });
+
+  // Define difficulty levels and feeling states
+  const difficultyLevels: DifficultyLevel[] = [
+    {
+      id: 'easy',
+      label: 'Easy',
+      description: 'Patient, understanding conversation partner',
+      icon: '😌'
+    },
+    {
+      id: 'medium',
+      label: 'Medium',
+      description: 'Normal social interaction with typical responses',
+      icon: '😊'
+    },
+    {
+      id: 'hard',
+      label: 'Hard',
+      description: 'Less patient person, more challenging social dynamics',
+      icon: '😅'
+    }
+  ];
+
+  const feelingStates: FeelingState[] = [
+    {
+      id: 'confident',
+      label: 'Confident and energized',
+      description: 'Feeling great and ready to tackle conversations',
+      icon: '💪'
+    },
+    {
+      id: 'okay',
+      label: 'Feeling okay, normal energy',
+      description: 'In a typical mood, ready for practice',
+      icon: '🙂'
+    },
+    {
+      id: 'anxious',
+      label: 'A bit anxious or tired',
+      description: 'Could use some gentle encouragement',
+      icon: '😰'
+    },
+    {
+      id: 'rough',
+      label: 'Having a rough day, need extra support',
+      description: 'Need extra patience and understanding',
+      icon: '😔'
+    }
+  ];
+
+  // Function to check for real-time hints
+  const checkForHints = useCallback(async () => {
+    if (!hintsEnabled || !isSimulationActive || messages.length < 2) return;
+
+    const now = new Date();
+    // Only check for hints every 30 seconds to avoid spam
+    if (lastHintCheck && (now.getTime() - lastHintCheck.getTime()) < 30000) return;
+
+    try {
+      const response = await fetch('/api/real-time-hints', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          conversationHistory: messages,
+          scenario,
+          difficulty: selectedDifficulty,
+          feeling: selectedFeeling,
+          timeSinceLastMessage: now.getTime() - (messages[messages.length - 1]?.timestamp.getTime() || 0),
+          anonId,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.hint) {
+          const newHint: RealTimeHint = {
+            id: crypto.randomUUID(),
+            message: data.hint.message,
+            type: data.hint.type,
+            timestamp: now,
+          };
+          setCurrentHint(newHint);
+          setRecentHints(prev => [...prev.slice(-4), newHint]); // Keep last 5 hints
+          setShowHintPopup(false); // Close popup to show new hint is available
+        }
+      }
+    } catch (error) {
+      console.error('Error checking for hints:', error);
+    } finally {
+      setLastHintCheck(now);
+    }
+  }, [hintsEnabled, isSimulationActive, messages, scenario, selectedDifficulty, selectedFeeling, lastHintCheck, anonId]);
+
+  // Check for hints periodically during conversation
+  useEffect(() => {
+    if (isSimulationActive && hintsEnabled && !isSpeaking && !loading) {
+      const interval = setInterval(checkForHints, 15000); // Check every 15 seconds
+      return () => clearInterval(interval);
+    }
+  }, [isSimulationActive, hintsEnabled, isSpeaking, loading, checkForHints]);
 
   const getDisplayResults = () => {
     if (analysisResult) {
@@ -456,6 +640,8 @@ function App() {
           userMessage: userMessage.content,
           conversationHistory: updatedHistory, // Send the complete history
           scenario,
+          difficulty: selectedDifficulty,
+          feeling: selectedFeeling,
           anonId,
         }),
       });
@@ -651,6 +837,8 @@ function App() {
         body: JSON.stringify({
           action: 'start',
           scenario: scenario.trim(),
+          difficulty: selectedDifficulty,
+          feeling: selectedFeeling,
           anonId,
         }),
       });
@@ -669,6 +857,9 @@ function App() {
         timestamp: new Date(),
       }]);
       setIsSimulationActive(true);
+      setCurrentHint(null); // Clear any existing hints
+      setRecentHints([]);
+      setLastHintCheck(null);
       
       // Speak the first AI message
       await speakText(data.aiResponse);
@@ -707,6 +898,8 @@ function App() {
           action: 'end',
           conversationHistory: messages,
           scenario,
+          difficulty: selectedDifficulty,
+          feeling: selectedFeeling,
           anonId,
         }),
       });
@@ -740,6 +933,16 @@ function App() {
     setScenario('');
     setIsListening(false);
     
+    // Reset enhanced setup
+    setSelectedDifficulty('medium');
+    setSelectedFeeling('okay');
+    
+    // Reset hints
+    setCurrentHint(null);
+    setRecentHints([]);
+    setLastHintCheck(null);
+    setShowHintPopup(false);
+    
     // Clear silence timer
     if (silenceTimer) {
       clearTimeout(silenceTimer);
@@ -752,48 +955,6 @@ function App() {
     }
     
     stopSpeaking();
-  };
-
-  // Advanced Futuristic Orb Component
-  const FloatingOrb = () => {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
-        {/* Advanced Futuristic Orb */}
-        <div className="w-64 h-64">
-          <NewOrb />
-        </div>
-
-        {/* Live transcript with premium styling */}
-        {(lastUserTranscript || currentTranscript) && (
-          <div className="max-w-md text-center">
-            <p className="text-sm text-slate-500/80 mb-3 font-medium">
-              {isListening && currentTranscript ? "Listening..." : "You said"}
-            </p>
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/50 transition-all duration-300 hover:shadow-2xl">
-              <p className="text-slate-700 italic leading-relaxed">
-                "{currentTranscript || lastUserTranscript}"
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Status text with premium typography */}
-        <div className="text-center max-w-md">
-          {isSpeaking && (
-            <p className="text-slate-600 font-medium">Kairoo is speaking...</p>
-          )}
-          {isListening && (
-            <p className="text-cyan-600 font-semibold">Listening attentively...</p>
-          )}
-          {!isSpeaking && !isListening && !loading && isSimulationActive && (
-            <p className="text-slate-500">Ready when you are</p>
-          )}
-          {loading && (
-            <p className="text-slate-600 font-medium">Processing thoughtfully...</p>
-          )}
-        </div>
-      </div>
-    );
   };
 
   // Render Practice Scenarios page
@@ -870,8 +1031,8 @@ function App() {
             </div>
 
             {!isSimulationActive && !showSummary ? (
-              /* Scenario Setup */
-              <div className="max-w-3xl mx-auto">
+              /* Enhanced Scenario Setup */
+              <div className="max-w-4xl mx-auto">
                 <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
                   <div className="text-center mb-8">
                     <div className="w-16 h-16 bg-secondary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -881,11 +1042,12 @@ function App() {
                     </div>
                     <h2 className="text-2xl font-bold text-neutral-900 mb-4">Start a Practice Session</h2>
                     <p className="text-neutral-600">
-                      Practice conversations in a safe space with AI coaching and feedback.
+                      Practice conversations in a safe space with personalized AI coaching and feedback.
                     </p>
                   </div>
 
-                  <div className="space-y-6">
+                  <div className="space-y-8">
+                    {/* Scenario Description */}
                     <div>
                       <label className="block text-sm font-medium text-neutral-700 mb-3">
                         What situation would you like to practice?
@@ -897,6 +1059,84 @@ function App() {
                         className="input-field h-32 resize-none"
                         disabled={loading}
                       />
+                    </div>
+
+                    {/* Difficulty Level Selection */}
+                    <div>
+                      <label className="block text-sm font-medium text-neutral-700 mb-4">
+                        Choose difficulty level
+                      </label>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {difficultyLevels.map((level) => (
+                          <button
+                            key={level.id}
+                            onClick={() => setSelectedDifficulty(level.id)}
+                            className={`p-4 rounded-xl border-2 transition-all text-left ${
+                              selectedDifficulty === level.id
+                                ? 'border-primary-500 bg-primary-50'
+                                : 'border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-25'
+                            }`}
+                            disabled={loading}
+                          >
+                            <div className="flex items-center space-x-3 mb-2">
+                              <span className="text-2xl">{level.icon}</span>
+                              <span className="font-semibold text-neutral-900">{level.label}</span>
+                            </div>
+                            <p className="text-sm text-neutral-600">{level.description}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Feeling Check-in */}
+                    <div>
+                      <label className="block text-sm font-medium text-neutral-700 mb-4">
+                        How are you feeling today?
+                      </label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {feelingStates.map((feeling) => (
+                          <button
+                            key={feeling.id}
+                            type="button"
+                            onClick={() => setSelectedFeeling(feeling.id)}
+                            className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                              selectedFeeling === feeling.id
+                                ? 'border-secondary-500 bg-secondary-50'
+                                : 'border-neutral-200 bg-white hover:border-secondary-300 hover:bg-secondary-25'
+                            }`}
+                            disabled={loading}
+                          >
+                            <div className="flex items-center space-x-3 mb-2">
+                              <span className="text-2xl flex-shrink-0">{feeling.icon}</span>
+                              <span className="font-semibold text-neutral-900 flex-1">{feeling.label}</span>
+                            </div>
+                            <p className="text-sm text-neutral-600">{feeling.description}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Real-time Hints Toggle */}
+                    <div className="bg-neutral-50 rounded-xl p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-medium text-neutral-900 mb-1">Real-time Coaching Hints</h3>
+                          <p className="text-sm text-neutral-600">Get gentle suggestions during your conversation</p>
+                        </div>
+                        <button
+                          onClick={() => setHintsEnabled(!hintsEnabled)}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            hintsEnabled ? 'bg-primary-600' : 'bg-neutral-300'
+                          }`}
+                          disabled={loading}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              hintsEnabled ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                      </div>
                     </div>
 
                     {error && (
@@ -1006,35 +1246,35 @@ function App() {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-4">
                   {/* Audio Mute Toggle */}
-                          <button
+                  <button
                     onClick={() => {
                       setIsAudioMuted(!isAudioMuted);
                       if (!isAudioMuted) stopSpeaking();
                     }}
                     className="p-2 text-neutral-600 hover:text-secondary-600 hover:bg-secondary-50 rounded-lg transition-smooth"
                     title={isAudioMuted ? "Enable audio" : "Mute audio"}
-                          >
+                  >
                     {isAudioMuted ? '🔇' : '🔈'}
-                          </button>
-                      </div>
-                      
-                    </div>
+                  </button>
 
-              {/* XP Progress Bar */}
-              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-neutral-900">XP Progress</h3>
-                  <span className="text-sm text-primary-600">
-                    {progressEvaluation ? `${progressEvaluation.progressScore}%` : 'Starting...'}
-                  </span>
-                </div>
-                <div className="w-full bg-neutral-200 rounded-full h-2">
-                  <div 
-                    className="bg-primary-600 h-2 rounded-full transition-smooth"
-                    style={{ width: `${progressEvaluation?.progressScore || 0}%` }}
-                  />
+                  {/* Hints Toggle */}
+                  <button
+                    onClick={() => setHintsEnabled(!hintsEnabled)}
+                    className={`p-2 rounded-lg transition-smooth ${
+                      hintsEnabled 
+                        ? 'text-primary-600 bg-primary-50 hover:bg-primary-100' 
+                        : 'text-neutral-600 hover:text-primary-600 hover:bg-primary-50'
+                    }`}
+                    title={hintsEnabled ? "Disable coaching hints" : "Enable coaching hints"}
+                  >
+                    💡
+                  </button>
                 </div>
               </div>
+
+
+
+
 
               {/* Scene Description */}
               {sceneDescription && (
@@ -1049,12 +1289,62 @@ function App() {
 
               {/* Main Floating Orb Interface */}
               <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm">
-                <FloatingOrb />
+                <FloatingOrb
+                  isSpeaking={isSpeaking}
+                  isListening={isListening}
+                  loading={loading}
+                  lastUserTranscript={lastUserTranscript}
+                  currentTranscript={currentTranscript}
+                />
               </div>
 
               {error && (
                 <div className="bg-error-50 border border-error-200 rounded-xl p-4">
                   <p className="text-error-600 text-sm">{error}</p>
+                </div>
+              )}
+
+              {/* Floating Hint Button - Bottom Right */}
+              {hintsEnabled && currentHint && (
+                <div className="fixed bottom-6 right-6 z-50">
+                  <button
+                    onClick={() => setShowHintPopup(!showHintPopup)}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-xl shadow-lg transition-all transform hover:scale-105 flex items-center space-x-2"
+                  >
+                    <span className="text-sm font-medium">💡 Hint</span>
+                    {!showHintPopup && (
+                      <div className="w-2 h-2 bg-purple-300 rounded-full animate-pulse"></div>
+                    )}
+                  </button>
+                  
+                  {/* Hint Popup */}
+                  {showHintPopup && (
+                    <div className="absolute bottom-full right-0 mb-2 w-80 bg-white rounded-xl shadow-xl border border-purple-200 p-4">
+                      <div className="flex items-start space-x-3">
+                        <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-purple-600">
+                            {currentHint.type === 'suggestion' ? '💡' : 
+                             currentHint.type === 'encouragement' ? '🌟' : '💭'}
+                          </span>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium text-gray-900 mb-1">Conversation Insight</h3>
+                          <p className="text-sm text-gray-700 leading-relaxed">{currentHint.message}</p>
+                        </div>
+                        <button
+                          onClick={() => setCurrentHint(null)}
+                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                          title="Dismiss hint"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                      {/* Arrow pointing down to button */}
+                      <div className="absolute top-full right-4 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-purple-200"></div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
