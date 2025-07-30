@@ -219,23 +219,21 @@ export default function Onboarding() {
                 {renderStepContent()}
               </motion.div>
             </AnimatePresence>
+
+            {currentStep !== 'welcome' && currentStep !== 'complete' && (
+              <div className="mt-16 text-center">
+                <button
+                  onClick={skipOnboarding}
+                  className="text-neutral-500 hover:text-neutral-700 font-medium transition-colors"
+                >
+                  I'll do this later, skip for now
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Skip Onboarding Button - Fixed at bottom */}
-        {currentStep !== 'complete' && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-neutral-200 p-6">
-            <div className="max-w-4xl mx-auto flex justify-center">
-              <button
-                onClick={skipOnboarding}
-                className="group bg-gradient-to-r from-neutral-600 to-neutral-700 hover:from-neutral-700 hover:to-neutral-800 text-white font-medium px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3"
-              >
-                <span>Skip onboarding</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-              </button>
-            </div>
-          </div>
-        )}
+        {/* The fixed skip button has been removed from here to prevent overlap */}
       </div>
     </>
   );
