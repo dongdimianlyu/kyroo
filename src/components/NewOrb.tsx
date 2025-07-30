@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useEffect } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { vertexShader, fragmentShader } from './orb-shader';
@@ -15,7 +15,7 @@ const OrbMesh: React.FC<NewOrbProps> = ({ isSpeaking = false, isListening = fals
   const uniforms = useMemo(
     () => ({
       u_time: { value: 0 },
-      u_intensity: { value: 0.15 }, // Reduced for stability
+      u_intensity: { value: 0.25 }, // Increased for more liquid motion
       u_isSpeaking: { value: false },
       u_isListening: { value: false },
     }),
@@ -24,7 +24,7 @@ const OrbMesh: React.FC<NewOrbProps> = ({ isSpeaking = false, isListening = fals
 
   useFrame((state) => {
     if (materialRef.current) {
-      // Smooth time progression
+      // Smooth, continuous time progression for liquid motion
       materialRef.current.uniforms.u_time.value = state.clock.getElapsedTime();
       materialRef.current.uniforms.u_isSpeaking.value = isSpeaking;
       materialRef.current.uniforms.u_isListening.value = isListening;
@@ -33,7 +33,7 @@ const OrbMesh: React.FC<NewOrbProps> = ({ isSpeaking = false, isListening = fals
 
   return (
     <mesh ref={meshRef}>
-      <sphereGeometry args={[1.2, 64, 64]} />
+      <sphereGeometry args={[1.3, 128, 128]} />
       <shaderMaterial
         ref={materialRef}
         attach="material"
@@ -49,11 +49,11 @@ const OrbMesh: React.FC<NewOrbProps> = ({ isSpeaking = false, isListening = fals
 
 const NewOrb: React.FC<NewOrbProps> = (props) => {
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: '300px' }}>
+    <div style={{ width: '100%', height: '100%', minHeight: '320px' }}>
       <Canvas
         camera={{ 
-          position: [0, 0, 3.5], 
-          fov: 45,
+          position: [0, 0, 3.8], 
+          fov: 42,
           near: 0.1,
           far: 1000
         }}
@@ -65,14 +65,16 @@ const NewOrb: React.FC<NewOrbProps> = (props) => {
         gl={{ 
           alpha: true,
           antialias: true,
-          powerPreference: "high-performance"
+          powerPreference: "high-performance",
+          precision: "highp"
         }}
         dpr={Math.min(window.devicePixelRatio, 2)}
       >
-        {/* Optimized lighting setup */}
-        <ambientLight intensity={0.4} />
-        <directionalLight position={[2, 2, 5]} intensity={0.6} />
-        <pointLight position={[-2, -2, -5]} intensity={0.3} />
+        {/* Soft, ethereal lighting for liquid effect */}
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[3, 3, 5]} intensity={0.8} />
+        <pointLight position={[-2, -2, -3]} intensity={0.4} color="#e6e6ff" />
+        <pointLight position={[2, -1, 3]} intensity={0.3} color="#ffe6f0" />
         
         <OrbMesh {...props} />
       </Canvas>
