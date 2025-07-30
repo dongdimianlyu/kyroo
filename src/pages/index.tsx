@@ -286,21 +286,7 @@ const HeroSection = () => {
           </LinearReveal>
         </LinearContainer>
 
-        {/* Hero image */}
-        <LinearReveal delay={0.9} className="mt-16">
-          <div className="relative max-w-3xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
-              <Image 
-                src="/orb.png"
-                alt="Kairoo Orb"
-                width={1200}
-                height={675}
-                layout="responsive"
-                priority
-              />
-            </div>
-          </div>
-        </LinearReveal>
+        {/* Hero image section removed */}
       </div>
     </section>
   );
