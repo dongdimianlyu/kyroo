@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React from 'react';
 import NewOrb from '../components/NewOrb';
+import { useRouter } from 'next/router';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -71,7 +71,7 @@ const FloatingOrb = React.memo(({ isSpeaking, isListening, loading, lastUserTran
       {(lastUserTranscript || currentTranscript) && (
         <div className="max-w-md text-center">
           <p className="text-sm text-slate-500/80 mb-3 font-medium">
-            {isListening && currentTranscript ? "Listening..." : "You said"}
+            {isListening && currentTranscript ? "Listening..." : ""}
           </p>
           <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/50 transition-all duration-300 hover:shadow-2xl">
             <p className="text-slate-700 italic leading-relaxed">
@@ -169,7 +169,6 @@ interface RealTimeHint {
 }
 
 function App() {
-  const router = useRouter();
   const [message, setMessage] = useState('');
   const [context, setContext] = useState('');
   const [activeNav, setActiveNav] = useState('Dashboard');
@@ -215,6 +214,13 @@ function App() {
   const synthesisRef = useRef<SpeechSynthesis | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const recognitionRunningRef = useRef<boolean>(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.view === 'practice') {
+      setActiveNav('Practice Scenarios');
+    }
+  }, [router.query]);
 
   // Ref to hold the latest state for callbacks to prevent stale closures
   const stateRef = useRef({
@@ -676,13 +682,6 @@ function App() {
     }
   }, [messages, scenario, anonId, evaluateProgress, speakText]);
 
-  // Handle URL navigation to specific tabs
-  useEffect(() => {
-    if (router.query.tab === 'practice') {
-      setActiveNav('Practice Scenarios');
-    }
-  }, [router.query.tab]);
-
   // Generate anonymous ID and set up speech recognition
   useEffect(() => {
     let id = localStorage.getItem('anonId');
@@ -1077,21 +1076,22 @@ function App() {
                       </label>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {difficultyLevels.map((level) => (
-                          <div
+                          <button
                             key={level.id}
-                            onClick={() => !loading && setSelectedDifficulty(level.id)}
-                            className={`p-4 rounded-xl border-2 transition-all text-left cursor-pointer ${
+                            onClick={() => setSelectedDifficulty(level.id)}
+                            className={`p-4 rounded-xl border-2 transition-all text-left ${
                               selectedDifficulty === level.id
                                 ? 'border-primary-500 bg-primary-50'
                                 : 'border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-25'
-                            } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            }`}
+                            disabled={loading}
                           >
                             <div className="flex items-center space-x-3 mb-2">
                               <span className="text-2xl">{level.icon}</span>
                               <span className="font-semibold text-neutral-900">{level.label}</span>
                             </div>
                             <p className="text-sm text-neutral-600">{level.description}</p>
-                          </div>
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -1103,21 +1103,23 @@ function App() {
                       </label>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {feelingStates.map((feeling) => (
-                          <div
+                          <button
                             key={feeling.id}
-                            onClick={() => !loading && setSelectedFeeling(feeling.id)}
+                            type="button"
+                            onClick={() => setSelectedFeeling(feeling.id)}
                             className={`w-full p-4 rounded-xl border-2 transition-all text-left cursor-pointer ${
                               selectedFeeling === feeling.id
-                                ? 'border-secondary-500 bg-secondary-50'
-                                : 'border-neutral-200 bg-white hover:border-secondary-300 hover:bg-secondary-25'
-                            } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                ? 'border-purple-500 bg-purple-50'
+                                : 'border-neutral-200 bg-white hover:border-purple-300 hover:bg-purple-50'
+                            }`}
+                            disabled={loading}
                           >
                             <div className="flex items-center space-x-3 mb-2">
                               <span className="text-2xl flex-shrink-0">{feeling.icon}</span>
                               <span className="font-semibold text-neutral-900 flex-1">{feeling.label}</span>
                             </div>
                             <p className="text-sm text-neutral-600">{feeling.description}</p>
-                          </div>
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -1309,96 +1311,63 @@ function App() {
                   <p className="text-error-600 text-sm">{error}</p>
                 </div>
               )}
-
-              {/* Conversation Insights Tooltip - Bottom Center */}
-              {hintsEnabled && currentHint && (
-                <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center p-4">
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowHintPopup(!showHintPopup)}
-                      className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-6 py-4 rounded-2xl shadow-xl transition-all transform hover:scale-105 flex items-center space-x-3 border border-purple-500"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <span className="text-lg">
-                          {currentHint.type === 'suggestion' ? '💡' : 
-                           currentHint.type === 'encouragement' ? '🌟' : '💭'}
-                        </span>
-                        <span className="text-sm font-semibold">Conversation Insights</span>
-                      </div>
-                      {!showHintPopup && (
-                        <div className="w-3 h-3 bg-purple-300 rounded-full animate-pulse"></div>
-                      )}
-                      <svg 
-                        className={`w-4 h-4 transition-transform ${showHintPopup ? 'rotate-180' : ''}`} 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                      </svg>
-                    </button>
-                    
-                    {/* Enhanced Hint Popup */}
-                    {showHintPopup && (
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 w-96 bg-white rounded-2xl shadow-2xl border border-purple-200 overflow-hidden">
-                        {/* Header */}
-                        <div className="bg-gradient-to-r from-purple-50 to-purple-100 px-6 py-4 border-b border-purple-200">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                <span className="text-purple-600 text-lg">
-                                  {currentHint.type === 'suggestion' ? '💡' : 
-                                   currentHint.type === 'encouragement' ? '🌟' : '💭'}
-                                </span>
-                              </div>
-                              <div>
-                                <h3 className="font-semibold text-gray-900">Conversation Analysis</h3>
-                                <p className="text-xs text-purple-600 capitalize">{currentHint.type}</p>
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => setCurrentHint(null)}
-                              className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-lg hover:bg-gray-100"
-                              title="Dismiss insight"
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                            </button>
-                          </div>
-                        </div>
-                        
-                        {/* Content */}
-                        <div className="px-6 py-5">
-                          <p className="text-gray-700 leading-relaxed text-sm">{currentHint.message}</p>
-                          
-                          {/* Progress indicator */}
-                          <div className="mt-4 pt-4 border-t border-gray-100">
-                            <div className="flex items-center justify-between text-xs text-gray-500">
-                              <span>Conversation progress</span>
-                              <span>{Math.floor(messages.length / 2)} exchanges</span>
-                            </div>
-                            <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                              <div 
-                                className="bg-gradient-to-r from-purple-500 to-purple-600 h-1.5 rounded-full transition-all duration-500"
-                                style={{ width: `${Math.min(100, (messages.length / 2) * 20)}%` }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Arrow pointing down to button */}
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white"></div>
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-t-6 border-l-transparent border-r-transparent border-t-purple-100 translate-y-[-2px]"></div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           )}
           </div>
         </main>
+
+        {/* Floating Hint Button - Bottom of page */}
+        {isSimulationActive && hintsEnabled && currentHint && (
+          <div 
+            className="fixed bottom-0 left-0 right-0 z-50 p-4 flex justify-center"
+            style={{ pointerEvents: 'none' }}
+          >
+            <div 
+              className={`bg-purple-600 text-white rounded-2xl shadow-2xl transition-all duration-300 ease-in-out transform cursor-pointer ${showHintPopup ? 'w-full max-w-lg' : 'w-auto'}`}
+              onClick={() => setShowHintPopup(!showHintPopup)}
+              style={{ pointerEvents: 'all' }}
+            >
+              {!showHintPopup ? (
+                <div className="p-4 flex items-center space-x-3">
+                  <span className="text-2xl">💡</span>
+                  <div>
+                    <h3 className="font-semibold">New Hint Available</h3>
+                    <p className="text-sm text-purple-200">Click to view</p>
+                  </div>
+                  <div className="w-2 h-2 bg-purple-300 rounded-full animate-pulse"></div>
+                </div>
+              ) : (
+                <div className="p-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <span className="text-2xl">
+                        {currentHint.type === 'suggestion' ? '💡' : 
+                          currentHint.type === 'encouragement' ? '🌟' : '💭'}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg mb-2">Conversation Insight</h3>
+                      <p className="text-purple-100 leading-relaxed">{currentHint.message}</p>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentHint(null);
+                        setShowHintPopup(false);
+                      }}
+                      className="text-purple-300 hover:text-white transition-colors"
+                      title="Dismiss hint"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
