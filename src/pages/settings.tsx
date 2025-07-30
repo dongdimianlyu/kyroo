@@ -152,10 +152,10 @@ export default function Settings() {
             While we work on these customization features, Kairoo is ready to help you understand and respond to messages with confidence.
           </p>
           <Link
-            href="/app"
+            href="/app?tab=practice"
             className="button-primary"
           >
-            Go to Message Analysis
+            Try Practice Scenarios
           </Link>
         </div>
       </main>
