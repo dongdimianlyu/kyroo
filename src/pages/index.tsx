@@ -288,7 +288,7 @@ const HeroSection = () => {
 
         {/* Hero image */}
         <LinearReveal delay={0.9} className="mt-16">
-          <div className="relative max-w-4xl mx-auto">
+          <div className="relative max-w-3xl mx-auto">
             <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
               <Image 
                 src="/orb.png"
