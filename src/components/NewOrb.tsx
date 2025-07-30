@@ -15,7 +15,7 @@ const OrbMesh: React.FC<NewOrbProps> = ({ isSpeaking = false, isListening = fals
   const uniforms = useMemo(
     () => ({
       u_time: { value: 0 },
-      u_intensity: { value: 0.25 }, // Increased for more liquid motion
+      u_intensity: { value: 0.6 }, // Much larger waves
       u_isSpeaking: { value: false },
       u_isListening: { value: false },
     }),
@@ -33,7 +33,7 @@ const OrbMesh: React.FC<NewOrbProps> = ({ isSpeaking = false, isListening = fals
 
   return (
     <mesh ref={meshRef}>
-      <sphereGeometry args={[1.3, 128, 128]} />
+      <sphereGeometry args={[1.0, 128, 128]} />
       <shaderMaterial
         ref={materialRef}
         attach="material"
@@ -52,8 +52,8 @@ const NewOrb: React.FC<NewOrbProps> = (props) => {
     <div style={{ width: '100%', height: '100%', minHeight: '320px' }}>
       <Canvas
         camera={{ 
-          position: [0, 0, 3.8], 
-          fov: 42,
+          position: [0, 0, 4.5], 
+          fov: 38,
           near: 0.1,
           far: 1000
         }}

@@ -4,50 +4,32 @@ export const vertexShader = `
   varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vPosition;
-  varying vec3 vWorldPosition;
 
-  // Multiple octave noise for liquid effect
+  // Stable noise function
   float noise(vec3 p) {
-    return sin(p.x * 1.2) * sin(p.y * 1.3) * sin(p.z * 1.1);
-  }
-  
-  float fbm(vec3 p) {
-    float value = 0.0;
-    float amplitude = 0.5;
-    float frequency = 1.0;
-    
-    // Multiple octaves for complex liquid motion
-    for(int i = 0; i < 4; i++) {
-      value += amplitude * noise(p * frequency);
-      frequency *= 2.0;
-      amplitude *= 0.5;
-    }
-    return value;
+    return sin(p.x * 2.1) * sin(p.y * 1.7) * sin(p.z * 1.9);
   }
 
   void main() {
     vUv = uv;
     vPosition = position;
     
-    // Create flowing liquid displacement
+    // Create large, flowing waves
     vec3 pos = position;
-    float time = u_time * 0.5;
+    float time = u_time * 0.4;
     
-    // Multiple wave layers for ocean-like motion
-    float wave1 = fbm(pos * 1.5 + vec3(time, time * 0.7, time * 0.3));
-    float wave2 = fbm(pos * 2.3 + vec3(time * 0.8, time * 1.2, time * 0.6));
-    float wave3 = fbm(pos * 0.8 + vec3(time * 0.4, time * 0.9, time * 1.1));
+    // Large primary waves
+    float wave1 = noise(pos * 0.8 + vec3(time * 1.2, time * 0.9, time * 0.7));
+    float wave2 = noise(pos * 1.5 + vec3(time * 0.8, time * 1.1, time * 0.6));
+    float wave3 = noise(pos * 2.2 + vec3(time * 0.5, time * 0.7, time * 1.0));
     
-    // Combine waves for complex liquid motion
-    float displacement = (wave1 * 0.4 + wave2 * 0.3 + wave3 * 0.3) * u_intensity;
+    // Combine for big wave displacement
+    float displacement = (wave1 * 0.6 + wave2 * 0.3 + wave3 * 0.1) * u_intensity;
     
-    // Apply displacement along normal for liquid surface effect
+    // Apply displacement
     pos += normal * displacement;
     
-    vec4 worldPosition = modelMatrix * vec4(pos, 1.0);
-    vWorldPosition = worldPosition.xyz;
     vNormal = normalize(normalMatrix * normal);
-    
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   }
 `;
@@ -59,62 +41,53 @@ export const fragmentShader = `
   varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vPosition;
-  varying vec3 vWorldPosition;
 
-  // Noise function for surface details
+  // Simple noise for color variation
   float noise(vec3 p) {
-    return sin(p.x * 1.2) * sin(p.y * 1.3) * sin(p.z * 1.1);
+    return sin(p.x * 2.1) * sin(p.y * 1.7) * sin(p.z * 1.9);
   }
 
   void main() {
-    // Light, dreamy colors inspired by the reference
-    vec3 lightPink = vec3(1.0, 0.85, 0.9);     // Very light pink
-    vec3 lightPurple = vec3(0.9, 0.8, 1.0);    // Very light purple  
-    vec3 lightBlue = vec3(0.8, 0.9, 1.0);      // Very light blue
-    vec3 white = vec3(0.98, 0.98, 1.0);        // Slightly blue-tinted white
+    // VIBRANT, SATURATED COLORS
+    vec3 brightPink = vec3(1.0, 0.4, 0.8);      // Bright pink
+    vec3 brightPurple = vec3(0.6, 0.3, 1.0);    // Bright purple
+    vec3 brightBlue = vec3(0.3, 0.6, 1.0);      // Bright blue
+    vec3 brightCyan = vec3(0.4, 0.9, 1.0);      // Bright cyan
     
-    // Create flowing color transitions
+    // Create flowing color patterns
     float time = u_time * 0.3;
-    vec3 noisePos = vWorldPosition * 2.0 + vec3(time, time * 0.7, time * 0.5);
+    vec3 colorPos = vPosition * 1.5 + vec3(time, time * 0.8, time * 0.6);
     
-    float colorNoise1 = noise(noisePos) * 0.5 + 0.5;
-    float colorNoise2 = noise(noisePos * 1.7 + vec3(1.0, 2.0, 3.0)) * 0.5 + 0.5;
-    float colorNoise3 = noise(noisePos * 0.8 + vec3(4.0, 5.0, 6.0)) * 0.5 + 0.5;
+    float colorMix1 = noise(colorPos) * 0.5 + 0.5;
+    float colorMix2 = noise(colorPos * 1.3 + vec3(10.0)) * 0.5 + 0.5;
     
-    // Blend colors based on position and noise for liquid effect
-    vec3 color1 = mix(lightPink, lightPurple, colorNoise1);
-    vec3 color2 = mix(lightBlue, white, colorNoise2);
-    vec3 baseColor = mix(color1, color2, colorNoise3);
+    // Blend vibrant colors
+    vec3 color1 = mix(brightPink, brightPurple, colorMix1);
+    vec3 color2 = mix(brightBlue, brightCyan, colorMix2);
+    vec3 baseColor = mix(color1, color2, sin(time + vUv.y * 3.14159) * 0.5 + 0.5);
     
-    // Add subtle gradient based on UV coordinates
-    float gradientFactor = smoothstep(0.0, 1.0, vUv.y);
-    baseColor = mix(baseColor, lightBlue, gradientFactor * 0.3);
+    // Strong lighting for visibility
+    vec3 lightDir = normalize(vec3(1.0, 1.0, 2.0));
+    float light = max(dot(vNormal, lightDir), 0.2);
     
-    // Lighting for depth and dimension
-    vec3 lightDirection = normalize(vec3(1.0, 1.0, 2.0));
-    float lightIntensity = max(dot(vNormal, lightDirection), 0.4);
-    
-    // Fresnel effect for glowing edges
+    // Fresnel glow
     float fresnel = 1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0)));
-    fresnel = pow(fresnel, 1.5);
+    fresnel = pow(fresnel, 1.2);
     
-    // Surface reflection highlights
-    float surfaceDetail = noise(vWorldPosition * 8.0 + u_time * 0.5) * 0.1 + 0.9;
+    // Combine with strong brightness
+    vec3 finalColor = baseColor * light;
+    finalColor += fresnel * vec3(1.0, 0.9, 1.0) * 0.6;
     
-    // Combine all effects
-    vec3 finalColor = baseColor * lightIntensity * surfaceDetail;
-    finalColor += fresnel * white * 0.4;
+    // Boost overall brightness significantly
+    finalColor *= 1.4;
     
-    // Subtle state changes (no harsh effects)
+    // State effects
     if (u_isSpeaking) {
-      finalColor += lightPink * 0.08;
+      finalColor += brightPink * 0.15;
     }
     if (u_isListening) {
-      finalColor += lightBlue * 0.05;
+      finalColor += brightBlue * 0.1;
     }
-    
-    // Ensure brightness and ethereal quality
-    finalColor = mix(finalColor, white, 0.1);
     
     gl_FragColor = vec4(finalColor, 1.0);
   }
