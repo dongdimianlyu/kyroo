@@ -3,12 +3,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { vertexShader, fragmentShader } from './orb-shader';
 
-interface NewOrbProps {
-  isSpeaking?: boolean;
-  isListening?: boolean;
-}
-
-const OrbMesh: React.FC<NewOrbProps> = ({ isSpeaking = false, isListening = false }) => {
+const OrbMesh: React.FC = () => {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
 
@@ -16,8 +11,6 @@ const OrbMesh: React.FC<NewOrbProps> = ({ isSpeaking = false, isListening = fals
     () => ({
       u_time: { value: 0 },
       u_intensity: { value: 0.6 }, // Much larger waves
-      u_isSpeaking: { value: false },
-      u_isListening: { value: false },
     }),
     []
   );
@@ -26,8 +19,6 @@ const OrbMesh: React.FC<NewOrbProps> = ({ isSpeaking = false, isListening = fals
     if (materialRef.current) {
       // Smooth, continuous time progression for liquid motion
       materialRef.current.uniforms.u_time.value = state.clock.getElapsedTime();
-      materialRef.current.uniforms.u_isSpeaking.value = isSpeaking;
-      materialRef.current.uniforms.u_isListening.value = isListening;
     }
   });
 
@@ -47,7 +38,7 @@ const OrbMesh: React.FC<NewOrbProps> = ({ isSpeaking = false, isListening = fals
   );
 };
 
-const NewOrb: React.FC<NewOrbProps> = (props) => {
+const NewOrb: React.FC = () => {
   return (
     <div style={{ width: '100%', height: '100%', minHeight: '320px' }}>
       <Canvas
@@ -76,7 +67,7 @@ const NewOrb: React.FC<NewOrbProps> = (props) => {
         <pointLight position={[-2, -2, -3]} intensity={0.4} color="#e6e6ff" />
         <pointLight position={[2, -1, 3]} intensity={0.3} color="#ffe6f0" />
         
-        <OrbMesh {...props} />
+        <OrbMesh />
       </Canvas>
     </div>
   );

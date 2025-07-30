@@ -36,8 +36,6 @@ export const vertexShader = `
 
 export const fragmentShader = `
   uniform float u_time;
-  uniform bool u_isSpeaking;
-  uniform bool u_isListening;
   varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vPosition;
@@ -80,14 +78,6 @@ export const fragmentShader = `
     
     // Boost overall brightness significantly
     finalColor *= 1.4;
-    
-    // State effects
-    if (u_isSpeaking) {
-      finalColor += brightPink * 0.15;
-    }
-    if (u_isListening) {
-      finalColor += brightBlue * 0.1;
-    }
     
     gl_FragColor = vec4(finalColor, 1.0);
   }

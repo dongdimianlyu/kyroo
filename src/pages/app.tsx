@@ -760,10 +760,7 @@ function App() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
         {/* Advanced Futuristic Orb */}
         <div className="w-64 h-64">
-          <NewOrb 
-            isSpeaking={isSpeaking}
-            isListening={isListening}
-          />
+          <NewOrb />
         </div>
 
         {/* Live transcript with premium styling */}
