@@ -124,7 +124,7 @@ Begin the conversation now, playing your role.`;
         messages: [
           {
             role: "system",
-            content: "You are a realistic conversation simulator that creates authentic teenage social interactions. You must respond with valid JSON only. Make conversations feel natural and genuine while maintaining a safe, supportive environment. Use realistic speech patterns and natural reactions."
+            content: "You are a realistic conversation simulator that creates authentic teenage social interactions. You must respond with ONLY valid JSON in this exact format: {\"sceneDescription\": \"brief scene context\", \"firstMessage\": \"your character's opening message\"}. Make conversations feel natural and genuine while maintaining a safe, supportive environment. Use realistic speech patterns and natural reactions."
           },
           {
             role: "user",
@@ -140,7 +140,13 @@ Begin the conversation now, playing your role.`;
         throw new Error('No response content from OpenAI');
       }
 
-      let startResult: { sceneDescription?: string; firstMessage?: string; message?: string };
+      let startResult: { 
+        sceneDescription?: string; 
+        firstMessage?: string; 
+        message?: string;
+        dialogue?: Array<{[key: string]: string}>;
+        other_person?: string;
+      };
       let aiMessage: string = '';
       try {
         // Log the raw response for debugging
@@ -163,8 +169,21 @@ Begin the conversation now, playing your role.`;
         
         startResult = JSON.parse(cleanedResponse);
         
-        // Validate required fields - handle both 'message' and 'firstMessage'
+        // Validate required fields - handle multiple response formats
         aiMessage = startResult.message || startResult.firstMessage || '';
+        
+        // Handle dialogue array format
+        if (!aiMessage && startResult.dialogue && Array.isArray(startResult.dialogue) && startResult.dialogue.length > 0) {
+          const dialogueEntry = startResult.dialogue[0];
+          if (dialogueEntry) {
+            // Extract the first message from any key in the dialogue object
+            const messageKeys = Object.keys(dialogueEntry);
+            if (messageKeys.length > 0) {
+              aiMessage = dialogueEntry[messageKeys[0]];
+            }
+          }
+        }
+        
         if (!aiMessage) {
           throw new Error('Missing AI message in response');
         }
@@ -187,13 +206,14 @@ Begin the conversation now, playing your role.`;
         // Enhanced error handling - try to extract content manually
         try {
           // Try to extract values using regex as a last resort
-          const sceneMatch = responseContent.match(/"sceneDescription":\s*"([^"]+)"/);
+          const sceneMatch = responseContent.match(/"scene_description":\s*"([^"]+)"/);
           const messageMatch = responseContent.match(/"firstMessage":\s*"([^"]+)"/);
+          const dialogueMatch = responseContent.match(/"dialogue":\s*\[\s*\{\s*"[^"]+"\s*:\s*"([^"]+)"/);
           
-          if (sceneMatch && messageMatch) {
+          if (sceneMatch && (messageMatch || dialogueMatch)) {
             startResult = {
               sceneDescription: sceneMatch[1],
-              firstMessage: messageMatch[1]
+              firstMessage: messageMatch?.[1] || dialogueMatch?.[1] || ''
             };
             console.log('Successfully extracted content using regex fallback');
           } else {
