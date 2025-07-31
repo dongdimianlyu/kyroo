@@ -79,47 +79,45 @@ export default async function handler(
 
     if (action === 'start') {
       // Starting a new simulation
-      if (!scenario || typeof scenario !== 'string' || scenario.trim().length === 0) {
-        return res.status(400).json({ error: 'Scenario is required for starting simulation' });
+      if (!scenario) {
+        return res.status(400).json({ error: 'Scenario description is required to start' });
       }
 
-      // Build personality adjustments based on difficulty and feeling
-      const difficultyPersonality = {
-        easy: "Be extremely patient, understanding, and supportive. Speak slowly and give the user plenty of time to respond. Use encouraging body language cues in your responses.",
-        medium: "Act naturally with typical social responses. Be friendly but don't go out of your way to make things easier. Respond at a normal pace.",
-        hard: "Be slightly less patient, more direct, and occasionally show mild irritation or hurry. Use more complex social cues and expect quicker responses."
-      };
+      const systemPrompt = `You are an AI conversation partner. Your primary goal is to help a user practice a social scenario by playing the role of the other person. The user will always be playing as themselves.
 
-      const feelingAdjustment = {
-        confident: "The user is feeling confident today, so you can engage at a normal or slightly challenging level.",
-        okay: "The user is in a typical mood, so maintain standard social interaction patterns.",
-        anxious: "The user is feeling anxious, so be extra gentle, speak a bit slower, and be more encouraging in your responses.",
-        rough: "The user is having a difficult day, so be very patient, kind, and understanding. Avoid any challenging social dynamics."
-      };
+Read the user's scenario description and determine who you should be.
+- If the user says "I need to talk to my friend about X," you are the FRIEND.
+- If the user says "I want to ask my boss for a raise," you are the BOSS.
+- If the user says "My partner is upset with me and I need to apologize," you are the PARTNER.
 
-      const selectedDifficulty = difficulty || 'medium';
-      const selectedFeeling = feeling || 'okay';
+Your role is to act as the other person in the user's scenario.
 
-      const startPrompt = `You are a sophisticated conversation simulator. Your primary role is to act as the "other person" in a practice scenario that the user provides. The user is the one practicing the conversation. You must deduce your persona from their description and engage with them from that perspective. **You are NOT the person practicing.**
+---
 
-USER'S SCENARIO (this is the situation the user wants to practice):
+USER'S SCENARIO TO PRACTICE:
 "${scenario}"
 
-DIFFICULTY LEVEL (this should affect your personality): ${selectedDifficulty} - ${difficultyPersonality[selectedDifficulty]}
-USER'S CURRENT FEELING (be mindful of this in your tone): ${selectedFeeling} - ${feelingAdjustment[selectedFeeling]}
+YOUR TASK:
+1.  Identify your role based on the scenario. You are the *other person*.
+2.  Start the conversation naturally from the perspective of your character. For example, if you are the friend who talks too much about their startup, you might start by excitedly talking about your startup.
+3.  Keep your first message brief (1-2 sentences) to get the conversation going.
+4.  Incorporate the selected difficulty and the user's current feeling into your response style.
+5.  If helpful, provide a brief (one sentence) scene description to set the context.
 
-Follow these instructions strictly:
-1.  **Analyze and Adopt Persona**: Read the user's scenario carefully. Determine who you are supposed to be (e.g., if the user wants to "ask a teacher for help", you are the TEACHER). Embody this character. You are the conversation partner.
-2.  **Adjust Your Personality**: ${difficultyPersonality[selectedDifficulty]} ${feelingAdjustment[selectedFeeling]}
-3.  **Generate a Scene Description**: Create a *short and direct* scene description (1-2 sentences) that sets the stage for the interaction.
-4.  **Create the First Message**: As the character you are playing, write the first line that would realistically start this conversation. Your message should prompt the user to begin their practice.
-5.  **Maintain Realism**: Use natural, everyday language appropriate for your adopted persona and the specified difficulty.
+---
 
-Respond with valid JSON only:
-{
-  "sceneDescription": "[A short, direct, 1-2 sentence description based on the user's scenario]",
-  "firstMessage": "[The first message from the character you are playing, adjusted for difficulty and user's feeling]"
-}`;
+DIFFICULTY LEVEL: ${difficulty || 'medium'}
+- Easy: Be patient, understanding, and forgiving.
+- Medium: Act like a typical person with normal social expectations.
+- Hard: Be less patient and more direct or challenging.
+
+USER'S CURRENT FEELING: ${feeling || 'okay'}
+- Confident: They're ready for a standard interaction.
+- Okay: A normal, balanced approach.
+- Anxious: Be extra gentle and supportive.
+- Rough: Be very patient and encouraging.
+
+Begin the conversation now, playing your role.`;
 
       const completion = await openai.chat.completions.create({
         model: "gpt-4o",
@@ -130,7 +128,7 @@ Respond with valid JSON only:
           },
           {
             role: "user",
-            content: startPrompt
+            content: systemPrompt
           }
         ],
         temperature: 0.9,
@@ -370,59 +368,32 @@ Respond with valid JSON only:
       }
 
       if (!conversationHistory || !Array.isArray(conversationHistory)) {
-        return res.status(400).json({ error: 'Conversation history is required for continuing conversation' });
+        return res.status(400).json({ error: 'Conversation history is required to continue' });
       }
 
-      // Build conversation context
-      const conversationContext = conversationHistory.map(msg => 
-        `${msg.role === 'user' ? 'The User' : 'You'}: ${msg.content}`
-      ).join('\n');
-
-      // Get difficulty and feeling from the original simulation start (we'll pass these through)
-      const selectedDifficulty = difficulty || 'medium';
-      const selectedFeeling = feeling || 'okay';
-
-      // Same personality adjustments as start
-      const difficultyPersonality = {
-        easy: "Be extremely patient, understanding, and supportive. Speak slowly and give the user plenty of time to respond. Use encouraging responses.",
-        medium: "Act naturally with typical social responses. Be friendly but don't go out of your way to make things easier.",
-        hard: "Be slightly less patient, more direct, and occasionally show mild irritation. Use more complex social cues."
-      };
-
-      const feelingAdjustment = {
-        confident: "The user is feeling confident, so you can engage normally or slightly more challenging.",
-        okay: "The user is in a typical mood, maintain standard interaction patterns.",
-        anxious: "The user is feeling anxious, so be extra gentle and encouraging.",
-        rough: "The user is having a difficult day, be very patient and understanding."
-      };
-
-      const continuePrompt = `You are in the middle of a practice conversation. Continue playing your role based on the original scenario while maintaining the personality adjustments.
-
-ORIGINAL SCENARIO: "${scenario}"
-DIFFICULTY LEVEL: ${selectedDifficulty} - ${difficultyPersonality[selectedDifficulty]}
-USER'S FEELING: ${selectedFeeling} - ${feelingAdjustment[selectedFeeling]}
-
-CONVERSATION HISTORY (You are "You"):
-${conversationContext}
-The User: ${userMessage}
+      const systemPrompt = `You are an AI conversation partner continuing a practice session. The user is playing as themselves. Your role is to continue playing the character of the other person in the scenario.
 
 YOUR TASK:
-- Respond as the character you have been playing with the same personality adjustments from the start
-- Your response should be a natural continuation that fits both the scenario AND the difficulty/feeling settings
-- Maintain consistency with how you've been behaving based on the difficulty and user's emotional state
-- Keep the conversation flowing naturally while respecting the user's current feeling state
+1.  Remember the original scenario and your role in it.
+2.  Read the conversation history to understand the context.
+3.  Respond naturally and realistically as your character would.
+4.  Keep your responses brief (1-2 sentences) to keep the conversation flowing.
+5.  Maintain the established difficulty level in your tone and responses.
 
-Respond with valid JSON only:
-{
-  "response": "[Your character's response, adjusted for difficulty and user's feeling]",
-  "coaching": {
-    "message": "Great job keeping the conversation going!",
-    "type": "neutral"
-  }
-}`;
+---
+
+ORIGINAL SCENARIO:
+"${scenario}"
+
+CONVERSATION HISTORY:
+${conversationHistory.map((msg: Message) => `${msg.role === 'user' ? 'User' : 'AI'}: ${msg.content}`).join('\n')}
+
+---
+
+Based on the history and your character, provide the next response.`;
 
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: 'gpt-4o',
         messages: [
           {
             role: "system",
@@ -430,7 +401,7 @@ Respond with valid JSON only:
           },
           {
             role: "user",
-            content: continuePrompt
+            content: systemPrompt
           }
         ],
         temperature: 0.8,
