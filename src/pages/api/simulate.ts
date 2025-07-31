@@ -140,7 +140,8 @@ Begin the conversation now, playing your role.`;
         throw new Error('No response content from OpenAI');
       }
 
-      let startResult: { sceneDescription: string; firstMessage: string };
+      let startResult: { sceneDescription?: string; firstMessage?: string; message?: string };
+      let aiMessage: string = '';
       try {
         // Log the raw response for debugging
         console.log('OpenAI start response:', responseContent);
@@ -162,14 +163,22 @@ Begin the conversation now, playing your role.`;
         
         startResult = JSON.parse(cleanedResponse);
         
-        // Validate required fields
-        if (!startResult.sceneDescription || !startResult.firstMessage) {
-          throw new Error('Missing required fields in AI response');
+        // Validate required fields - handle both 'message' and 'firstMessage'
+        aiMessage = startResult.message || startResult.firstMessage || '';
+        if (!aiMessage) {
+          throw new Error('Missing AI message in response');
         }
         
         // Clean up any formatting in the actual content
-        startResult.sceneDescription = startResult.sceneDescription.trim();
-        startResult.firstMessage = startResult.firstMessage.trim();
+        if (startResult.sceneDescription) {
+          startResult.sceneDescription = startResult.sceneDescription.trim();
+        }
+        if (startResult.firstMessage) {
+          startResult.firstMessage = startResult.firstMessage.trim();
+        }
+        if (startResult.message) {
+          startResult.message = startResult.message.trim();
+        }
         
       } catch (parseError) {
         console.error('Failed to parse OpenAI start response:', responseContent);
@@ -199,8 +208,8 @@ Begin the conversation now, playing your role.`;
       }
 
       return res.status(200).json({
-        sceneDescription: startResult.sceneDescription,
-        aiResponse: startResult.firstMessage,
+        sceneDescription: startResult.sceneDescription || '',
+        aiResponse: aiMessage,
         coaching: {
           message: "Great! You're starting a practice conversation. Take your time to think about how you want to respond.",
           type: 'neutral'
