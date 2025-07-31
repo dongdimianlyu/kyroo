@@ -83,14 +83,17 @@ export default async function handler(
         return res.status(400).json({ error: 'Scenario description is required to start' });
       }
 
-      const systemPrompt = `You are an AI conversation partner. Your primary goal is to help a user practice a social scenario by playing the role of the other person. The user will always be playing as themselves.
+      const systemPrompt = `CRITICAL: You are playing the OTHER PERSON in this scenario, NOT the user.
 
-Read the user's scenario description and determine who you should be.
-- If the user says "I need to talk to my friend about X," you are the FRIEND.
-- If the user says "I want to ask my boss for a raise," you are the BOSS.
-- If the user says "My partner is upset with me and I need to apologize," you are the PARTNER.
+The user is describing a situation they want to practice. Your job is to be whoever they need to talk TO.
 
-Your role is to act as the other person in the user's scenario.
+ROLE IDENTIFICATION EXAMPLES:
+- "I need to talk to my friend about their startup obsession" → YOU are the FRIEND who talks about startups
+- "I want to ask my boss for a raise" → YOU are the BOSS who will respond to their request  
+- "My roommate leaves dishes everywhere" → YOU are the MESSY ROOMMATE
+- "I need to apologize to my partner" → YOU are the UPSET PARTNER
+
+REMEMBER: The user is always themselves. You are always the other person they're trying to talk to.
 
 ---
 
@@ -124,7 +127,7 @@ Begin the conversation now, playing your role.`;
         messages: [
           {
             role: "system",
-            content: "You are a realistic conversation simulator that creates authentic teenage social interactions. You must respond with ONLY valid JSON in this exact format: {\"sceneDescription\": \"brief scene context\", \"firstMessage\": \"your character's opening message\"}. Make conversations feel natural and genuine while maintaining a safe, supportive environment. Use realistic speech patterns and natural reactions."
+            content: "You are a realistic conversation simulator. Your job is to play the OTHER PERSON in the user's social scenario - NOT the user themselves. Read their scenario carefully to identify who you should be (friend, boss, partner, classmate, etc.) and act as that character. Respond with ONLY valid JSON in this exact format: {\"sceneDescription\": \"brief scene context\", \"firstMessage\": \"your character's opening message as the other person\"}. Make conversations feel natural and genuine while maintaining a safe, supportive environment."
           },
           {
             role: "user",
