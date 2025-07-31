@@ -779,7 +779,7 @@ function App() {
 
           const timer = setTimeout(() => {
             setTranscriptToSend(fullTranscript.trim());
-          }, 500); // faster than 1.5s
+          }, 150); // much faster response
 
           setSilenceTimer(timer);
         }
@@ -794,9 +794,17 @@ function App() {
         recognitionRunningRef.current = false;
         setIsListening(false);
         
-        // If recognition ends and we have a transcript that hasn't been sent by timer, send it now.
+        // If recognition ends and we have a transcript, send it immediately (don't wait for timer)
         if (currentTranscript.trim() && !loading) {
-          setTranscriptToSend(currentTranscript.trim());
+          // Clear any pending silence timer
+          if (stateRef.current.silenceTimer) {
+            clearTimeout(stateRef.current.silenceTimer);
+            setSilenceTimer(null);
+          }
+          
+          // Send the message immediately when recognition stops
+          sendVoiceMessage(currentTranscript.trim());
+          setCurrentTranscript('');
         } else {
           // Otherwise, restart listening if appropriate
           if (isSimulationActive && !isSpeaking && !loading) {
@@ -826,10 +834,10 @@ function App() {
   // Auto-start listening after AI finishes speaking
   useEffect(() => {
     if (!isSpeaking && isSimulationActive && !loading && !showSummary && !isListening) {
-      // Small delay to allow for natural conversation flow
+      // Faster restart for more responsive conversation
       const timer = setTimeout(() => {
         startListening();
-      }, 1000);
+      }, 300);
       
       return () => clearTimeout(timer);
     }
