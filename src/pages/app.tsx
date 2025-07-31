@@ -462,30 +462,34 @@ function App() {
     leftEmoji: string;
     rightEmoji: string;
   }) => (
-    <div className="space-y-3">
-      <h4 className="text-sm font-medium text-neutral-700">{label}</h4>
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs text-neutral-500">
-          <div className="flex items-center space-x-1">
-            <span>{leftEmoji}</span>
-            <span>{leftLabel}</span>
+    <div className="space-y-4">
+      <h4 className="text-sm font-semibold text-neutral-800">{label}</h4>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between text-xs text-neutral-600">
+          <div className="flex items-center gap-2">
+            <span className="text-base">{leftEmoji}</span>
+            <span className="font-medium">{leftLabel}</span>
           </div>
-          <div className="flex items-center space-x-1">
-            <span>{rightLabel}</span>
-            <span>{rightEmoji}</span>
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{rightLabel}</span>
+            <span className="text-base">{rightEmoji}</span>
           </div>
         </div>
-        <div className="w-full bg-neutral-200 rounded-full h-2.5">
-          <div 
-            className={`h-2.5 rounded-full transition-all duration-300 ${
-              hasResults ? 'bg-secondary-600' : 'bg-neutral-400'
-            }`}
-            style={{ width: `${value}%` }}
-          ></div>
+        <div className="relative">
+          <div className="w-full bg-neutral-200 rounded-full h-3 shadow-inner">
+            <div 
+              className={`h-3 rounded-full transition-all duration-500 ease-out ${
+                hasResults 
+                  ? 'bg-gradient-to-r from-purple-500 to-purple-600 shadow-glow-purple' 
+                  : 'bg-neutral-400'
+              }`}
+              style={{ width: `${value}%` }}
+            ></div>
+          </div>
         </div>
         <div className="text-right">
-          <span className={`text-xs font-medium ${
-            hasResults ? 'text-neutral-700' : 'text-neutral-500'
+          <span className={`text-sm font-bold ${
+            hasResults ? 'text-purple-700' : 'text-neutral-500'
           }`}>
             {value}%
           </span>
@@ -1321,10 +1325,6 @@ function App() {
                   </button>
                 </div>
               </div>
-
-
-
-
 
               {/* Scene Description */}
               {sceneDescription && (

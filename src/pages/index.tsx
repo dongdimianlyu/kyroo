@@ -180,21 +180,21 @@ const Navigation = () => {
       transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? "bg-white/95 backdrop-blur-xl border-b border-gray-200/50 shadow-sm" 
+          ? "bg-white/95 backdrop-blur-xl border-b border-neutral-200/50 shadow-premium" 
           : "bg-transparent"
       }`}
     >
       <nav className="flex items-center justify-between p-6 lg:px-8 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-sm">K</span>
+          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-glow-purple">
+            <span className="text-white font-bold text-lg">K</span>
           </div>
-          <span className="text-xl font-semibold text-gray-900 tracking-tight">Kairoo</span>
+          <span className="text-xl font-bold text-neutral-900 tracking-tight">Kairoo</span>
         </Link>
         
         <Link 
           href="/onboarding" 
-          className="px-6 py-3 bg-gray-900 text-white text-sm font-medium rounded-xl hover:bg-gray-800 transition-colors duration-300 shadow-lg"
+          className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white text-sm font-semibold rounded-2xl hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
         >
           Get Started
         </Link>
@@ -210,15 +210,15 @@ const HeroSection = () => {
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-25 via-white to-neutral-50">
       {/* Background */}
       <motion.div 
         style={{ y, opacity }}
         className="absolute inset-0"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-50" />
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-200 rounded-full blur-3xl opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-25 via-white to-neutral-50" />
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl opacity-50" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-200 rounded-full blur-3xl opacity-40" />
         </div>
       </motion.div>
@@ -267,21 +267,21 @@ const HeroSection = () => {
             </p>
           </LinearReveal>
 
-          <LinearReveal delay={1.0} className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <LinearReveal delay={1.0} className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
             <Link 
               href="/onboarding" 
-              className="group px-8 py-4 bg-gray-900 text-white font-medium rounded-xl shadow-lg hover:bg-gray-800 transition-all duration-300 flex items-center gap-2"
+              className="group px-10 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200 flex items-center gap-3"
             >
               Start practicing conversations
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
             
             <Link 
               href="#features" 
-              className="group px-8 py-4 text-gray-700 font-medium rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 flex items-center gap-2"
+              className="group px-10 py-4 text-neutral-700 font-medium rounded-2xl border border-neutral-200/80 bg-white/80 backdrop-blur-sm hover:border-neutral-300 hover:bg-white hover:shadow-md active:scale-95 transition-all duration-200 flex items-center gap-3"
             >
               How it works
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
           </LinearReveal>
         </LinearContainer>
@@ -328,7 +328,7 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section id="features" className="py-24 bg-white">
+    <section id="features" className="py-24 bg-gradient-to-br from-neutral-50 to-white">
       <div className="max-w-7xl mx-auto px-6">
         <LinearReveal className="text-center mb-16">
           <div className="space-y-6">
@@ -358,17 +358,17 @@ const FeaturesSection = () => {
           </div>
         </LinearReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <LinearReveal key={feature.title} delay={index * 0.05}>
-              <div className="group p-8 bg-gray-50 rounded-2xl border border-gray-100 hover:border-gray-200 hover:bg-white hover:shadow-lg transition-all duration-300">
-                <div className="flex items-start space-x-4 mb-4">
-                  <div className="p-3 bg-violet-100 rounded-xl text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors duration-300">
+              <div className="group p-8 bg-white/80 backdrop-blur-sm rounded-2xl border border-neutral-200/50 shadow-premium hover:shadow-premium-lg hover:-translate-y-1 hover:border-neutral-300/60 transition-all duration-300">
+                <div className="flex items-start mb-6">
+                  <div className="p-3 bg-purple-100 rounded-2xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-glow-purple transition-all duration-300">
                     {feature.icon}
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-bold text-neutral-900 mb-4">{feature.title}</h3>
+                <p className="text-neutral-600 leading-relaxed">{feature.description}</p>
               </div>
             </LinearReveal>
           ))}
@@ -461,17 +461,17 @@ const ProductShowcase = () => {
 // CTA Section
 const CTASection = () => {
   return (
-    <section className="py-24 bg-gray-900 relative overflow-hidden">
+    <section className="py-24 bg-gradient-to-br from-neutral-900 to-neutral-800 relative overflow-hidden">
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-600 rounded-full blur-3xl opacity-20" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600 rounded-full blur-3xl opacity-20" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600 rounded-full blur-3xl opacity-30" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl opacity-25" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <LinearReveal>
-          <div className="space-y-8">
-            <div className="space-y-6">
-              <div className="space-y-1">
+          <div className="space-y-10">
+            <div className="space-y-8">
+              <div className="space-y-2">
                 <LinearTextReveal 
                   text="You don't have to"
                   className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-[-0.02em]"
@@ -486,7 +486,7 @@ const CTASection = () => {
                 />
               </div>
               <LinearReveal delay={0.4}>
-                <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                <p className="text-xl text-neutral-300 max-w-3xl mx-auto leading-relaxed">
                   Whether you're preparing for an important conversation, feeling uncertain about 
                   social cues, or wanting to practice expressing yourself clearly, Kairoo is here 
                   to support your growth.
@@ -497,7 +497,7 @@ const CTASection = () => {
             <LinearReveal delay={0.6}>
               <Link 
                 href="/onboarding" 
-                className="inline-flex items-center gap-3 px-8 py-4 bg-white text-gray-900 font-semibold rounded-xl shadow-lg hover:bg-gray-50 transition-colors duration-300"
+                className="inline-flex items-center gap-3 px-10 py-4 bg-white text-neutral-900 font-semibold rounded-2xl shadow-glow-purple-lg hover:bg-neutral-50 hover:shadow-2xl active:scale-95 transition-all duration-200"
               >
                 Start your growth journey
                 <ArrowRight className="w-5 h-5" />
@@ -513,17 +513,17 @@ const CTASection = () => {
 // Footer
 const Footer = () => {
   return (
-    <footer className="bg-white border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-6 py-16">
+    <footer className="bg-gradient-to-br from-neutral-50 to-white border-t border-neutral-200/50">
+      <div className="max-w-7xl mx-auto px-6 py-20">
         <LinearReveal>
           <div className="text-center">
-            <div className="flex items-center justify-center gap-3 mb-8">
-              <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-purple-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-sm">K</span>
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-glow-purple">
+                <span className="text-white font-bold text-lg">K</span>
               </div>
-              <span className="text-xl font-semibold text-gray-900">Kairoo</span>
+              <span className="text-2xl font-bold text-neutral-900">Kairoo</span>
             </div>
-            <p className="text-gray-500 text-sm">© 2024 Kairoo. All rights reserved.</p>
+            <p className="text-neutral-500 text-base font-medium">© 2024 Kairoo. All rights reserved.</p>
           </div>
         </LinearReveal>
       </div>
