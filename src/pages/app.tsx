@@ -585,7 +585,22 @@ function App() {
 
       if (!response.ok) {
         console.error('❌ ElevenLabs TTS failed, using browser fallback');
-        throw new Error('Voice generation failed');
+        // Fallback to browser TTS immediately without throwing an error
+        if (synthesisRef.current) {
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.rate = 0.85;
+          utterance.pitch = 0.9;
+          utterance.volume = 0.7;
+
+          utterance.onstart = () => {
+            setIsSpeaking(true);
+          };
+          utterance.onend = () => {
+            setIsSpeaking(false);
+          };
+          synthesisRef.current.speak(utterance);
+        }
+        return;
       }
 
       // Create audio from the response
@@ -744,20 +759,28 @@ function App() {
             interimTranscript += transcript;
           }
         }
-        
+
         const fullTranscript = finalTranscript || interimTranscript;
         if (fullTranscript.trim()) {
           setCurrentTranscript(fullTranscript.trim());
           setLastUserTranscript(fullTranscript.trim());
-          
+
+          // If it's a final transcript send immediately
+          if (finalTranscript.trim()) {
+            if (recognitionRef.current) recognitionRef.current.stop();
+            sendVoiceMessage(fullTranscript.trim());
+            setCurrentTranscript('');
+            return;
+          }
+
           if (stateRef.current.silenceTimer) {
             clearTimeout(stateRef.current.silenceTimer);
           }
-          
+
           const timer = setTimeout(() => {
             setTranscriptToSend(fullTranscript.trim());
-          }, 1500); // Changed to 1.5 seconds
-          
+          }, 500); // faster than 1.5s
+
           setSilenceTimer(timer);
         }
       };
