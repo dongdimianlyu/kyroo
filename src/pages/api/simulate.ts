@@ -21,6 +21,7 @@ interface SimulationRequest {
   conversationHistory?: Message[];
   difficulty?: 'easy' | 'medium' | 'hard';
   feeling?: 'confident' | 'okay' | 'anxious' | 'rough';
+  whoStartsFirst?: 'ai' | 'user';
   anonId: string;
 }
 
@@ -58,7 +59,7 @@ export default async function handler(
   }
 
   try {
-    const { action, scenario, userMessage, conversationHistory, difficulty, feeling, anonId }: SimulationRequest = req.body;
+    const { action, scenario, userMessage, conversationHistory, difficulty, feeling, whoStartsFirst, anonId }: SimulationRequest = req.body;
 
     // Validate input
     if (!anonId || typeof anonId !== 'string') {
@@ -187,7 +188,8 @@ Begin the conversation now, playing your role.`;
           }
         }
         
-        if (!aiMessage) {
+        // Only require AI message if AI starts first
+        if (whoStartsFirst !== 'user' && !aiMessage) {
           throw new Error('Missing AI message in response');
         }
         
@@ -230,14 +232,28 @@ Begin the conversation now, playing your role.`;
         }
       }
 
-      return res.status(200).json({
-        sceneDescription: startResult.sceneDescription || '',
-        aiResponse: aiMessage,
-        coaching: {
-          message: "Great! You're starting a practice conversation. Take your time to think about how you want to respond.",
-          type: 'neutral'
-        }
-      });
+      // Handle different starting scenarios
+      if (whoStartsFirst === 'user') {
+        // User starts first - return only scene description, no AI message
+        return res.status(200).json({
+          sceneDescription: startResult.sceneDescription || '',
+          aiResponse: '', // Empty since user starts first
+          coaching: {
+            message: "You're starting the conversation! Take a moment to think about how you want to begin.",
+            type: 'positive'
+          }
+        });
+      } else {
+        // AI starts first - return normal response with AI message
+        return res.status(200).json({
+          sceneDescription: startResult.sceneDescription || '',
+          aiResponse: aiMessage,
+          coaching: {
+            message: "Great! You're starting a practice conversation. Take your time to think about how you want to respond.",
+            type: 'neutral'
+          }
+        });
+      }
 
     } else if (action === 'end') {
       // Generate simulation summary

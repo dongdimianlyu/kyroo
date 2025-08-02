@@ -195,6 +195,7 @@ function App() {
   // Enhanced pre-conversation setup state
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel['id']>('medium');
   const [selectedFeeling, setSelectedFeeling] = useState<FeelingState['id']>('okay');
+  const [whoStartsFirst, setWhoStartsFirst] = useState<'ai' | 'user'>('ai');
   
   // Real-time hints state
   const [hintsEnabled, setHintsEnabled] = useState(true);
@@ -765,21 +766,15 @@ function App() {
           setCurrentTranscript(fullTranscript.trim());
           setLastUserTranscript(fullTranscript.trim());
 
-          // If it's a final transcript send immediately
-          if (finalTranscript.trim()) {
-            if (recognitionRef.current) recognitionRef.current.stop();
-            sendVoiceMessage(fullTranscript.trim());
-            setCurrentTranscript('');
-            return;
-          }
-
+          // Clear any existing silence timer
           if (stateRef.current.silenceTimer) {
             clearTimeout(stateRef.current.silenceTimer);
           }
 
+          // Always wait 2 seconds after last speech input before sending
           const timer = setTimeout(() => {
             setTranscriptToSend(fullTranscript.trim());
-          }, 150); // much faster response
+          }, 2000); // Always 2 seconds
 
           setSilenceTimer(timer);
         }
@@ -794,24 +789,11 @@ function App() {
         recognitionRunningRef.current = false;
         setIsListening(false);
         
-        // If recognition ends and we have a transcript, send it immediately (don't wait for timer)
-        if (currentTranscript.trim() && !loading) {
-          // Clear any pending silence timer
-          if (stateRef.current.silenceTimer) {
-            clearTimeout(stateRef.current.silenceTimer);
-            setSilenceTimer(null);
-          }
-          
-          // Send the message immediately when recognition stops
-          sendVoiceMessage(currentTranscript.trim());
-          setCurrentTranscript('');
-        } else {
-          // Otherwise, restart listening if appropriate
-          if (isSimulationActive && !isSpeaking && !loading) {
-            setTimeout(() => {
-              startListening();
-            }, 500);
-          }
+        // Restart listening if appropriate (don't send immediately on recognition end)
+        if (isSimulationActive && !isSpeaking && !loading) {
+          setTimeout(() => {
+            startListening();
+          }, 500);
         }
       };
       
@@ -906,6 +888,7 @@ function App() {
           scenario: scenario.trim(),
           difficulty: selectedDifficulty,
           feeling: selectedFeeling,
+          whoStartsFirst,
           anonId,
         }),
       });
@@ -917,19 +900,33 @@ function App() {
       const data: SimulationResponse = await response.json();
       
       setSceneDescription(data.sceneDescription || '');
-      setMessages([{
-        id: crypto.randomUUID(),
-        role: 'ai',
-        content: data.aiResponse,
-        timestamp: new Date(),
-      }]);
       setIsSimulationActive(true);
       setCurrentHint(null); // Clear any existing hints
       setRecentHints([]);
       setLastHintCheck(null);
       
-      // Speak the first AI message
-      await speakText(data.aiResponse);
+      if (whoStartsFirst === 'ai') {
+        // AI starts first - add AI message and speak it
+        setMessages([{
+          id: crypto.randomUUID(),
+          role: 'ai',
+          content: data.aiResponse,
+          timestamp: new Date(),
+        }]);
+        
+        // Speak the first AI message
+        await speakText(data.aiResponse);
+      } else {
+        // User starts first - just initialize empty messages and start listening
+        setMessages([]);
+        
+        // Start listening immediately for the user's first message
+        if (speechEnabled) {
+          setTimeout(() => {
+            startListening();
+          }, 500);
+        }
+      }
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to start simulation');
@@ -1183,6 +1180,45 @@ function App() {
                               <p className="text-sm text-neutral-600">{feeling.description}</p>
                             </button>
                           ))}
+                        </div>
+                      </div>
+
+                      {/* Who Starts First */}
+                      <div>
+                        <label className="block text-sm font-medium text-neutral-700 mb-4">
+                          Who should start the conversation?
+                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <button
+                            onClick={() => setWhoStartsFirst('ai')}
+                            className={`p-4 rounded-xl border-2 transition-all text-left ${
+                              whoStartsFirst === 'ai'
+                                ? 'border-primary-500 bg-primary-50'
+                                : 'border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-25'
+                            }`}
+                            disabled={loading}
+                          >
+                            <div className="flex items-center space-x-3 mb-2">
+                              <span className="text-2xl">🤖</span>
+                              <span className="font-semibold text-neutral-900">AI starts first</span>
+                            </div>
+                            <p className="text-sm text-neutral-600">The other person will begin the conversation</p>
+                          </button>
+                          <button
+                            onClick={() => setWhoStartsFirst('user')}
+                            className={`p-4 rounded-xl border-2 transition-all text-left ${
+                              whoStartsFirst === 'user'
+                                ? 'border-primary-500 bg-primary-50'
+                                : 'border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-25'
+                            }`}
+                            disabled={loading}
+                          >
+                            <div className="flex items-center space-x-3 mb-2">
+                              <span className="text-2xl">👤</span>
+                              <span className="font-semibold text-neutral-900">I'll start first</span>
+                            </div>
+                            <p className="text-sm text-neutral-600">You will begin the conversation</p>
+                          </button>
                         </div>
                       </div>
 
