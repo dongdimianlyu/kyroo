@@ -328,55 +328,76 @@ const PracticeFeatureSection = () => {
                 {/* Background glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-blue-50 to-pink-50 rounded-full blur-3xl opacity-60"></div>
                 
-                {/* 3D Gradient Orb - CSS replica */}
+                {/* Enhanced 3D Gradient Orb */}
                 <div className="relative w-72 h-72 bg-white rounded-full flex items-center justify-center shadow-2xl border border-neutral-100">
-                  <div className="relative w-64 h-64 rounded-[45%] overflow-hidden">
-                    {/* Main gradient orb */}
+                  <div className="relative w-64 h-64 rounded-[44%] overflow-hidden shadow-inner">
+                    {/* Base gradient foundation */}
                     <div 
-                      className="w-full h-full relative"
+                      className="absolute inset-0 rounded-[44%]"
                       style={{
                         background: `
-                          radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.9) 0%, transparent 25%),
-                          radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.7) 0%, transparent 20%),
-                          radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.5) 0%, transparent 15%),
-                          linear-gradient(135deg, 
-                            rgba(255, 255, 255, 0.95) 0%,
-                            rgba(173, 216, 255, 0.8) 15%,
-                            rgba(147, 197, 253, 0.9) 35%,
-                            rgba(129, 140, 248, 0.95) 50%,
-                            rgba(147, 51, 234, 0.9) 70%,
-                            rgba(219, 39, 119, 0.8) 85%,
-                            rgba(236, 72, 153, 0.9) 100%
+                          linear-gradient(145deg, 
+                            rgba(255, 255, 255, 1) 0%,
+                            rgba(173, 216, 255, 0.95) 12%,
+                            rgba(147, 197, 253, 1) 28%,
+                            rgba(129, 140, 248, 1) 45%,
+                            rgba(139, 92, 246, 1) 62%,
+                            rgba(147, 51, 234, 0.95) 78%,
+                            rgba(219, 39, 119, 0.9) 90%,
+                            rgba(236, 72, 153, 1) 100%
                           )
                         `,
-                        filter: 'blur(0.5px)',
-                        transform: 'scale(1.02)'
+                        filter: 'saturate(1.1) contrast(1.05)'
                       }}
                     />
                     
-                    {/* Inner glow layers */}
+                    {/* Depth and dimension layer */}
                     <div 
-                      className="absolute inset-0 rounded-[45%]"
+                      className="absolute inset-0 rounded-[44%]"
                       style={{
                         background: `
-                          radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
-                          radial-gradient(circle at 65% 25%, rgba(173, 216, 255, 0.4) 0%, transparent 30%),
-                          radial-gradient(circle at 25% 75%, rgba(147, 51, 234, 0.3) 0%, transparent 25%)
+                          radial-gradient(ellipse at 20% 20%, rgba(255, 255, 255, 0.9) 0%, transparent 35%),
+                          radial-gradient(ellipse at 80% 30%, rgba(173, 216, 255, 0.6) 0%, transparent 40%),
+                          radial-gradient(ellipse at 30% 80%, rgba(147, 51, 234, 0.4) 0%, transparent 45%),
+                          radial-gradient(ellipse at 70% 85%, rgba(219, 39, 119, 0.3) 0%, transparent 35%)
                         `
                       }}
                     />
                     
-                    {/* Surface highlights */}
+                    {/* Primary highlight */}
                     <div 
-                      className="absolute inset-0 rounded-[45%]"
+                      className="absolute inset-0 rounded-[44%]"
                       style={{
                         background: `
-                          radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.8) 0%, transparent 15%),
-                          radial-gradient(circle at 60% 15%, rgba(255, 255, 255, 0.6) 0%, transparent 12%),
-                          radial-gradient(circle at 80% 40%, rgba(255, 255, 255, 0.4) 0%, transparent 10%)
+                          radial-gradient(ellipse at 28% 25%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.3) 25%, transparent 45%)
                         `
                       }}
                     />
+                    
+                    {/* Secondary highlights */}
+                    <div 
+                      className="absolute inset-0 rounded-[44%]"
+                      style={{
+                        background: `
+                          radial-gradient(circle at 65% 20%, rgba(255, 255, 255, 0.7) 0%, transparent 18%),
+                          radial-gradient(circle at 75% 45%, rgba(255, 255, 255, 0.5) 0%, transparent 12%),
+                          radial-gradient(circle at 20% 70%, rgba(255, 255, 255, 0.4) 0%, transparent 15%)
+                        `
+                      }}
+                    />
+                    
+                    {/* Subtle edge enhancement */}
+                    <div 
+                      className="absolute inset-0 rounded-[44%] border-2 border-white/20"
+                      style={{
+                        boxShadow: 'inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.1)'
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Floating animation */}
+                  <div className="absolute inset-0 animate-pulse-slow">
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-200/20 to-pink-200/20 blur-xl"></div>
                   </div>
                 </div>
               </div>
@@ -492,29 +513,29 @@ const FeedbackFeatureSection = () => {
             </div>
           </LinearReveal>
 
-                     {/* Right side - Exact feedback interface replica */}
+                     {/* Right side - Improved feedback interface */}
            <LinearReveal delay={0.4}>
              <div className="relative flex justify-center">
-               <div className="relative w-full max-w-lg">
-                 {/* Main feedback interface */}
-                 <div className="bg-white rounded-3xl shadow-2xl border border-neutral-200 p-8 space-y-8">
+               <div className="relative w-full max-w-2xl">
+                 {/* Main feedback interface - Made wider and more spacious */}
+                 <div className="bg-white rounded-3xl shadow-2xl border border-neutral-200 p-10 space-y-10">
                    {/* Header */}
-                   <div className="text-center space-y-3">
+                   <div className="text-center space-y-4">
                      <h3 className="text-3xl font-bold text-gray-900">Practice Complete!</h3>
                      <p className="text-gray-500 text-lg">Here's your performance summary.</p>
                    </div>
                    
                    {/* Circular Progress */}
                    <div className="flex justify-center">
-                     <div className="relative w-48 h-48">
-                       <svg className="w-48 h-48 transform -rotate-90" viewBox="0 0 100 100">
+                     <div className="relative w-40 h-40">
+                       <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 100 100">
                          {/* Background circle */}
                          <circle
                            cx="50"
                            cy="50"
                            r="40"
                            stroke="#e5e7eb"
-                           strokeWidth="8"
+                           strokeWidth="6"
                            fill="none"
                          />
                          {/* Progress circle */}
@@ -523,7 +544,7 @@ const FeedbackFeatureSection = () => {
                            cy="50"
                            r="40"
                            stroke="url(#progressGradient)"
-                           strokeWidth="8"
+                           strokeWidth="6"
                            fill="none"
                            strokeLinecap="round"
                            strokeDasharray={`${75 * 2.51} ${100 * 2.51}`}
@@ -536,36 +557,36 @@ const FeedbackFeatureSection = () => {
                          </defs>
                        </svg>
                        <div className="absolute inset-0 flex items-center justify-center">
-                         <span className="text-4xl font-bold text-purple-600">75%</span>
+                         <span className="text-3xl font-bold text-purple-600">75%</span>
                        </div>
                      </div>
                    </div>
                    
                    <div className="text-center">
-                     <h4 className="text-xl font-semibold text-gray-800 mb-2">Conversation Smoothness</h4>
+                     <h4 className="text-xl font-semibold text-gray-800">Conversation Smoothness</h4>
                    </div>
                    
-                   {/* Feedback sections */}
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   {/* Feedback sections - Improved layout */}
+                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                      {/* What Went Well */}
-                     <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                       <div className="flex items-center mb-4">
-                         <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-3">
+                     <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100">
+                       <div className="flex items-center mb-6">
+                         <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-4">
                            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                            </svg>
                          </div>
                          <h5 className="text-lg font-semibold text-gray-900">What Went Well</h5>
                        </div>
-                       <p className="text-gray-700 text-sm leading-relaxed">
-                         You did a fantastic job initiating the conversation and suggesting a specific place for lunch, which shows confidence and leadership. Your playful response about your 'two sides' added a fun element to the conversation, making it more engaging and lively.
+                       <p className="text-gray-700 leading-relaxed">
+                         Great job initiating the conversation and suggesting a specific lunch place! Your playful "two sides" response added personality and made it engaging.
                        </p>
                      </div>
                      
                      {/* Focus Areas */}
-                     <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                       <div className="flex items-center mb-4">
-                         <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                     <div className="bg-gray-50 rounded-2xl p-8 border border-gray-100">
+                       <div className="flex items-center mb-6">
+                         <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
                            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                            </svg>
@@ -574,15 +595,15 @@ const FeedbackFeatureSection = () => {
                        </div>
                        <div className="space-y-4">
                          <div className="flex items-start">
-                           <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                           <p className="text-gray-700 text-sm">
-                             Try to keep your responses directly related to the conversation topic to maintain smoothness and clarity.
+                           <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                           <p className="text-gray-700">
+                             Keep responses on topic for better flow
                            </p>
                          </div>
                          <div className="flex items-start">
-                           <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                           <p className="text-gray-700 text-sm">
-                             Consider checking in with the other person's preferences to show more social awareness.
+                           <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-4 flex-shrink-0"></div>
+                           <p className="text-gray-700">
+                             Ask about their preferences too
                            </p>
                          </div>
                        </div>
@@ -591,7 +612,7 @@ const FeedbackFeatureSection = () => {
                  </div>
                  
                  {/* Background decoration */}
-                 <div className="absolute -inset-4 bg-gradient-to-br from-purple-100 via-blue-50 to-pink-50 rounded-3xl blur-2xl opacity-40 -z-10"></div>
+                 <div className="absolute -inset-6 bg-gradient-to-br from-purple-100 via-blue-50 to-pink-50 rounded-3xl blur-3xl opacity-40 -z-10"></div>
                </div>
              </div>
            </LinearReveal>
