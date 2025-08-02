@@ -3,16 +3,19 @@ import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { 
-  MessageCircle, 
+  MessageSquare, 
   TrendingUp, 
   Users, 
   Sparkles, 
   ArrowRight, 
   CheckCircle,
-  Mic,
-  Brain,
-  Shield,
-  Zap
+  Mic2,
+  Lightbulb,
+  ShieldCheck,
+  Zap,
+  Bot,
+  Target,
+  HeadphonesIcon
 } from "lucide-react";
 
 // Linear's exact text reveal implementation
@@ -173,6 +176,12 @@ const Navigation = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const navLinks = [
+    { href: "/mission", label: "Our mission" },
+    { href: "/how-it-works", label: "How it works" },
+    { href: "/contact", label: "Contact us" }
+  ];
+
   return (
     <motion.header 
       initial={{ y: -100, opacity: 0 }}
@@ -191,6 +200,20 @@ const Navigation = () => {
           </div>
           <span className="text-xl font-bold text-neutral-900 tracking-tight">Kairoo</span>
         </Link>
+        
+        {/* Navigation Links - Using golden ratio proportions for spacing */}
+        <div className="hidden md:flex items-center gap-8">
+          {navLinks.map((link, index) => (
+            <Link 
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors duration-200 relative group"
+            >
+              {link.label}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-700 group-hover:w-full transition-all duration-300"></span>
+            </Link>
+          ))}
+        </div>
         
         <Link 
           href="/onboarding" 
@@ -292,38 +315,324 @@ const HeroSection = () => {
   );
 };
 
+// Practice Feature Section - First part with orb
+const PracticeFeatureSection = () => {
+  return (
+    <section className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          {/* Left side - Orb image */}
+          <LinearReveal delay={0.2}>
+            <div className="relative flex justify-center">
+              <div className="relative w-80 h-80 flex items-center justify-center">
+                {/* Background glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-blue-50 to-pink-50 rounded-full blur-3xl opacity-60"></div>
+                
+                {/* 3D Gradient Orb - CSS replica */}
+                <div className="relative w-72 h-72 bg-white rounded-full flex items-center justify-center shadow-2xl border border-neutral-100">
+                  <div className="relative w-64 h-64 rounded-[45%] overflow-hidden">
+                    {/* Main gradient orb */}
+                    <div 
+                      className="w-full h-full relative"
+                      style={{
+                        background: `
+                          radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.9) 0%, transparent 25%),
+                          radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.7) 0%, transparent 20%),
+                          radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.5) 0%, transparent 15%),
+                          linear-gradient(135deg, 
+                            rgba(255, 255, 255, 0.95) 0%,
+                            rgba(173, 216, 255, 0.8) 15%,
+                            rgba(147, 197, 253, 0.9) 35%,
+                            rgba(129, 140, 248, 0.95) 50%,
+                            rgba(147, 51, 234, 0.9) 70%,
+                            rgba(219, 39, 119, 0.8) 85%,
+                            rgba(236, 72, 153, 0.9) 100%
+                          )
+                        `,
+                        filter: 'blur(0.5px)',
+                        transform: 'scale(1.02)'
+                      }}
+                    />
+                    
+                    {/* Inner glow layers */}
+                    <div 
+                      className="absolute inset-0 rounded-[45%]"
+                      style={{
+                        background: `
+                          radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
+                          radial-gradient(circle at 65% 25%, rgba(173, 216, 255, 0.4) 0%, transparent 30%),
+                          radial-gradient(circle at 25% 75%, rgba(147, 51, 234, 0.3) 0%, transparent 25%)
+                        `
+                      }}
+                    />
+                    
+                    {/* Surface highlights */}
+                    <div 
+                      className="absolute inset-0 rounded-[45%]"
+                      style={{
+                        background: `
+                          radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.8) 0%, transparent 15%),
+                          radial-gradient(circle at 60% 15%, rgba(255, 255, 255, 0.6) 0%, transparent 12%),
+                          radial-gradient(circle at 80% 40%, rgba(255, 255, 255, 0.4) 0%, transparent 10%)
+                        `
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </LinearReveal>
+
+          {/* Right side - Explanation */}
+          <LinearReveal delay={0.4}>
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <div className="inline-flex items-center space-x-2 rounded-full bg-purple-50 border border-purple-200 p-1 pr-4 text-sm font-medium text-purple-700">
+                  <span className="rounded-full bg-purple-600 px-3 py-1 text-white text-xs font-medium">Step 1</span>
+                  <span>Practice with AI</span>
+                </div>
+                
+                <LinearTextReveal 
+                  text="Start a conversation"
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em]"
+                  staggerDelay={0.02}
+                />
+                
+                <LinearTextReveal 
+                  text="with your AI practice partner"
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold text-purple-700 leading-[1.2] tracking-[-0.02em]"
+                  delay={0.3}
+                  staggerDelay={0.02}
+                />
+              </div>
+              
+              <div className="space-y-6">
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  Meet your understanding AI companion. Practice real conversations in a 
+                  safe space where you can explore different scenarios, from casual small talk 
+                  to important meetings.
+                </p>
+                
+                <div className="space-y-4">
+                  {[
+                    "Voice-based natural conversations",
+                    "Scenarios tailored to your needs", 
+                    "No pressure, no judgment",
+                    "Practice at your own pace"
+                  ].map((feature, index) => (
+                    <LinearReveal key={feature} delay={0.6 + index * 0.05}>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-2 h-2 bg-purple-600 rounded-full flex-shrink-0"></div>
+                        <span className="text-gray-700 text-lg">{feature}</span>
+                      </div>
+                    </LinearReveal>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </LinearReveal>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Feedback Feature Section - Second part with feedback explanation
+const FeedbackFeatureSection = () => {
+  return (
+    <section className="py-24 bg-gradient-to-br from-neutral-50 to-white">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          {/* Left side - Explanation */}
+          <LinearReveal delay={0.2}>
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <div className="inline-flex items-center space-x-2 rounded-full bg-green-50 border border-green-200 p-1 pr-4 text-sm font-medium text-green-700">
+                  <span className="rounded-full bg-green-600 px-3 py-1 text-white text-xs font-medium">Step 2</span>
+                  <span>Gentle feedback</span>
+                </div>
+                
+                <LinearTextReveal 
+                  text="Receive supportive insights"
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em]"
+                  staggerDelay={0.02}
+                />
+                
+                <LinearTextReveal 
+                  text="and celebrate your progress"
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold text-green-700 leading-[1.2] tracking-[-0.02em]"
+                  delay={0.3}
+                  staggerDelay={0.02}
+                />
+              </div>
+              
+              <div className="space-y-6">
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  After each practice session, Kairoo provides gentle, constructive insights 
+                  focused on your strengths and opportunities for growth. No harsh criticism—just 
+                  supportive guidance to help you improve.
+                </p>
+                
+                <div className="space-y-4">
+                  {[
+                    "Highlights what you did well",
+                    "Gentle suggestions for improvement", 
+                    "Confidence tracking over time",
+                    "Personalized growth insights"
+                  ].map((feature, index) => (
+                    <LinearReveal key={feature} delay={0.4 + index * 0.05}>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-2 h-2 bg-green-600 rounded-full flex-shrink-0"></div>
+                        <span className="text-gray-700 text-lg">{feature}</span>
+                      </div>
+                    </LinearReveal>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </LinearReveal>
+
+                     {/* Right side - Exact feedback interface replica */}
+           <LinearReveal delay={0.4}>
+             <div className="relative flex justify-center">
+               <div className="relative w-full max-w-lg">
+                 {/* Main feedback interface */}
+                 <div className="bg-white rounded-3xl shadow-2xl border border-neutral-200 p-8 space-y-8">
+                   {/* Header */}
+                   <div className="text-center space-y-3">
+                     <h3 className="text-3xl font-bold text-gray-900">Practice Complete!</h3>
+                     <p className="text-gray-500 text-lg">Here's your performance summary.</p>
+                   </div>
+                   
+                   {/* Circular Progress */}
+                   <div className="flex justify-center">
+                     <div className="relative w-48 h-48">
+                       <svg className="w-48 h-48 transform -rotate-90" viewBox="0 0 100 100">
+                         {/* Background circle */}
+                         <circle
+                           cx="50"
+                           cy="50"
+                           r="40"
+                           stroke="#e5e7eb"
+                           strokeWidth="8"
+                           fill="none"
+                         />
+                         {/* Progress circle */}
+                         <circle
+                           cx="50"
+                           cy="50"
+                           r="40"
+                           stroke="url(#progressGradient)"
+                           strokeWidth="8"
+                           fill="none"
+                           strokeLinecap="round"
+                           strokeDasharray={`${75 * 2.51} ${100 * 2.51}`}
+                         />
+                         <defs>
+                           <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                             <stop offset="0%" stopColor="#8b5cf6" />
+                             <stop offset="100%" stopColor="#a855f7" />
+                           </linearGradient>
+                         </defs>
+                       </svg>
+                       <div className="absolute inset-0 flex items-center justify-center">
+                         <span className="text-4xl font-bold text-purple-600">75%</span>
+                       </div>
+                     </div>
+                   </div>
+                   
+                   <div className="text-center">
+                     <h4 className="text-xl font-semibold text-gray-800 mb-2">Conversation Smoothness</h4>
+                   </div>
+                   
+                   {/* Feedback sections */}
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     {/* What Went Well */}
+                     <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                       <div className="flex items-center mb-4">
+                         <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mr-3">
+                           <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                           </svg>
+                         </div>
+                         <h5 className="text-lg font-semibold text-gray-900">What Went Well</h5>
+                       </div>
+                       <p className="text-gray-700 text-sm leading-relaxed">
+                         You did a fantastic job initiating the conversation and suggesting a specific place for lunch, which shows confidence and leadership. Your playful response about your 'two sides' added a fun element to the conversation, making it more engaging and lively.
+                       </p>
+                     </div>
+                     
+                     {/* Focus Areas */}
+                     <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                       <div className="flex items-center mb-4">
+                         <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                           <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                           </svg>
+                         </div>
+                         <h5 className="text-lg font-semibold text-gray-900">Focus Areas for Next Time</h5>
+                       </div>
+                       <div className="space-y-4">
+                         <div className="flex items-start">
+                           <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                           <p className="text-gray-700 text-sm">
+                             Try to keep your responses directly related to the conversation topic to maintain smoothness and clarity.
+                           </p>
+                         </div>
+                         <div className="flex items-start">
+                           <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                           <p className="text-gray-700 text-sm">
+                             Consider checking in with the other person's preferences to show more social awareness.
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+                 
+                 {/* Background decoration */}
+                 <div className="absolute -inset-4 bg-gradient-to-br from-purple-100 via-blue-50 to-pink-50 rounded-3xl blur-2xl opacity-40 -z-10"></div>
+               </div>
+             </div>
+           </LinearReveal>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 // Features section
 const FeaturesSection = () => {
   const features = [
     {
-      icon: <MessageCircle className="w-6 h-6" />,
-      title: "Conversation Simulations",
-      description: "Practice realistic dialogue simulations with voice interaction that feels immersive, non-clinical, and calming.",
+      icon: <Bot className="w-6 h-6" />,
+      title: "AI Conversation Partner",
+      description: "Practice with an empathetic AI companion that creates realistic, immersive dialogue experiences.",
     },
     {
-      icon: <Zap className="w-6 h-6" />,
-      title: "Real-Time Coaching",
-      description: "Gentle micro-feedback about tone and social cues, with supportive summaries of what went well.",
+      icon: <Lightbulb className="w-6 h-6" />,
+      title: "Smart Insights",
+      description: "Receive gentle, personalized feedback that highlights your strengths and growth opportunities.",
     },
     {
-      icon: <Users className="w-6 h-6" />,
-      title: "Real-Life Preparation",
-      description: "Prepare for specific upcoming conversations or social events in a safe, supportive environment.",
+      icon: <Target className="w-6 h-6" />,
+      title: "Scenario Practice",
+      description: "Prepare for real-world situations with tailored conversation scenarios and social contexts.",
     },
     {
-      icon: <Brain className="w-6 h-6" />,
-      title: "Personalized Learning",
-      description: "AI adapts to your communication style and helps you practice scenarios that matter most to you.",
+      icon: <HeadphonesIcon className="w-6 h-6" />,
+      title: "Voice-First Experience",
+      description: "Natural speech interaction that adapts to your communication style and builds confidence.",
     },
     {
-      icon: <Shield className="w-6 h-6" />,
-      title: "Privacy First",
-      description: "Your conversations are private and secure. Practice without judgment in a safe space.",
+      icon: <ShieldCheck className="w-6 h-6" />,
+      title: "Safe Space",
+      description: "Practice without judgment in a completely private, secure environment designed for growth.",
     },
     {
       icon: <TrendingUp className="w-6 h-6" />,
-      title: "Progress Tracking",
-      description: "Track your confidence growth with insights and analytics that celebrate your progress.",
+      title: "Growth Analytics",
+      description: "Track your communication progress with insights that celebrate every step of your journey.",
     },
   ];
 
@@ -555,6 +864,8 @@ export default function Home() {
       <Navigation />
       <main>
         <HeroSection />
+        <PracticeFeatureSection />
+        <FeedbackFeatureSection />
         <FeaturesSection />
         <ProductShowcase />
         <CTASection />
