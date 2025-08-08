@@ -239,18 +239,19 @@ const MissionContent = () => {
         <div className="text-center mb-20">
           <LinearReveal delay={0.1}>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
-              We don't help. <span className="text-purple-700">We serve.</span>
+              Purpose-built to help you <span className="text-purple-700">communicate with confidence</span>
             </h2>
           </LinearReveal>
           
           <LinearReveal delay={0.3} className="space-y-8">
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Kairoo exists for those who've been told they're awkward, too quiet, too intense, 
-              too much — or not enough.
+              Kairoo is a focused system for practicing real conversations. We combine thoughtful AI, clear feedback,
+              and a calm interface so you can grow skills that translate to everyday life.
             </p>
             
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              We're not here to "fix" anyone. <strong className="text-gray-900">Because you're not broken.</strong>
+              We believe progress comes from repetition, reflection, and respect. No gimmicks. No judgment. Just a
+              professional tool that helps you get better, one conversation at a time.
             </p>
           </LinearReveal>
         </div>
@@ -260,24 +261,19 @@ const MissionContent = () => {
           <LinearReveal delay={0.5}>
             <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-3xl p-8 lg:p-12 border border-purple-100">
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                <strong className="text-purple-700">Kairoo serves you</strong>, not by changing who you are, 
-                but by amplifying who you are.
+                <strong className="text-purple-700">Why we exist</strong>: communication shapes opportunity. Many people never
+                get a fair space to practice. Kairoo makes that practice accessible—private by default, gentle by design,
+                and structured so progress is visible.
               </p>
               
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                We started Kairoo out of something deeply personal. As a founder, I used to think 
-                the way to help others was to build efficient systems — optimize, fix, solve. 
-                But over time, I realized that <strong className="text-gray-900">love and dignity can't be engineered</strong>. 
-                They have to be felt. They have to be offered.
-              </p>
-              
-              <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                Kairoo was born from that shift. <strong className="text-purple-700">From empathy, not ego.</strong>
+                We value clarity over noise and craft over clutter. Our focus is building an experience that feels fast,
+                reliable, and respectful of your time. The product should get out of the way and let the work happen.
               </p>
               
               <p className="text-lg text-gray-700 leading-relaxed">
-                We don't see you as a user. We see you as someone we serve — from below, not above. 
-                Because real empowerment isn't charity. <strong className="text-gray-900">It's solidarity.</strong>
+                The result is a tool that meets you where you are and grows with you. Practice when it’s convenient,
+                review when it matters, and come back to a consistent system that supports steady improvement.
               </p>
             </div>
           </LinearReveal>
@@ -287,21 +283,21 @@ const MissionContent = () => {
         <div className="text-center mb-20">
           <LinearReveal delay={0.7}>
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-8">
-              We're building Kairoo so you can walk into any room, interview, date, meeting, 
-              or hard conversation — and feel <strong className="text-purple-700">prepared, grounded, and truly yourself.</strong>
+              Imagine walking into any room—interview, meeting, first date—and feeling prepared, grounded, and
+              authentically yourself.
             </p>
           </LinearReveal>
           
           <LinearReveal delay={0.9}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
-                <p className="text-lg text-gray-700 font-medium">Not to impress.</p>
+                <p className="text-lg text-gray-700 font-medium">Clarity over complexity</p>
               </div>
               <div>
-                <p className="text-lg text-gray-700 font-medium">Not to fake confidence.</p>
+                <p className="text-lg text-gray-700 font-medium">Practice over theory</p>
               </div>
               <div>
-                <p className="text-lg text-purple-700 font-semibold">But to connect. To belong. On your own terms.</p>
+                <p className="text-lg text-purple-700 font-semibold">Consistency over intensity</p>
               </div>
             </div>
           </LinearReveal>
@@ -334,10 +330,10 @@ const MissionContent = () => {
               </div>
               <div className="relative z-10">
                 <p className="text-xl font-semibold mb-4">
-                  Kairoo is and always will be free.
+                  Kairoo is free to use.
                 </p>
                 <p className="text-lg text-neutral-300">
-                  Because dignity shouldn't come with a price tag.
+                  Because practice should be accessible to everyone.
                 </p>
               </div>
             </div>

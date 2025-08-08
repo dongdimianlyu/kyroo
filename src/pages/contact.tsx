@@ -207,8 +207,7 @@ const ContactHero = () => {
           
           <LinearReveal delay={0.8}>
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              We're here to listen and support you. Reach out with any questions, 
-              feedback, or just to share your journey with us.
+              We read every note. Reach out with questions, feedback, or partnerships and we’ll get back quickly.
             </p>
           </LinearReveal>
         </div>
@@ -248,11 +247,10 @@ const ContactContent = () => {
         <LinearReveal delay={0.1}>
           <div className="text-center mb-20">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
-              We're here to <span className="text-purple-700">listen</span>
+              We're here to <span className="text-purple-700">help</span>
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Your voice matters to us. Whether you have questions, feedback, or just want to 
-              connect, we're here with open ears and understanding hearts.
+              Whether you’re exploring Kairoo or already practicing, we’re a message away.
             </p>
           </div>
         </LinearReveal>
@@ -286,15 +284,14 @@ const ContactContent = () => {
           <div className="text-center">
             <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-3xl p-8 lg:p-12 border border-purple-100">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                A personal note from our team
+                A note from the team
               </h3>
               <p className="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">
-                We built Kairoo because we believe everyone deserves to feel heard and understood. 
-                Your journey matters to us, and we're honored to be part of it. Please don't hesitate 
-                to reach out—we genuinely care about your experience.
+                We’re building Kairoo with care and attention to craft. Your thoughts help us make the product simpler,
+                faster, and more supportive.
               </p>
               <p className="text-purple-700 font-semibold">
-                With empathy and solidarity,<br />
+                With appreciation,<br />
                 The Kairoo Team
               </p>
             </div>

@@ -208,8 +208,8 @@ const HowItWorksHero = () => {
           
           <LinearReveal delay={0.8}>
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Discover how Kairoo helps you build confidence through practice, 
-              feedback, and growth in a supportive environment.
+              Kairoo is a focused practice environment. Describe a scenario, hold a natural
+              conversation with AI, then review clear, gentle feedback. Repeat to build real skill.
             </p>
           </LinearReveal>
         </div>
@@ -222,20 +222,20 @@ const HowItWorksContent = () => {
   const steps = [
     {
       icon: <MessageCircle className="w-8 h-8" />,
-      title: "Practice Conversations",
-      description: "Engage in realistic dialogue simulations with our AI that adapts to your communication style.",
+      title: "Start a conversation",
+      description: "Describe the situation you want to practice. Speak or type—your partner adapts in real time.",
       step: "01"
     },
     {
       icon: <Zap className="w-8 h-8" />,
-      title: "Receive Gentle Feedback",
-      description: "Get supportive insights about your conversation skills without judgment or pressure.",
+      title: "Get fast, kind feedback",
+      description: "After each exchange, see concise insights that highlight strengths and next steps.",
       step: "02"
     },
     {
       icon: <TrendingUp className="w-8 h-8" />,
-      title: "Track Your Growth",
-      description: "Monitor your progress and celebrate improvements in your confidence and communication.",
+      title: "Track meaningful progress",
+      description: "See trends over time and focus on consistency. Small, repeated reps compound into confidence.",
       step: "03"
     }
   ];
@@ -246,11 +246,10 @@ const HowItWorksContent = () => {
         <LinearReveal delay={0.1}>
           <div className="text-center mb-20">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
-              Simple steps to <span className="text-purple-700">build confidence</span>
+              Simple steps to <span className="text-purple-700">steady growth</span>
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Our approach is designed to be gentle, supportive, and effective. 
-              No pressure, no judgment—just growth at your own pace.
+              Designed to be calm and efficient. Minimal controls, clear guidance, and just enough structure to keep you moving.
             </p>
           </div>
         </LinearReveal>
@@ -287,11 +286,10 @@ const HowItWorksContent = () => {
           <div className="text-center mt-20">
             <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-3xl p-8 lg:p-12 border border-purple-100">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Ready to start your journey?
+                Ready to begin?
               </h3>
               <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                Join thousands who are building confidence and improving their 
-                communication skills with Kairoo's supportive approach.
+                Join people who practice a few minutes a day and see compounding results.
               </p>
               <Link 
                 href="/onboarding"

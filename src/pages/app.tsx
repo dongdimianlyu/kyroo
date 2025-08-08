@@ -5,6 +5,7 @@ import React from 'react';
 import NewOrb from '../components/NewOrb';
 import { useRouter } from 'next/router';
 import Sidebar from '../components/Sidebar';
+import Dashboard from './dashboard';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -1570,26 +1571,33 @@ function App() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-neutral-50 flex">
-      <Sidebar 
-        activeNav={activeNav}
-        setActiveNav={setActiveNav}
-        isTransitioning={isTransitioning}
-        setIsTransitioning={setIsTransitioning}
-      />
-      <div className="flex-1">
-      
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-neutral-900 mb-2">Message Analysis</h1>
-            <p className="text-neutral-600">
-              Understand tone, spot manipulation, and get personalized response suggestions.
-            </p>
-          </div>
+  // Render Dashboard page
+  if (activeNav === 'Dashboard') {
+    return <Dashboard />;
+  }
+
+  // Render Analysis page (renamed from Dashboard)
+  if (activeNav === 'Analysis') {
+    return (
+      <div className="min-h-screen bg-neutral-50 flex">
+        <Sidebar 
+          activeNav={activeNav}
+          setActiveNav={setActiveNav}
+          isTransitioning={isTransitioning}
+          setIsTransitioning={setIsTransitioning}
+        />
+        <div className="flex-1">
+        
+        {/* Main Content */}
+        <main className="max-w-7xl mx-auto px-6 py-8">
+          <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-neutral-900 mb-2">Message Analysis</h1>
+              <p className="text-neutral-600">
+                Understand tone, spot manipulation, and get personalized response suggestions.
+              </p>
+            </div>
 
         {/* Input Section */}
         <div className="mb-12">
@@ -1784,12 +1792,16 @@ function App() {
               </div>
             </div>
           </div>
+          </div>
+          </div>
+        </main>
         </div>
-        </div>
-      </main>
       </div>
-    </div>
-  );
+    );
+  }
+
+  // Default fallback - redirect to Dashboard
+  return <Dashboard />;
 }
 
 // Export App wrapped with ErrorBoundary

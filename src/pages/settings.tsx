@@ -64,7 +64,7 @@ export default function Settings() {
           
           <h1 className="text-4xl font-bold text-neutral-900 mb-4">Settings</h1>
           <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-            We're working on customization options to make Kairoo even more helpful for you.
+            Personalize Kairoo to match how you like to practice. More options are on the way.
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export default function Settings() {
               </div>
             </div>
             <p className="text-neutral-600">
-              Customize the tone and style of suggested responses to match your communication preferences.
+              Choose tones and styles for suggested replies. Save presets for different contexts.
             </p>
           </div>
 
@@ -102,7 +102,7 @@ export default function Settings() {
               </div>
             </div>
             <p className="text-neutral-600">
-              Adjust how sensitive the analysis is to different communication patterns and contexts.
+              Adjust how sensitive analysis is to tone, intent, and context.
             </p>
           </div>
 
@@ -138,7 +138,7 @@ export default function Settings() {
               </div>
             </div>
             <p className="text-neutral-600">
-              Customize the interface layout, themes, and accessibility options to suit your needs.
+              Customize layout, themes, and accessibility options.
             </p>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function Settings() {
             Ready to start analyzing messages?
           </h2>
           <p className="text-neutral-600 mb-6">
-            While we work on these customization features, Kairoo is ready to help you understand and respond to messages with confidence.
+            While we build out preferences, the core experience is ready. Analyze messages and get guidance now.
           </p>
           <Link
             href="/app"

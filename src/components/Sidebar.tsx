@@ -11,6 +11,11 @@ interface SidebarProps {
 const navItems = [
   { 
     name: 'Dashboard', 
+    icon: '🎯',
+    description: 'Confidence tracking & progress'
+  },
+  { 
+    name: 'Analysis', 
     icon: '📊',
     description: 'Message analysis & insights'
   },
