@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { ArrowLeft, Heart, Users, Shield, Sparkles } from "lucide-react";
+import { ArrowLeft, Heart, Users, Shield, Sparkles, Star, Quote } from "lucide-react";
 
 // Reusing the same animation components from index page
 const LinearTextReveal = ({ 
@@ -200,12 +200,18 @@ const MissionHero = () => {
           <LinearTextReveal 
             text="Our Mission"
             className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-[1.05] tracking-[-0.02em]"
-            delay={0.1}
-            staggerDelay={0.05}
+            delay={0.05}
+            staggerDelay={0.03}
           />
           
-          <LinearReveal delay={0.6}>
+          <LinearReveal delay={0.3}>
             <div className="w-24 h-1 bg-gradient-to-r from-purple-600 to-purple-700 rounded-full mx-auto"></div>
+          </LinearReveal>
+
+          <LinearReveal delay={0.4}>
+            <p className="text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+              <strong>We believe everyone deserves to be heard</strong> — and we're building tools to make that reality.
+            </p>
           </LinearReveal>
         </div>
       </div>
@@ -234,148 +240,268 @@ const MissionContent = () => {
 
   return (
     <section className="py-24 bg-gradient-to-br from-white to-neutral-50">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="max-w-5xl mx-auto px-6">
         
         {/* Why We Exist */}
-        <div className="mb-20">
-          <LinearReveal delay={0.1}>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
+        <div className="mb-24">
+          <LinearReveal delay={0.05}>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-12 text-center">
               Why We Exist
             </h2>
           </LinearReveal>
           
-          <LinearReveal delay={0.3}>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-3xl p-8 lg:p-12 border border-purple-100">
-              <p className="text-xl text-gray-700 leading-relaxed mb-6">
-                <strong className="text-purple-700">Communication shapes opportunity.</strong> Yet many people never get a fair space to practice. Whether it's social anxiety, cultural differences, neurodivergence, or simply lacking confident role models growing up—countless brilliant minds stay quiet when they could be contributing.
-              </p>
-              
-              <p className="text-xl text-gray-700 leading-relaxed mb-6">
-                We've all felt that knot in our stomach before an important conversation. The rehearsing in your head, the worry about saying the wrong thing, the weight of knowing that one interaction could change everything. <strong>You shouldn't have to navigate this alone.</strong>
-              </p>
-              
-              <p className="text-xl text-gray-700 leading-relaxed">
-                Kairoo makes practice accessible—<em>private by default, gentle by design, and structured so progress is visible.</em> Because everyone deserves to feel heard and understood.
-              </p>
+          <LinearReveal delay={0.15}>
+            <div className="space-y-8">
+              <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-3xl p-8 lg:p-12 border border-purple-100">
+                <p className="text-xl text-gray-700 leading-relaxed mb-6">
+                  <strong className="text-purple-700">Communication shapes opportunity.</strong> Yet many brilliant minds never get a fair space to practice. Whether it's social anxiety, cultural differences, neurodivergence, or simply lacking confident role models growing up—countless people stay quiet when they could be contributing.
+                </p>
+                
+                <blockquote className="border-l-4 border-purple-600 pl-6 py-2 my-8">
+                  <p className="text-2xl text-gray-800 leading-relaxed font-medium italic">
+                    "We've all felt that knot in our stomach before an important conversation."
+                  </p>
+                </blockquote>
+                
+                <p className="text-xl text-gray-700 leading-relaxed mb-6">
+                  The rehearsing in your head, the worry about saying the wrong thing, the weight of knowing that one interaction could change everything. <strong>You shouldn't have to navigate this alone.</strong>
+                </p>
+                
+                <p className="text-xl text-gray-700 leading-relaxed">
+                  Kairoo makes practice accessible—<em>private by default, gentle by design, and structured so progress is visible.</em> Because everyone deserves to feel heard and understood.
+                </p>
+              </div>
+
+              {/* User quote */}
+              <LinearReveal delay={0.25}>
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-premium">
+                  <div className="flex items-start space-x-4">
+                    <Quote className="w-8 h-8 text-purple-600 mt-1 flex-shrink-0" />
+                    <div>
+                                              <blockquote className="text-lg text-gray-700 leading-relaxed mb-4">
+                          "I've struggled with social anxiety my whole life. Traditional therapy helped, but I needed somewhere to actually <em>practice</em> without the pressure of real consequences. Kairoo gave me that safe space."
+                        </blockquote>
+                        <div className="flex items-center">
+                          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center text-white font-semibold mr-3">
+                            M
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900">Maya Chen</p>
+                            <p className="text-sm text-gray-600">Beta User, Software Developer</p>
+                          <div className="flex items-center mt-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className="w-4 h-4 text-purple-500 fill-current" />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </LinearReveal>
             </div>
           </LinearReveal>
         </div>
 
-        {/* The Change We Want to See */}
-        <div className="mb-20">
-          <LinearReveal delay={0.5}>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
-              The Change We Want to See
+        {/* Our Values */}
+                <div className="mb-24">
+          <LinearReveal delay={0.35}>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-12 text-center">
+              Our Values
             </h2>
           </LinearReveal>
           
-          <LinearReveal delay={0.7}>
-            <div className="space-y-8">
-              <p className="text-xl text-gray-600 leading-relaxed">
-                Imagine walking into any room—interview, meeting, first date—and feeling <strong>prepared, grounded, and authentically yourself.</strong> Not because you've memorized scripts, but because you've practiced being present and responding with confidence.
-              </p>
-              
-              <blockquote className="border-l-4 border-purple-600 pl-8 py-4 bg-white/80 rounded-r-2xl">
-                <p className="text-2xl text-gray-800 leading-relaxed font-medium italic">
-                  "A world where your ideas get the attention they deserve—not because you're the loudest person in the room, but because you've learned to express them clearly and with conviction."
-                </p>
-              </blockquote>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div className="p-6 bg-white/60 rounded-2xl border border-purple-100">
-                  <p className="text-lg text-purple-700 font-semibold">Clarity over complexity</p>
-                  <p className="text-gray-600 mt-2">Simple tools that work</p>
+          <LinearReveal delay={0.45}>
+            <p className="text-xl text-gray-600 leading-relaxed mb-12 text-center max-w-3xl mx-auto">
+              These principles guide every decision we make—from product design to business model.
+            </p>
+          </LinearReveal>
+
+          {/* Values cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            {values.map((value, index) => (
+              <LinearReveal key={value.title} delay={0.55 + index * 0.05}>
+                <div className="group p-8 bg-white/80 backdrop-blur-sm rounded-2xl border border-neutral-200/50 shadow-premium hover:shadow-premium-lg hover:-translate-y-1 hover:border-neutral-300/60 transition-all duration-300 text-center">
+                  <div className="flex justify-center mb-6">
+                    <div className="p-4 bg-purple-100 rounded-2xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-glow-purple transition-all duration-300">
+                      {value.icon}
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-neutral-900 mb-4">{value.title}</h3>
+                  <p className="text-neutral-600 leading-relaxed">{value.description}</p>
                 </div>
-                <div className="p-6 bg-white/60 rounded-2xl border border-purple-100">
-                  <p className="text-lg text-purple-700 font-semibold">Practice over theory</p>
-                  <p className="text-gray-600 mt-2">Learning through doing</p>
+              </LinearReveal>
+            ))}
+          </div>
+
+          {/* Values in practice */}
+          <LinearReveal delay={0.75}>
+            <div className="bg-gradient-to-br from-neutral-50 to-white rounded-3xl p-8 border border-gray-200">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+                What This Means in Practice
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <span className="text-white font-bold">💜</span>
+                  </div>
+                  <p className="text-gray-700 font-medium mb-2">Always Free</p>
+                  <p className="text-sm text-gray-600">No paywalls, no premium features. Full access for everyone.</p>
                 </div>
-                <div className="p-6 bg-white/60 rounded-2xl border border-purple-100">
-                  <p className="text-lg text-purple-700 font-semibold">Consistency over intensity</p>
-                  <p className="text-gray-600 mt-2">Small steps, big results</p>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <span className="text-white font-bold">🔒</span>
+                  </div>
+                  <p className="text-gray-700 font-medium mb-2">Privacy First</p>
+                  <p className="text-sm text-gray-600">Your conversations are private. No sharing, no selling data.</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <span className="text-white font-bold">🤝</span>
+                  </div>
+                  <p className="text-gray-700 font-medium mb-2">Community Driven</p>
+                  <p className="text-sm text-gray-600">Built with and for people who understand the struggle.</p>
                 </div>
               </div>
             </div>
           </LinearReveal>
         </div>
 
-        {/* How Our Mission Connects to Kairoo */}
+        {/* How Kairoo Lives This Mission */}
         <div className="mb-20">
-          <LinearReveal delay={0.9}>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
-              How Our Mission Connects to Kairoo
+          <LinearReveal delay={0.85}>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-12 text-center">
+              How Kairoo Lives This Mission
             </h2>
           </LinearReveal>
           
-          <LinearReveal delay={1.1}>
+          <LinearReveal delay={0.95}>
             <div className="space-y-8">
-              <p className="text-xl text-gray-600 leading-relaxed">
+              <p className="text-xl text-gray-600 leading-relaxed text-center max-w-4xl mx-auto">
                 <strong>Kairoo is a focused system for practicing real conversations.</strong> We combine thoughtful AI, clear feedback, and a calm interface so you can grow skills that translate to everyday life.
               </p>
               
-              <p className="text-xl text-gray-600 leading-relaxed">
-                We believe progress comes from <strong>repetition, reflection, and respect.</strong> No gimmicks. No judgment. Just a professional tool that helps you get better, one conversation at a time.
-              </p>
-              
-              <div className="bg-gradient-to-br from-neutral-50 to-white rounded-3xl p-8 border border-gray-200">
-                <p className="text-lg text-gray-700 leading-relaxed mb-4">
-                  <strong>What this means in practice:</strong>
-                </p>
-                <ul className="space-y-3 text-lg text-gray-700">
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
-                    <span>Practice conversations that feel natural and respond to your unique communication style</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
-                    <span>Get feedback that highlights your strengths and suggests gentle improvements</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
-                    <span>Track progress in a way that builds confidence rather than creating pressure</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
-                    <span>Access a tool that meets you where you are and grows with you</span>
-                  </li>
-                </ul>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                {/* Left side - features */}
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6">
+                    Progress Through Practice
+                  </h3>
+                  <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                    We believe progress comes from <strong>repetition, reflection, and respect.</strong> No gimmicks. No judgment. Just a professional tool that helps you get better, one conversation at a time.
+                  </p>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-start">
+                      <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
+                      <div>
+                        <p className="font-semibold text-gray-900">Natural Conversations</p>
+                        <p className="text-gray-600">Practice conversations that feel natural and respond to your unique communication style</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
+                      <div>
+                        <p className="font-semibold text-gray-900">Strength-Based Feedback</p>
+                        <p className="text-gray-600">Get feedback that highlights what you do well and suggests gentle improvements</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
+                      <div>
+                        <p className="font-semibold text-gray-900">Confidence Building</p>
+                        <p className="text-gray-600">Track progress in a way that builds confidence rather than creating pressure</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
+                      <div>
+                        <p className="font-semibold text-gray-900">Adaptive Growth</p>
+                        <p className="text-gray-600">Access a tool that meets you where you are and grows with you</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right side - user quote */}
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-25 rounded-3xl p-8 border border-green-100">
+                    <div className="flex items-start space-x-4">
+                      <Quote className="w-8 h-8 text-green-600 mt-1 flex-shrink-0" />
+                      <div>
+                        <blockquote className="text-lg text-gray-700 leading-relaxed mb-4">
+                          "What I love most is that it doesn't try to change who I am. It helps me express myself more clearly, but I still sound like <em>me</em>. That's so important for someone who's been told their whole life to 'just be more outgoing.'"
+                        </blockquote>
+                        <div className="flex items-center">
+                          <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-full flex items-center justify-center text-white font-semibold mr-3">
+                            J
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900">Jordan Martinez</p>
+                            <p className="text-sm text-gray-600">Beta User, Graphic Designer</p>
+                            <div className="flex items-center mt-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className="w-4 h-4 text-green-500 fill-current" />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-blue-50 to-cyan-25 rounded-3xl p-8 border border-blue-100">
+                    <div className="flex items-start space-x-4">
+                      <Quote className="w-8 h-8 text-blue-600 mt-1 flex-shrink-0" />
+                      <div>
+                        <blockquote className="text-lg text-gray-700 leading-relaxed mb-4">
+                          "I practiced for weeks before my job interview. When the day came, I felt prepared instead of panicked. I got the job! The interviewer even commented on how well I communicated."
+                        </blockquote>
+                        <div className="flex items-center">
+                          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-semibold mr-3">
+                            A
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900">Alex Thompson</p>
+                            <p className="text-sm text-gray-600">Beta User, Marketing Manager</p>
+                            <div className="flex items-center mt-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className="w-4 h-4 text-blue-500 fill-current" />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </LinearReveal>
         </div>
 
-        {/* Values cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-          {values.map((value, index) => (
-            <LinearReveal key={value.title} delay={1.3 + index * 0.1}>
-              <div className="group p-8 bg-white/80 backdrop-blur-sm rounded-2xl border border-neutral-200/50 shadow-premium hover:shadow-premium-lg hover:-translate-y-1 hover:border-neutral-300/60 transition-all duration-300">
-                <div className="flex items-start mb-6">
-                  <div className="p-3 bg-purple-100 rounded-2xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-glow-purple transition-all duration-300">
-                    {value.icon}
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-neutral-900 mb-4">{value.title}</h3>
-                <p className="text-neutral-600 leading-relaxed">{value.description}</p>
-              </div>
-            </LinearReveal>
-          ))}
-        </div>
-
         {/* Final statement */}
-        <LinearReveal delay={1.7}>
+        <LinearReveal delay={1.05}>
           <div className="text-center">
             <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-3xl p-8 lg:p-12 text-white relative overflow-hidden">
               <div className="absolute inset-0">
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600 rounded-full blur-3xl opacity-30" />
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl opacity-25" />
               </div>
-              <div className="relative z-10">
-                <p className="text-xl font-semibold mb-4">
-                  Kairoo is free to use.
+              <div className="relative z-10 space-y-6">
+                <h3 className="text-3xl font-bold mb-4">
+                  Join Our Mission
+                </h3>
+                <p className="text-xl text-neutral-300 mb-6">
+                  Kairoo is free to use because practice should be accessible to everyone.
                 </p>
-                <p className="text-lg text-neutral-300">
-                  Because practice should be accessible to everyone.
-                </p>
+                <Link 
+                  href="/onboarding"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-white text-neutral-900 font-semibold rounded-2xl shadow-glow-purple-lg hover:bg-neutral-50 hover:shadow-2xl active:scale-95 transition-all duration-200"
+                >
+                  Start practicing today
+                  <ArrowLeft className="w-5 h-5 rotate-180" />
+                </Link>
               </div>
             </div>
           </div>

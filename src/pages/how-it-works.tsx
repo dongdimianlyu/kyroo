@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { ArrowLeft, MessageCircle, Zap, TrendingUp, ArrowRight } from "lucide-react";
+import { ArrowLeft, MessageCircle, Zap, TrendingUp, ArrowRight, CheckCircle, Clock, Users, Target } from "lucide-react";
 
 // Reusing the same animation components
 const LinearTextReveal = ({ 
@@ -198,18 +198,17 @@ const HowItWorksHero = () => {
           <LinearTextReveal 
             text="How It Works"
             className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-[1.05] tracking-[-0.02em]"
-            delay={0.1}
-            staggerDelay={0.05}
+            delay={0.05}
+            staggerDelay={0.03}
           />
           
-          <LinearReveal delay={0.6}>
+          <LinearReveal delay={0.3}>
             <div className="w-24 h-1 bg-gradient-to-r from-purple-600 to-purple-700 rounded-full mx-auto"></div>
           </LinearReveal>
           
-          <LinearReveal delay={0.8}>
-            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Practice makes progress. Choose real scenarios you care about, have natural conversations 
-              with your AI coach, and get supportive feedback that builds confidence over time.
+          <LinearReveal delay={0.4}>
+            <p className="text-xl text-gray-600 leading-relaxed max-w-4xl mx-auto">
+              <strong>Three simple steps to building conversation confidence.</strong> No complex setups or overwhelming features—just choose a scenario, practice naturally, and grow with gentle guidance.
             </p>
           </LinearReveal>
         </div>
@@ -222,37 +221,40 @@ const HowItWorksContent = () => {
   const steps = [
     {
       icon: <MessageCircle className="w-8 h-8" />,
-      title: "Choose Your Scenario & Start Talking",
-      description: "Pick from real-world situations or describe your own. Then have a natural conversation with your AI practice partner.",
+      title: "Practice Real Conversations",
+      description: "Choose from real-world scenarios or describe your own situation. Then have natural, voice-based conversations with your AI practice partner who understands context and responds thoughtfully.",
       step: "01",
       examples: [
-        "Practice asking for a raise in your next review",
-        "Rehearse introducing yourself at networking events", 
-        "Work on difficult conversations with family members"
+        "\"I need to ask my boss for a raise next week\"",
+        "\"Help me practice small talk for networking events\"", 
+        "\"I want to work on speaking up in team meetings\"",
+        "\"Can we practice difficult conversations with family?\""
       ],
       imagePlaceholder: "/conversation-mockup.svg"
     },
     {
       icon: <Zap className="w-8 h-8" />,
-      title: "Get Instant, Gentle Feedback",
-      description: "After each exchange, see personalized insights that highlight what you did well and suggest improvements.",
+      title: "Get Gentle, Actionable Feedback",
+      description: "After each conversation, receive personalized insights that highlight your strengths and offer gentle suggestions for improvement. Our feedback focuses on building confidence, not tearing down.",
       step: "02", 
       examples: [
         "\"Great job staying calm and asking clarifying questions\"",
-        "\"Try pausing before responding to show you're listening\"",
-        "\"Your enthusiasm came through clearly in your tone\""
+        "\"Your enthusiasm came through clearly—try pausing before responding to show active listening\"",
+        "\"You expressed your needs clearly. Consider adding more specific examples to strengthen your point\"",
+        "\"Nice work maintaining eye contact throughout the conversation\""
       ],
       imagePlaceholder: "/dashboard-mockup.svg"
     },
     {
       icon: <TrendingUp className="w-8 h-8" />,
-      title: "Track Your Progress Over Time",
-      description: "See your confidence grow through visual progress tracking. Build habits with streaks and celebrate meaningful milestones.",
+      title: "Track Your Growth Over Time",
+      description: "See your confidence build through visual progress tracking, conversation analytics, and milestone celebrations. Watch your communication skills improve with every practice session.",
       step: "03",
       examples: [
-        "Weekly confidence score improvements",
-        "Conversation length and quality trends",
-        "Mastery levels for different scenario types"
+        "Weekly confidence score improvements (65% → 78% → 85%)",
+        "Track practice streaks and build momentum (5 days → 30 days → 90 days)",
+        "Mastery levels unlock for different scenario types",
+        "Achievement badges for consistency and breakthrough moments"
       ],
       imagePlaceholder: "/xp-progress-mockup.svg"
     }
@@ -260,51 +262,84 @@ const HowItWorksContent = () => {
 
   return (
     <section className="py-24 bg-gradient-to-br from-white to-neutral-50">
-      <div className="max-w-6xl mx-auto px-6">
-        <LinearReveal delay={0.1}>
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Overview section */}
+        <LinearReveal delay={0.05}>
           <div className="text-center mb-20">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
-              Three Simple Steps to <span className="text-purple-700">Better Conversations</span>
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-[1.1] tracking-[-0.02em] mb-8">
+              Build Confidence Through 
+              <span className="text-purple-700"> Focused Practice</span>
             </h2>
-            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Designed to feel natural and supportive. No complex setups—just choose a scenario and start practicing.
+            <p className="text-xl text-gray-600 leading-relaxed max-w-4xl mx-auto mb-12">
+              Whether you're preparing for a specific conversation or building general social confidence, our process adapts to your needs and goals.
             </p>
+            
+            {/* Quick stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Clock className="w-8 h-8 text-purple-600" />
+                </div>
+                <p className="text-2xl font-bold text-gray-900 mb-2">5-15 min</p>
+                <p className="text-gray-600">Average practice session</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-purple-600" />
+                </div>
+                <p className="text-2xl font-bold text-gray-900 mb-2">50+</p>
+                <p className="text-gray-600">Scenario templates</p>
+              </div>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Target className="w-8 h-8 text-purple-600" />
+                </div>
+                <p className="text-2xl font-bold text-gray-900 mb-2">100%</p>
+                <p className="text-gray-600">Private & secure</p>
+              </div>
+            </div>
           </div>
         </LinearReveal>
 
-        <div className="space-y-24">
+        {/* Steps */}
+        <div className="space-y-32">
           {steps.map((step, index) => (
-            <LinearReveal key={step.title} delay={0.3 + index * 0.2}>
+            <LinearReveal key={step.title} delay={0.15 + index * 0.1}>
               <div className={`grid grid-cols-1 lg:grid-cols-2 gap-16 items-center ${index % 2 === 1 ? 'lg:grid-flow-dense' : ''}`}>
                 
                 {/* Content Side */}
                 <div className={`space-y-8 ${index % 2 === 1 ? 'lg:col-start-2' : ''}`}>
                   <div className="flex items-center space-x-4 mb-6">
                     <div className="relative">
-                      <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center text-white shadow-glow-purple">
+                      <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center text-white shadow-glow-purple">
                         {step.icon}
                       </div>
-                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 text-sm font-bold">
+                      <div className="absolute -top-3 -right-3 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 text-sm font-bold border-2 border-white">
                         {step.step}
                       </div>
                     </div>
-                    <div className="w-24 h-0.5 bg-gradient-to-r from-purple-300 to-purple-100 hidden lg:block"></div>
+                    <div className="w-32 h-0.5 bg-gradient-to-r from-purple-300 to-purple-100 hidden lg:block"></div>
                   </div>
                   
                   <div className="space-y-6">
-                    <h3 className="text-3xl font-bold text-neutral-900">{step.title}</h3>
+                    <h3 className="text-3xl sm:text-4xl font-bold text-neutral-900 leading-tight">{step.title}</h3>
                     <p className="text-xl text-neutral-600 leading-relaxed">{step.description}</p>
                     
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-2xl p-6 border border-purple-100">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Examples:</h4>
-                      <ul className="space-y-3">
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-2xl p-8 border border-purple-100">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                        <span className="w-6 h-6 bg-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-bold mr-3">
+                          ✓
+                        </span>
+                        Example {index === 0 ? 'Scenarios:' : index === 1 ? 'Feedback:' : 'Progress Tracking:'}
+                      </h4>
+                      <div className="space-y-4">
                         {step.examples.map((example, idx) => (
-                          <li key={idx} className="flex items-start">
+                          <div key={idx} className="flex items-start">
                             <span className="w-2 h-2 bg-purple-600 rounded-full mt-2 mr-4 flex-shrink-0"></span>
                             <span className="text-gray-700 leading-relaxed">{example}</span>
-                          </li>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -325,46 +360,73 @@ const HowItWorksContent = () => {
           ))}
         </div>
 
-        {/* Call to Action */}
-        <LinearReveal delay={1.2}>
-          <div className="text-center mt-24">
-            <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-3xl p-8 lg:p-12 border border-purple-100">
-              <h3 className="text-3xl font-bold text-gray-900 mb-6">
-                Ready to Build Your Confidence?
-              </h3>
-              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                Join thousands who practice a few minutes a day and see real improvements in their conversations.
-              </p>
-              
-              {/* Benefits grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <span className="text-white font-bold text-lg">✓</span>
-                  </div>
-                  <p className="text-gray-700 font-medium">100% Free</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <span className="text-white font-bold text-lg">✓</span>
-                  </div>
-                  <p className="text-gray-700 font-medium">Private & Safe</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <span className="text-white font-bold text-lg">✓</span>
-                  </div>
-                  <p className="text-gray-700 font-medium">Start Immediately</p>
-                </div>
+        {/* Strong Call to Action */}
+        <LinearReveal delay={0.6}>
+          <div className="text-center mt-32">
+            <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-3xl p-8 lg:p-16 relative overflow-hidden">
+              <div className="absolute inset-0">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600 rounded-full blur-3xl opacity-30" />
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl opacity-25" />
               </div>
               
-              <Link 
-                href="/onboarding"
-                className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-lg rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
-              >
-                Start Free Practice Now
-                <ArrowRight className="w-6 h-6" />
-              </Link>
+              <div className="relative z-10 space-y-8">
+                <h3 className="text-4xl sm:text-5xl font-bold text-white mb-6 leading-tight">
+                  Start Your First Conversation Now
+                </h3>
+                <p className="text-xl text-neutral-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+                  Join thousands who've already built their confidence through practice. No credit card required—just your willingness to grow.
+                </p>
+                
+                {/* Benefits grid */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-white font-medium">100% Free</p>
+                    <p className="text-neutral-400 text-sm">Forever</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-white font-medium">Private & Safe</p>
+                    <p className="text-neutral-400 text-sm">Your conversations stay private</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-white font-medium">Start Immediately</p>
+                    <p className="text-neutral-400 text-sm">No setup required</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-white font-medium">Real Results</p>
+                    <p className="text-neutral-400 text-sm">See progress in days</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                  <Link 
+                    href="/onboarding"
+                    className="group inline-flex items-center gap-3 px-12 py-5 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-lg rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
+                  >
+                    Start Free Practice Now
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+                  </Link>
+                  
+                  <Link 
+                    href="/mission"
+                    className="group inline-flex items-center gap-3 px-8 py-4 text-neutral-300 font-medium rounded-2xl border border-neutral-600 bg-neutral-800/50 backdrop-blur-sm hover:bg-neutral-700/50 hover:border-neutral-500 active:scale-95 transition-all duration-200"
+                  >
+                    Learn about our mission
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </LinearReveal>
