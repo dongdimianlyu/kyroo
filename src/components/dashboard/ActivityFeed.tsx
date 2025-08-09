@@ -4,6 +4,7 @@ import { ActivityItem } from '../../types/dashboard';
 
 interface ActivityFeedProps {
   activities: ActivityItem[];
+  onStartPractice?: () => void;
 }
 
 interface ActivityItemProps {
@@ -138,7 +139,7 @@ const ActivityItemComponent: React.FC<ActivityItemProps> = ({ activity, index })
   );
 };
 
-const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
+const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities, onStartPractice }) => {
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -153,9 +154,10 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={onStartPractice}
           className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl text-sm font-medium shadow-lg hover:shadow-xl transition-all duration-300"
         >
-          View All
+          Start Practice
         </motion.button>
       </div>
 
@@ -177,6 +179,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={onStartPractice}
               className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Start Practicing

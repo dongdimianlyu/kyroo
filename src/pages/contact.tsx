@@ -217,77 +217,54 @@ const ContactHero = () => {
 };
 
 const ContactContent = () => {
-  const contactMethods = [
-    {
-      icon: <Mail className="w-8 h-8" />,
-      title: "Email Us",
-      description: "For general inquiries, feedback, or support questions",
-      contact: "hello@kairoo.app",
-      action: "Send an email"
-    },
-    {
-      icon: <MessageCircle className="w-8 h-8" />,
-      title: "Share Your Story",
-      description: "Tell us about your experience or how Kairoo has helped you",
-      contact: "stories@kairoo.app",
-      action: "Share your journey"
-    },
-    {
-      icon: <Heart className="w-8 h-8" />,
-      title: "Support & Care",
-      description: "Need help or have concerns? We're here to support you",
-      contact: "support@kairoo.app",
-      action: "Get support"
-    }
-  ];
-
   return (
     <section className="py-24 bg-gradient-to-br from-white to-neutral-50">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-4xl mx-auto px-6">
         <LinearReveal delay={0.1}>
           <div className="text-center mb-20">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
               We're here to <span className="text-purple-700">help</span>
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Whether you’re exploring Kairoo or already practicing, we’re a message away.
+              Whether you're exploring Kairoo or already practicing, we're a message away.
             </p>
           </div>
         </LinearReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
-          {contactMethods.map((method, index) => (
-            <LinearReveal key={method.title} delay={0.3 + index * 0.1}>
-              <div className="group p-8 bg-white/80 backdrop-blur-sm rounded-3xl border border-neutral-200/50 shadow-premium hover:shadow-premium-lg hover:-translate-y-2 hover:border-neutral-300/60 transition-all duration-300">
-                <div className="flex items-start mb-6">
-                  <div className="p-4 bg-purple-100 rounded-2xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-glow-purple transition-all duration-300">
-                    {method.icon}
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold text-neutral-900 mb-4">{method.title}</h3>
-                <p className="text-neutral-600 leading-relaxed mb-6">{method.description}</p>
-                <div className="space-y-4">
-                  <p className="text-purple-700 font-semibold">{method.contact}</p>
-                  <a 
-                    href={`mailto:${method.contact}`}
-                    className="inline-flex items-center text-sm font-medium text-neutral-600 hover:text-purple-700 transition-colors duration-200"
-                  >
-                    {method.action} →
-                  </a>
+        <LinearReveal delay={0.3}>
+          <div className="max-w-2xl mx-auto mb-20">
+            <div className="group p-12 bg-white/80 backdrop-blur-sm rounded-3xl border border-neutral-200/50 shadow-premium hover:shadow-premium-lg hover:-translate-y-2 hover:border-neutral-300/60 transition-all duration-300 text-center">
+              <div className="flex justify-center mb-8">
+                <div className="p-6 bg-purple-100 rounded-3xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-glow-purple transition-all duration-300">
+                  <Mail className="w-10 h-10" />
                 </div>
               </div>
-            </LinearReveal>
-          ))}
-        </div>
+              <h3 className="text-3xl font-bold text-neutral-900 mb-6">Get in Touch</h3>
+              <p className="text-xl text-neutral-600 leading-relaxed mb-8">
+                For questions, feedback, support, or just to share your story—we read every message and respond quickly.
+              </p>
+              <div className="space-y-6">
+                <p className="text-2xl text-purple-700 font-semibold">jiarenlyu@gmail.com</p>
+                <a 
+                  href="mailto:jiarenlyu@gmail.com"
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
+                >
+                  Send us an email
+                  <Mail className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </LinearReveal>
 
-        <LinearReveal delay={0.8}>
+        <LinearReveal delay={0.6}>
           <div className="text-center">
             <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-3xl p-8 lg:p-12 border border-purple-100">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
                 A note from the team
               </h3>
               <p className="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">
-                We’re building Kairoo with care and attention to craft. Your thoughts help us make the product simpler,
+                We're building Kairoo with care and attention to craft. Your thoughts help us make the product simpler,
                 faster, and more supportive.
               </p>
               <p className="text-purple-700 font-semibold">

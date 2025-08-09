@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { ArrowLeft, MessageCircle, Zap, TrendingUp } from "lucide-react";
+import { ArrowLeft, MessageCircle, Zap, TrendingUp, ArrowRight } from "lucide-react";
 
 // Reusing the same animation components
 const LinearTextReveal = ({ 
@@ -208,8 +208,8 @@ const HowItWorksHero = () => {
           
           <LinearReveal delay={0.8}>
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Kairoo is a focused practice environment. Describe a scenario, hold a natural
-              conversation with AI, then review clear, gentle feedback. Repeat to build real skill.
+              Practice makes progress. Choose real scenarios you care about, have natural conversations 
+              with your AI coach, and get supportive feedback that builds confidence over time.
             </p>
           </LinearReveal>
         </div>
@@ -222,21 +222,39 @@ const HowItWorksContent = () => {
   const steps = [
     {
       icon: <MessageCircle className="w-8 h-8" />,
-      title: "Start a conversation",
-      description: "Describe the situation you want to practice. Speak or type—your partner adapts in real time.",
-      step: "01"
+      title: "Choose Your Scenario & Start Talking",
+      description: "Pick from real-world situations or describe your own. Then have a natural conversation with your AI practice partner.",
+      step: "01",
+      examples: [
+        "Practice asking for a raise in your next review",
+        "Rehearse introducing yourself at networking events", 
+        "Work on difficult conversations with family members"
+      ],
+      imagePlaceholder: "/conversation-mockup.svg"
     },
     {
       icon: <Zap className="w-8 h-8" />,
-      title: "Get fast, kind feedback",
-      description: "After each exchange, see concise insights that highlight strengths and next steps.",
-      step: "02"
+      title: "Get Instant, Gentle Feedback",
+      description: "After each exchange, see personalized insights that highlight what you did well and suggest improvements.",
+      step: "02", 
+      examples: [
+        "\"Great job staying calm and asking clarifying questions\"",
+        "\"Try pausing before responding to show you're listening\"",
+        "\"Your enthusiasm came through clearly in your tone\""
+      ],
+      imagePlaceholder: "/dashboard-mockup.svg"
     },
     {
       icon: <TrendingUp className="w-8 h-8" />,
-      title: "Track meaningful progress",
-      description: "See trends over time and focus on consistency. Small, repeated reps compound into confidence.",
-      step: "03"
+      title: "Track Your Progress Over Time",
+      description: "See your confidence grow through visual progress tracking. Build habits with streaks and celebrate meaningful milestones.",
+      step: "03",
+      examples: [
+        "Weekly confidence score improvements",
+        "Conversation length and quality trends",
+        "Mastery levels for different scenario types"
+      ],
+      imagePlaceholder: "/xp-progress-mockup.svg"
     }
   ];
 
@@ -246,56 +264,106 @@ const HowItWorksContent = () => {
         <LinearReveal delay={0.1}>
           <div className="text-center mb-20">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
-              Simple steps to <span className="text-purple-700">steady growth</span>
+              Three Simple Steps to <span className="text-purple-700">Better Conversations</span>
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Designed to be calm and efficient. Minimal controls, clear guidance, and just enough structure to keep you moving.
+              Designed to feel natural and supportive. No complex setups—just choose a scenario and start practicing.
             </p>
           </div>
         </LinearReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="space-y-24">
           {steps.map((step, index) => (
-            <LinearReveal key={step.title} delay={0.3 + index * 0.1}>
-              <div className="relative">
-                {/* Step connector line */}
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-purple-200 to-transparent z-0"></div>
-                )}
+            <LinearReveal key={step.title} delay={0.3 + index * 0.2}>
+              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-16 items-center ${index % 2 === 1 ? 'lg:grid-flow-dense' : ''}`}>
                 
-                <div className="relative z-10 group p-8 bg-white/80 backdrop-blur-sm rounded-3xl border border-neutral-200/50 shadow-premium hover:shadow-premium-lg hover:-translate-y-2 hover:border-neutral-300/60 transition-all duration-300">
-                  <div className="flex items-center mb-6">
+                {/* Content Side */}
+                <div className={`space-y-8 ${index % 2 === 1 ? 'lg:col-start-2' : ''}`}>
+                  <div className="flex items-center space-x-4 mb-6">
                     <div className="relative">
-                      <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center text-white group-hover:shadow-glow-purple transition-all duration-300">
+                      <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center text-white shadow-glow-purple">
                         {step.icon}
                       </div>
                       <div className="absolute -top-2 -right-2 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 text-sm font-bold">
                         {step.step}
                       </div>
                     </div>
+                    <div className="w-24 h-0.5 bg-gradient-to-r from-purple-300 to-purple-100 hidden lg:block"></div>
                   </div>
-                  <h3 className="text-2xl font-bold text-neutral-900 mb-4">{step.title}</h3>
-                  <p className="text-neutral-600 leading-relaxed text-lg">{step.description}</p>
+                  
+                  <div className="space-y-6">
+                    <h3 className="text-3xl font-bold text-neutral-900">{step.title}</h3>
+                    <p className="text-xl text-neutral-600 leading-relaxed">{step.description}</p>
+                    
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-2xl p-6 border border-purple-100">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Examples:</h4>
+                      <ul className="space-y-3">
+                        {step.examples.map((example, idx) => (
+                          <li key={idx} className="flex items-start">
+                            <span className="w-2 h-2 bg-purple-600 rounded-full mt-2 mr-4 flex-shrink-0"></span>
+                            <span className="text-gray-700 leading-relaxed">{example}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Visual Side */}
+                <div className={`${index % 2 === 1 ? 'lg:col-start-1' : ''}`}>
+                  <div className="relative bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
+                    <img 
+                      src={step.imagePlaceholder}
+                      alt={`Step ${step.step}: ${step.title}`}
+                      className="w-full h-auto"
+                    />
+                  </div>
+                </div>
+
               </div>
             </LinearReveal>
           ))}
         </div>
 
-        <LinearReveal delay={0.8}>
-          <div className="text-center mt-20">
+        {/* Call to Action */}
+        <LinearReveal delay={1.2}>
+          <div className="text-center mt-24">
             <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-3xl p-8 lg:p-12 border border-purple-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Ready to begin?
+              <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                Ready to Build Your Confidence?
               </h3>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-                Join people who practice a few minutes a day and see compounding results.
+              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                Join thousands who practice a few minutes a day and see real improvements in their conversations.
               </p>
+              
+              {/* Benefits grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <span className="text-white font-bold text-lg">✓</span>
+                  </div>
+                  <p className="text-gray-700 font-medium">100% Free</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <span className="text-white font-bold text-lg">✓</span>
+                  </div>
+                  <p className="text-gray-700 font-medium">Private & Safe</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <span className="text-white font-bold text-lg">✓</span>
+                  </div>
+                  <p className="text-gray-700 font-medium">Start Immediately</p>
+                </div>
+              </div>
+              
               <Link 
                 href="/onboarding"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
+                className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-lg rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
               >
-                Begin practicing conversations
+                Start Free Practice Now
+                <ArrowRight className="w-6 h-6" />
               </Link>
             </div>
           </div>

@@ -235,69 +235,110 @@ const MissionContent = () => {
   return (
     <section className="py-24 bg-gradient-to-br from-white to-neutral-50">
       <div className="max-w-4xl mx-auto px-6">
-        {/* Core mission statement */}
-        <div className="text-center mb-20">
+        
+        {/* Why We Exist */}
+        <div className="mb-20">
           <LinearReveal delay={0.1}>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
-              Purpose-built to help you <span className="text-purple-700">communicate with confidence</span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
+              Why We Exist
             </h2>
           </LinearReveal>
           
-          <LinearReveal delay={0.3} className="space-y-8">
-            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Kairoo is a focused system for practicing real conversations. We combine thoughtful AI, clear feedback,
-              and a calm interface so you can grow skills that translate to everyday life.
-            </p>
-            
-            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              We believe progress comes from repetition, reflection, and respect. No gimmicks. No judgment. Just a
-              professional tool that helps you get better, one conversation at a time.
-            </p>
-          </LinearReveal>
-        </div>
-
-        {/* Main narrative */}
-        <div className="prose prose-lg max-w-none mb-20">
-          <LinearReveal delay={0.5}>
+          <LinearReveal delay={0.3}>
             <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-3xl p-8 lg:p-12 border border-purple-100">
-              <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                <strong className="text-purple-700">Why we exist</strong>: communication shapes opportunity. Many people never
-                get a fair space to practice. Kairoo makes that practice accessible—private by default, gentle by design,
-                and structured so progress is visible.
+              <p className="text-xl text-gray-700 leading-relaxed mb-6">
+                <strong className="text-purple-700">Communication shapes opportunity.</strong> Yet many people never get a fair space to practice. Whether it's social anxiety, cultural differences, neurodivergence, or simply lacking confident role models growing up—countless brilliant minds stay quiet when they could be contributing.
               </p>
               
-              <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                We value clarity over noise and craft over clutter. Our focus is building an experience that feels fast,
-                reliable, and respectful of your time. The product should get out of the way and let the work happen.
+              <p className="text-xl text-gray-700 leading-relaxed mb-6">
+                We've all felt that knot in our stomach before an important conversation. The rehearsing in your head, the worry about saying the wrong thing, the weight of knowing that one interaction could change everything. <strong>You shouldn't have to navigate this alone.</strong>
               </p>
               
-              <p className="text-lg text-gray-700 leading-relaxed">
-                The result is a tool that meets you where you are and grows with you. Practice when it’s convenient,
-                review when it matters, and come back to a consistent system that supports steady improvement.
+              <p className="text-xl text-gray-700 leading-relaxed">
+                Kairoo makes practice accessible—<em>private by default, gentle by design, and structured so progress is visible.</em> Because everyone deserves to feel heard and understood.
               </p>
             </div>
           </LinearReveal>
         </div>
 
-        {/* Vision section */}
-        <div className="text-center mb-20">
-          <LinearReveal delay={0.7}>
-            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto mb-8">
-              Imagine walking into any room—interview, meeting, first date—and feeling prepared, grounded, and
-              authentically yourself.
-            </p>
+        {/* The Change We Want to See */}
+        <div className="mb-20">
+          <LinearReveal delay={0.5}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
+              The Change We Want to See
+            </h2>
           </LinearReveal>
           
+          <LinearReveal delay={0.7}>
+            <div className="space-y-8">
+              <p className="text-xl text-gray-600 leading-relaxed">
+                Imagine walking into any room—interview, meeting, first date—and feeling <strong>prepared, grounded, and authentically yourself.</strong> Not because you've memorized scripts, but because you've practiced being present and responding with confidence.
+              </p>
+              
+              <blockquote className="border-l-4 border-purple-600 pl-8 py-4 bg-white/80 rounded-r-2xl">
+                <p className="text-2xl text-gray-800 leading-relaxed font-medium italic">
+                  "A world where your ideas get the attention they deserve—not because you're the loudest person in the room, but because you've learned to express them clearly and with conviction."
+                </p>
+              </blockquote>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div className="p-6 bg-white/60 rounded-2xl border border-purple-100">
+                  <p className="text-lg text-purple-700 font-semibold">Clarity over complexity</p>
+                  <p className="text-gray-600 mt-2">Simple tools that work</p>
+                </div>
+                <div className="p-6 bg-white/60 rounded-2xl border border-purple-100">
+                  <p className="text-lg text-purple-700 font-semibold">Practice over theory</p>
+                  <p className="text-gray-600 mt-2">Learning through doing</p>
+                </div>
+                <div className="p-6 bg-white/60 rounded-2xl border border-purple-100">
+                  <p className="text-lg text-purple-700 font-semibold">Consistency over intensity</p>
+                  <p className="text-gray-600 mt-2">Small steps, big results</p>
+                </div>
+              </div>
+            </div>
+          </LinearReveal>
+        </div>
+
+        {/* How Our Mission Connects to Kairoo */}
+        <div className="mb-20">
           <LinearReveal delay={0.9}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div>
-                <p className="text-lg text-gray-700 font-medium">Clarity over complexity</p>
-              </div>
-              <div>
-                <p className="text-lg text-gray-700 font-medium">Practice over theory</p>
-              </div>
-              <div>
-                <p className="text-lg text-purple-700 font-semibold">Consistency over intensity</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
+              How Our Mission Connects to Kairoo
+            </h2>
+          </LinearReveal>
+          
+          <LinearReveal delay={1.1}>
+            <div className="space-y-8">
+              <p className="text-xl text-gray-600 leading-relaxed">
+                <strong>Kairoo is a focused system for practicing real conversations.</strong> We combine thoughtful AI, clear feedback, and a calm interface so you can grow skills that translate to everyday life.
+              </p>
+              
+              <p className="text-xl text-gray-600 leading-relaxed">
+                We believe progress comes from <strong>repetition, reflection, and respect.</strong> No gimmicks. No judgment. Just a professional tool that helps you get better, one conversation at a time.
+              </p>
+              
+              <div className="bg-gradient-to-br from-neutral-50 to-white rounded-3xl p-8 border border-gray-200">
+                <p className="text-lg text-gray-700 leading-relaxed mb-4">
+                  <strong>What this means in practice:</strong>
+                </p>
+                <ul className="space-y-3 text-lg text-gray-700">
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
+                    <span>Practice conversations that feel natural and respond to your unique communication style</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
+                    <span>Get feedback that highlights your strengths and suggests gentle improvements</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
+                    <span>Track progress in a way that builds confidence rather than creating pressure</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="w-2 h-2 bg-purple-600 rounded-full mt-3 mr-4 flex-shrink-0"></span>
+                    <span>Access a tool that meets you where you are and grows with you</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </LinearReveal>
@@ -306,7 +347,7 @@ const MissionContent = () => {
         {/* Values cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
           {values.map((value, index) => (
-            <LinearReveal key={value.title} delay={1.1 + index * 0.1}>
+            <LinearReveal key={value.title} delay={1.3 + index * 0.1}>
               <div className="group p-8 bg-white/80 backdrop-blur-sm rounded-2xl border border-neutral-200/50 shadow-premium hover:shadow-premium-lg hover:-translate-y-1 hover:border-neutral-300/60 transition-all duration-300">
                 <div className="flex items-start mb-6">
                   <div className="p-3 bg-purple-100 rounded-2xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-glow-purple transition-all duration-300">
@@ -321,7 +362,7 @@ const MissionContent = () => {
         </div>
 
         {/* Final statement */}
-        <LinearReveal delay={1.5}>
+        <LinearReveal delay={1.7}>
           <div className="text-center">
             <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-3xl p-8 lg:p-12 text-white relative overflow-hidden">
               <div className="absolute inset-0">

@@ -25,7 +25,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<AnalysisResult | { error: string }>
@@ -52,7 +51,6 @@ export default async function handler(
       return res.status(500).json({ error: 'Service authentication failed. Please check configuration.' });
     }
 
-    // Enhanced prompt for better manipulation detection and overthinking assessment
     const prompt = `You are a social intelligence assistant helping autistic and introverted individuals navigate social interactions safely. Your goal is to help them identify potential manipulation, passive-aggressiveness, and understand whether they might be overthinking normal social situations.
 
 ANALYZE THIS MESSAGE/SCENARIO:
@@ -78,48 +76,22 @@ Respond with a JSON object in this exact format:
     "passiveAggressive": [0-100 number, where 0=direct communication, 50=some indirect elements, 100=clearly passive-aggressive]
   },
   "responses": [
-    {
-      "tone": "Direct",
-      "text": "[A straightforward, honest response that sets clear boundaries if needed]"
-    },
-    {
-      "tone": "Diplomatic", 
-      "text": "[A polite but firm response that addresses concerns while maintaining relationship]"
-    },
-    {
-      "tone": "Assertive",
-      "text": "[A confident response that protects the user's interests without being aggressive]"
-    }
+    { "tone": "Direct", "text": "[A straightforward, honest response that sets clear boundaries if needed]" },
+    { "tone": "Diplomatic", "text": "[A polite but firm response that addresses concerns while maintaining relationship]" },
+    { "tone": "Assertive", "text": "[A confident response that protects the user's interests without being aggressive]" }
   ],
   "advice": "[SURGICAL GUIDANCE: 1-2 sentences maximum. Start with VERDICT: 'Normal interaction' or 'Red flag detected' or 'Proceed with caution'. Then ONE specific action: what to do next. No fluff, just actionable guidance.]"
-}
-
-IMPORTANT GUIDELINES FOR ADVICE:
-- Maximum 2 sentences total
-- Start with clear verdict: "Normal interaction", "Red flag detected", or "Proceed with caution"
-- Follow with ONE specific action the user should take
-- No lengthy explanations or background information
-- Be direct and actionable
-- Examples: "Normal interaction. Respond naturally and don't overthink it." OR "Red flag detected. Set clear boundaries and consider limiting contact."
-
-GENERAL GUIDELINES:
-- If you detect manipulation (score 70+), prioritize user safety in responses
-- If scores are low (under 30), reassure user they may be overthinking 
-- For passive-aggression, teach user to recognize the patterns
-- Responses should be practical and actually usable by someone who struggles with social cues
-- Be specific about what makes something manipulative vs just awkward`;
+}`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: 'gpt-3.5-turbo',
       messages: [
         {
-          role: "system", 
-          content: "You are a helpful social intelligence assistant specializing in helping neurodivergent individuals navigate social situations safely. Always respond with valid JSON in the exact format requested."
+          role: 'system',
+          content:
+            'You are a helpful social intelligence assistant specializing in helping neurodivergent individuals navigate social situations safely. Always respond with valid JSON in the exact format requested.',
         },
-        {
-          role: "user",
-          content: prompt
-        }
+        { role: 'user', content: prompt },
       ],
       temperature: 0.7,
       max_tokens: 1500,
@@ -131,61 +103,71 @@ GENERAL GUIDELINES:
     }
 
     // Parse the JSON response
-    let analysisResult: AnalysisResult;
+    let raw: any;
     try {
-      analysisResult = JSON.parse(responseContent);
+      raw = JSON.parse(responseContent);
     } catch {
       console.error('Failed to parse OpenAI response:', responseContent);
       throw new Error('Invalid response format from AI service');
     }
 
-    // Validate the response structure
-    if (!analysisResult.analysis || !analysisResult.responses || !analysisResult.advice) {
-      console.error('Invalid response structure:', analysisResult);
-      throw new Error('Incomplete analysis result');
+    const toNumber = (v: any, fallback: number) => {
+      const n = typeof v === 'string' ? Number.parseFloat(v) : v;
+      return Number.isFinite(n) ? n : fallback;
+    };
+
+    const emotionalWarmth = Math.min(100, Math.max(0, toNumber(raw?.analysis?.emotionalWarmth, 50)));
+    const manipulationRisk = Math.min(100, Math.max(0, toNumber(raw?.analysis?.manipulationRisk, 0)));
+    const passiveAggressive = Math.min(100, Math.max(0, toNumber(raw?.analysis?.passiveAggressive, 0)));
+
+    // Normalize responses to exactly 3 with valid tones
+    const validTones = ['Direct', 'Diplomatic', 'Assertive'] as const;
+    const asArray = Array.isArray(raw?.responses) ? raw.responses : [];
+    const normalized = asArray
+      .filter((r: any) => r && typeof r.text === 'string' && r.text.trim().length > 0)
+      .map((r: any) => ({
+        tone: validTones.includes(r.tone) ? (r.tone as (typeof validTones)[number]) : ('Direct' as const),
+        text: r.text.trim(),
+      }));
+
+    while (normalized.length < 3) {
+      const i = normalized.length;
+      const fallbackTone = validTones[i] || 'Direct';
+      normalized.push({ tone: fallbackTone, text: 'Thanks for sharing. Here’s a clear, respectful way to respond.' });
     }
+    if (normalized.length > 3) normalized.length = 3;
 
-    // Validate analysis scores are numbers between 0-100
-    const { emotionalWarmth, manipulationRisk, passiveAggressive } = analysisResult.analysis;
-    if (typeof emotionalWarmth !== 'number' || emotionalWarmth < 0 || emotionalWarmth > 100 ||
-        typeof manipulationRisk !== 'number' || manipulationRisk < 0 || manipulationRisk > 100 ||
-        typeof passiveAggressive !== 'number' || passiveAggressive < 0 || passiveAggressive > 100) {
-      throw new Error('Invalid analysis scores');
-    }
+    const advice = typeof raw?.advice === 'string' && raw.advice.trim().length > 0
+      ? raw.advice.trim()
+      : 'Normal interaction. Respond naturally and don’t overthink it.';
 
-    // Validate responses array
-    if (!Array.isArray(analysisResult.responses) || analysisResult.responses.length !== 3) {
-      throw new Error('Invalid responses format');
-    }
+    const result: AnalysisResult = {
+      analysis: {
+        emotionalWarmth,
+        manipulationRisk,
+        passiveAggressive,
+      },
+      responses: normalized as AnalysisResult['responses'],
+      advice,
+    };
 
-    const validTones = ['Direct', 'Diplomatic', 'Assertive'];
-    for (const response of analysisResult.responses) {
-      if (!validTones.includes(response.tone) || typeof response.text !== 'string') {
-        throw new Error('Invalid response format');
-      }
-    }
-
-    return res.status(200).json(analysisResult);
-
+    return res.status(200).json(result);
   } catch (error: unknown) {
     console.error('Analysis error:', error);
-    
-    // Handle specific OpenAI errors
+
     if (error instanceof OpenAI.APIError) {
       if (error.status === 401) {
         return res.status(500).json({ error: 'Service authentication failed. Please check your API key.' });
       }
-      if (error.code === 'insufficient_quota') {
+      if ((error as any).code === 'insufficient_quota') {
         return res.status(429).json({ error: 'You have exceeded your OpenAI quota. Please check your plan and billing details.' });
       }
       if (error.status === 429) {
         return res.status(429).json({ error: 'Service is busy. Please try again in a moment.' });
       }
     }
-    
+
     const errorMessage = error instanceof Error ? error.message : 'Analysis failed. Please try again.';
-    return res.status(500).json({ 
-      error: errorMessage
-    });
+    return res.status(500).json({ error: errorMessage });
   }
 } 

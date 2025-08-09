@@ -259,21 +259,21 @@ const HeroSection = () => {
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-[1.05] tracking-[-0.02em]">
               <div className="block">
                 <LinearTextReveal 
-                  text="Practice social" 
+                  text="Too anxious to speak up?" 
                   delay={0.1}
                   staggerDelay={0.03}
                 />
               </div>
               <div className="block">
                 <LinearTextReveal 
-                  text="conversations with" 
+                  text="Rehearse real chats with" 
                   delay={0.3}
                   staggerDelay={0.03}
                 />
               </div>
               <div className="block">
                 <LinearTextReveal 
-                  text="confidence" 
+                  text="an AI that understands" 
                   delay={0.5}
                   staggerDelay={0.05}
                   className="text-violet-700 font-extrabold"
@@ -284,23 +284,54 @@ const HeroSection = () => {
 
           <LinearReveal delay={0.8}>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              A growth companion for those who feel misunderstood in social settings. 
-              Practice real conversations, receive gentle feedback, and build confidence 
-              through immersive simulations—no judgment, just understanding.
+              Build real-world confidence through practice conversations that feel natural and judgment-free.
             </p>
           </LinearReveal>
 
-          <LinearReveal delay={1.0} className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
+          {/* Scenario bullet points */}
+          <LinearReveal delay={1.0}>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-violet-100 p-8 max-w-2xl mx-auto">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">Practice scenarios that matter:</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="w-2 h-2 bg-violet-600 rounded-full"></div>
+                  <span className="text-gray-700 font-medium">Calm your interview nerves</span>
+                </div>
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="w-2 h-2 bg-violet-600 rounded-full"></div>
+                  <span className="text-gray-700 font-medium">Own small talk at parties</span>
+                </div>
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="w-2 h-2 bg-violet-600 rounded-full"></div>
+                  <span className="text-gray-700 font-medium">Assert yourself in meetings</span>
+                </div>
+              </div>
+            </div>
+          </LinearReveal>
+
+          {/* Mission excerpt and link */}
+          <LinearReveal delay={1.2}>
+            <div className="text-center">
+              <p className="text-lg text-gray-600 mb-4">
+                <Link href="/mission" className="text-violet-700 hover:text-violet-800 font-medium underline decoration-2 underline-offset-2">
+                  We believe practice should be accessible to everyone—
+                </Link>
+                <span className="text-gray-600">no judgment, just understanding.</span>
+              </p>
+            </div>
+          </LinearReveal>
+
+          <LinearReveal delay={1.4} className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8">
             <Link 
               href="/onboarding" 
-              className="group px-10 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200 flex items-center gap-3"
+              className="group px-12 py-5 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-lg rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200 flex items-center gap-3"
             >
-              Start practicing conversations
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+              Start Free Practice Now
+              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
             
             <Link 
-              href="#features" 
+              href="/how-it-works" 
               className="group px-10 py-4 text-neutral-700 font-medium rounded-2xl border border-neutral-200/80 bg-white/80 backdrop-blur-sm hover:border-neutral-300 hover:bg-white hover:shadow-md active:scale-95 transition-all duration-200 flex items-center gap-3"
             >
               How it works
@@ -309,7 +340,47 @@ const HeroSection = () => {
           </LinearReveal>
         </LinearContainer>
 
-        {/* Hero image section removed */}
+        {/* Visual placeholder and testimonial */}
+        <LinearReveal delay={1.6}>
+          <div className="mt-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* App mockup placeholder */}
+            <div className="order-2 lg:order-1">
+              <div className="relative bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
+                <img 
+                  src="/simulation-coach-mockup.svg" 
+                  alt="Kairoo app interface showing conversation practice and feedback"
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+            
+            {/* Testimonial card */}
+            <div className="order-1 lg:order-2">
+              <div className="bg-gradient-to-br from-violet-50 to-purple-25 rounded-3xl p-8 border border-violet-100">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-violet-600 rounded-full flex items-center justify-center text-white font-semibold text-lg mr-4">
+                    F
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">Anonymous User</p>
+                    <p className="text-sm text-gray-600">Community Member</p>
+                  </div>
+                </div>
+                <blockquote className="text-lg text-gray-700 leading-relaxed mb-4">
+                  "This is amazing. I gave it a try and it was very close. I love how there are all the little trinkets for like the context of the conversation like the emotion and topics. Most of my friends are either Neurotypical or just have a hard time with context clues, common sense, or empathy. ABSOLUTELY FABULOUS AND AMAZING!!!"
+                </blockquote>
+                <div className="flex items-center">
+                  <div className="flex text-violet-500">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-lg">★</span>
+                    ))}
+                  </div>
+                  <span className="ml-2 text-sm text-gray-600">Real user feedback</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </LinearReveal>
       </div>
     </section>
   );
@@ -778,7 +849,7 @@ const ProductShowcase = () => {
                 alt="User testimonial"
                 width={1200}
                 height={675}
-                layout="responsive"
+                style={{ width: '100%', height: 'auto' }}
               />
             </div>
           </LinearReveal>

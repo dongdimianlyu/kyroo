@@ -192,6 +192,7 @@ function App() {
   const [simulationSummary, setSimulationSummary] = useState<SimulationSummary | null>(null);
   const [showSummary, setShowSummary] = useState(false);
   const [lastUserTranscript, setLastUserTranscript] = useState('');
+  const [simulationStartAt, setSimulationStartAt] = useState<Date | null>(null);
   
   // Enhanced pre-conversation setup state
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel['id']>('medium');
@@ -902,6 +903,7 @@ function App() {
       
       setSceneDescription(data.sceneDescription || '');
       setIsSimulationActive(true);
+      setSimulationStartAt(new Date());
       setCurrentHint(null); // Clear any existing hints
       setRecentHints([]);
       setLastHintCheck(null);
@@ -976,7 +978,30 @@ function App() {
       const summary: SimulationSummary = await response.json();
       setSimulationSummary(summary);
       setShowSummary(true);
-      
+
+      // Persist session for dashboard
+      try {
+        const startedAtISO = simulationStartAt ? simulationStartAt.toISOString() : undefined;
+        await fetch('/api/sessions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            anonId,
+            scenario,
+            smoothnessScore: summary.smoothnessScore,
+            whatWentWell: summary.whatWentWell,
+            improvementAreas: summary.improvementAreas,
+            durationMinutes: undefined, // let API derive from timestamps if present
+            startedAt: startedAtISO,
+            endedAt: new Date().toISOString(),
+            difficulty: selectedDifficulty,
+            feeling: selectedFeeling,
+          }),
+        });
+      } catch (persistErr) {
+        console.warn('Failed to persist session:', persistErr);
+      }
+
       // Stop any ongoing audio
       stopSpeaking();
       
@@ -996,6 +1021,7 @@ function App() {
     setLastUserTranscript('');
     setCurrentTranscript('');
     setScenario('');
+    setSimulationStartAt(null);
     setIsListening(false);
     
     // Reset enhanced setup
