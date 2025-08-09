@@ -208,7 +208,7 @@ const HowItWorksHero = () => {
           
           <LinearReveal delay={0.4}>
             <p className="text-xl text-gray-600 leading-relaxed max-w-4xl mx-auto">
-              <strong>Three simple steps to building conversation confidence.</strong> No complex setups or overwhelming features—just choose a scenario, practice naturally, and grow with gentle guidance.
+              <strong>Practice → Improve → Repeat.</strong> Voice AI that understands context and gives feedback that actually helps.
             </p>
           </LinearReveal>
         </div>
@@ -221,40 +221,40 @@ const HowItWorksContent = () => {
   const steps = [
     {
       icon: <MessageCircle className="w-8 h-8" />,
-      title: "Practice Real Conversations",
-      description: "Choose from real-world scenarios or describe your own situation. Then have natural, voice-based conversations with your AI practice partner who understands context and responds thoughtfully.",
+      title: "Choose Your Scenario",
+      description: "Pick from 50+ conversation types or describe your own. Interview prep, difficult conversations, small talk—whatever you need to practice.",
       step: "01",
       examples: [
-        "\"I need to ask my boss for a raise next week\"",
-        "\"Help me practice small talk for networking events\"", 
-        "\"I want to work on speaking up in team meetings\"",
-        "\"Can we practice difficult conversations with family?\""
+        "Interview questions for your dream job",
+        "Asking for a raise or promotion", 
+        "Small talk at networking events",
+        "Difficult conversations with family"
       ],
       imagePlaceholder: "/conversation-mockup.svg"
     },
     {
       icon: <Zap className="w-8 h-8" />,
-      title: "Get Gentle, Actionable Feedback",
-      description: "After each conversation, receive personalized insights that highlight your strengths and offer gentle suggestions for improvement. Our feedback focuses on building confidence, not tearing down.",
+      title: "Practice With AI",
+      description: "Talk naturally. The AI understands context, picks up on social cues, and responds like a real person. Practice until it feels natural.",
       step: "02", 
       examples: [
-        "\"Great job staying calm and asking clarifying questions\"",
-        "\"Your enthusiasm came through clearly—try pausing before responding to show active listening\"",
-        "\"You expressed your needs clearly. Consider adding more specific examples to strengthen your point\"",
-        "\"Nice work maintaining eye contact throughout the conversation\""
+        "AI notices when you're nervous and adjusts",
+        "Picks up on emotion and responds appropriately",
+        "Understands context and keeps conversation flowing",
+        "Gives you space to practice difficult moments"
       ],
       imagePlaceholder: "/dashboard-mockup.svg"
     },
     {
       icon: <TrendingUp className="w-8 h-8" />,
-      title: "Track Your Growth Over Time",
-      description: "See your confidence build through visual progress tracking, conversation analytics, and milestone celebrations. Watch your communication skills improve with every practice session.",
+      title: "Get Feedback That Helps",
+      description: "See what worked, what didn't, and specific ways to improve. Track progress over time and watch your confidence grow.",
       step: "03",
       examples: [
-        "Weekly confidence score improvements (65% → 78% → 85%)",
-        "Track practice streaks and build momentum (5 days → 30 days → 90 days)",
-        "Mastery levels unlock for different scenario types",
-        "Achievement badges for consistency and breakthrough moments"
+        "Confidence scores that improve with practice",
+        "Specific suggestions for next time",
+        "Track which scenarios you've mastered",
+        "See progress week over week"
       ],
       imagePlaceholder: "/xp-progress-mockup.svg"
     }
@@ -267,11 +267,11 @@ const HowItWorksContent = () => {
         <LinearReveal delay={0.05}>
           <div className="text-center mb-20">
             <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-[1.1] tracking-[-0.02em] mb-8">
-              Build Confidence Through 
-              <span className="text-purple-700"> Focused Practice</span>
+              Conversation practice that 
+              <span className="text-purple-700"> actually works</span>
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed max-w-4xl mx-auto mb-12">
-              Whether you're preparing for a specific conversation or building general social confidence, our process adapts to your needs and goals.
+              Pick any conversation scenario. Practice with AI that understands social context. Get better at the conversations that matter.
             </p>
             
             {/* Quick stats */}
@@ -330,7 +330,7 @@ const HowItWorksContent = () => {
                         <span className="w-6 h-6 bg-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-bold mr-3">
                           ✓
                         </span>
-                        Example {index === 0 ? 'Scenarios:' : index === 1 ? 'Feedback:' : 'Progress Tracking:'}
+                        {index === 0 ? 'Popular scenarios:' : index === 1 ? 'How AI helps:' : 'What you get:'}
                       </h4>
                       <div className="space-y-4">
                         {step.examples.map((example, idx) => (
@@ -371,10 +371,10 @@ const HowItWorksContent = () => {
               
               <div className="relative z-10 space-y-8">
                 <h3 className="text-4xl sm:text-5xl font-bold text-white mb-6 leading-tight">
-                  Start Your First Conversation Now
+                  Ready to practice?
                 </h3>
                 <p className="text-xl text-neutral-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-                  Join thousands who've already built their confidence through practice. No credit card required—just your willingness to grow.
+                  Free to use. No signup required. Pick a scenario and start talking.
                 </p>
                 
                 {/* Benefits grid */}
@@ -383,8 +383,8 @@ const HowItWorksContent = () => {
                     <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
                       <CheckCircle className="w-6 h-6 text-white" />
                     </div>
-                    <p className="text-white font-medium">100% Free</p>
-                    <p className="text-neutral-400 text-sm">Forever</p>
+                    <p className="text-white font-medium">Always Free</p>
+                    <p className="text-neutral-400 text-sm">No hidden costs</p>
                   </div>
                   <div className="text-center">
                     <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
@@ -397,15 +397,15 @@ const HowItWorksContent = () => {
                     <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
                       <CheckCircle className="w-6 h-6 text-white" />
                     </div>
-                    <p className="text-white font-medium">Start Immediately</p>
-                    <p className="text-neutral-400 text-sm">No setup required</p>
+                    <p className="text-white font-medium">Ready in 30s</p>
+                    <p className="text-neutral-400 text-sm">No signup required</p>
                   </div>
                   <div className="text-center">
                     <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mx-auto mb-3">
                       <CheckCircle className="w-6 h-6 text-white" />
                     </div>
-                    <p className="text-white font-medium">Real Results</p>
-                    <p className="text-neutral-400 text-sm">See progress in days</p>
+                    <p className="text-white font-medium">See Results</p>
+                    <p className="text-neutral-400 text-sm">Confidence improves with practice</p>
                   </div>
                 </div>
                 
@@ -414,7 +414,7 @@ const HowItWorksContent = () => {
                     href="/onboarding"
                     className="group inline-flex items-center gap-3 px-12 py-5 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-lg rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
                   >
-                    Start Free Practice Now
+                    Start Practicing
                     <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
                   </Link>
                   
@@ -422,7 +422,7 @@ const HowItWorksContent = () => {
                     href="/mission"
                     className="group inline-flex items-center gap-3 px-8 py-4 text-neutral-300 font-medium rounded-2xl border border-neutral-600 bg-neutral-800/50 backdrop-blur-sm hover:bg-neutral-700/50 hover:border-neutral-500 active:scale-95 transition-all duration-200"
                   >
-                    Learn about our mission
+                    Our mission
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                   </Link>
                 </div>

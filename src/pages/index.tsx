@@ -254,8 +254,8 @@ const HeroSection = () => {
         <LinearContainer className="space-y-10">
           <LinearItem>
             <div className="inline-flex items-center space-x-2 rounded-full bg-violet-50 border border-violet-200 p-1 pr-4 text-sm font-medium text-violet-700 mb-8">
-              <span className="rounded-full bg-violet-600 px-3 py-1 text-white text-xs font-medium">Free Beta</span>
-              <span>Safe conversation practice for everyone</span>
+              <span className="rounded-full bg-violet-600 px-3 py-1 text-white text-xs font-medium">Live Now</span>
+              <span>Voice AI that understands social context</span>
             </div>
           </LinearItem>
 
@@ -263,21 +263,21 @@ const HeroSection = () => {
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-[1.05] tracking-[-0.02em]">
               <div className="block">
                 <LinearTextReveal 
-                  text="Conversation practice that" 
+                  text="Practice conversations" 
                   delay={0.05}
                   staggerDelay={0.02}
                 />
               </div>
               <div className="block">
                 <LinearTextReveal 
-                  text="actually understands you" 
+                  text="with AI that gets it" 
                   delay={0.15}
                   staggerDelay={0.02}
                 />
               </div>
               <div className="block">
                 <LinearTextReveal 
-                  text="without the anxiety" 
+                  text="Build confidence, naturally" 
                   delay={0.25}
                   staggerDelay={0.03}
                   className="text-violet-700 font-extrabold"
@@ -288,7 +288,7 @@ const HeroSection = () => {
 
           <LinearReveal delay={0.35}>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Practice conversations in a safe space where you won't be judged for missing social cues or needing more time to process. Build confidence through gentle, understanding feedback.
+              Voice AI that understands context, picks up on social cues, and gives you feedback that actually helps. No judgment. Just practice.
             </p>
           </LinearReveal>
 
@@ -298,7 +298,7 @@ const HeroSection = () => {
               href="/onboarding" 
               className="group px-12 py-5 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-lg rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200 flex items-center gap-3"
             >
-              Try a Safe Practice Chat
+              Start Practicing
               <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
             
@@ -314,7 +314,7 @@ const HeroSection = () => {
           {/* Credibility bar */}
           <LinearReveal delay={0.55}>
             <div className="pt-8">
-              <p className="text-sm text-gray-500 mb-6">Trusted by people from around the world who understand the struggle</p>
+              <p className="text-sm text-gray-500 mb-6">Used across 15+ countries</p>
               <div className="flex items-center justify-center gap-8 opacity-60">
                 <div className="text-sm font-medium text-gray-600">🇺🇸 USA</div>
                 <div className="text-sm font-medium text-gray-600">🇬🇧 UK</div>
@@ -357,7 +357,7 @@ const HeroSection = () => {
                   </div>
                 </div>
                 <blockquote className="text-gray-700 leading-relaxed">
-                  "This is amazing. I gave it a try and it was very close. I love how there are all the little trinkets for like the context of the conversation like the emotion and topics subtopic. Most of my friends have a hard time with context clues, common sense, or empathy. ABSOLUTELY FABULOUS AND AMAZING!!!"
+                  "This is amazing. I love how it gets the context of conversations — the emotion, the subtopics. Most of my friends struggle with context clues and empathy. ABSOLUTELY FABULOUS!"
                 </blockquote>
               </div>
               
@@ -372,7 +372,7 @@ const HeroSection = () => {
                   </div>
                 </div>
                 <blockquote className="text-gray-700 leading-relaxed">
-                  "Finally, somewhere I can practice without judgment. My interview nerves are almost gone!"
+                  "No judgment, just practice. My interview nerves are actually gone now."
                 </blockquote>
               </div>
             </div>
@@ -735,13 +735,13 @@ const FeaturesSection = () => {
             </p>
             <div className="space-y-1">
               <LinearTextReveal 
-                text="Everything you need to"
+                text="Conversation AI that"
                 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.1] tracking-[-0.02em]"
                 staggerDelay={0.03}
               />
               <br />
               <LinearTextReveal 
-                text="grow with confidence"
+                text="understands social context"
                 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.1] tracking-[-0.02em]"
                 delay={0.2}
                 staggerDelay={0.03}
@@ -749,7 +749,7 @@ const FeaturesSection = () => {
             </div>
             <LinearReveal delay={0.2}>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Designed for those who feel misunderstood in social settings and want to practice in a safe, supportive environment.
+                AI that picks up on emotion, tone, and social cues. Practice conversations that feel real.
               </p>
             </LinearReveal>
           </div>
@@ -860,23 +860,23 @@ const ScenariosSection = () => {
   const scenarios = [
     {
       icon: <UserCheck className="w-6 h-6" />,
-      title: "Ace your next interview",
-      description: "Practice common interview questions and build confidence for that dream job."
+      title: "Interview prep that works",
+      description: "Practice responses until they feel natural. Walk in confident."
     },
     {
       icon: <Users className="w-6 h-6" />,
-      title: "Navigate small talk with ease",
-      description: "Turn awkward silences into natural conversation starters."
+      title: "Small talk that flows",
+      description: "Learn to read social cues and keep conversations going."
     },
     {
       icon: <MessageCircle className="w-6 h-6" />,
-      title: "Speak up confidently in meetings",
-      description: "Share your ideas clearly and contribute meaningfully to discussions."
+      title: "Speak up in meetings",
+      description: "Practice expressing ideas clearly before it counts."
     },
     {
       icon: <Sparkles className="w-6 h-6" />,
-      title: "Connect naturally in new groups",
-      description: "Build rapport and feel comfortable in any social setting."
+      title: "Connect with new people",
+      description: "Build conversation skills that transfer to any social setting."
     }
   ];
 
@@ -885,13 +885,13 @@ const ScenariosSection = () => {
       <div className="max-w-7xl mx-auto px-6">
         <LinearReveal className="text-center mb-16">
           <div className="space-y-6">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-[1.1] tracking-[-0.02em]">
-              Your AI practice partner for 
-              <span className="text-violet-700"> every situation</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Practice scenarios that matter to you—from career moments to social connections.
-            </p>
+                          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-[1.1] tracking-[-0.02em]">
+                Practice conversations for 
+                <span className="text-violet-700"> any situation</span>
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Pick a scenario. Practice until it feels natural. Use it in real life.
+              </p>
           </div>
         </LinearReveal>
 
@@ -920,18 +920,18 @@ const HowItWorksPreview = () => {
   const steps = [
     {
       icon: <MessageCircle className="w-5 h-5" />,
-      title: "Practice Real Conversations",
-      description: "Choose scenarios and talk naturally"
+      title: "Pick a scenario",
+      description: "Choose from 50+ conversation types"
     },
     {
       icon: <Lightbulb className="w-5 h-5" />,
-      title: "Get Gentle Feedback",
-      description: "Receive supportive, actionable insights"
+      title: "Talk with AI",
+      description: "Practice until it feels natural"
     },
     {
       icon: <TrendingUp className="w-5 h-5" />,
-      title: "Track Your Growth",
-      description: "See measurable confidence improvements"
+      title: "Get better",
+      description: "See confidence improve with each session"
     }
   ];
 
@@ -944,7 +944,7 @@ const HowItWorksPreview = () => {
               How it works
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Three simple steps to building conversation confidence
+              Choose. Practice. Improve. Repeat.
             </p>
           </div>
         </LinearReveal>
@@ -999,11 +999,10 @@ const MissionExcerpt = () => {
         <LinearReveal>
           <div className="space-y-8">
             <h2 className="text-4xl sm:text-5xl font-bold text-white leading-[1.1] tracking-[-0.02em]">
-              We believe everyone deserves to be heard
+              Everyone deserves to be heard
             </h2>
             <p className="text-xl text-purple-100 max-w-3xl mx-auto leading-relaxed">
-              Kairoo helps you find your voice in a world that often feels overwhelming. 
-              Practice should be accessible to everyone—no judgment, just understanding.
+              Practice conversations in a space that gets it. No judgment. Just better conversations.
             </p>
             <Link 
               href="/mission"
@@ -1034,13 +1033,13 @@ const CTASection = () => {
             <div className="space-y-8">
               <div className="space-y-2">
                 <LinearTextReveal 
-                  text="Ready to turn anxiety"
+                  text="Start practicing"
                   className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-[-0.02em]"
                   staggerDelay={0.03}
                 />
                 <br />
                 <LinearTextReveal 
-                  text="into confidence?"
+                  text="better conversations"
                   className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-[-0.02em]"
                   delay={0.2}
                   staggerDelay={0.03}
@@ -1048,8 +1047,7 @@ const CTASection = () => {
               </div>
               <LinearReveal delay={0.2}>
                 <p className="text-xl text-neutral-300 max-w-3xl mx-auto leading-relaxed">
-                  Join the free beta and start practicing conversations that matter. 
-                  No credit card required—just your willingness to grow.
+                  Free to use. No signup required. Start practicing in 30 seconds.
                 </p>
               </LinearReveal>
               
@@ -1057,7 +1055,7 @@ const CTASection = () => {
                 <div className="flex items-center justify-center gap-8 text-sm text-neutral-400 mb-6">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-400" />
-                    <span>100% Free Beta</span>
+                    <span>Always Free</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-400" />
@@ -1065,7 +1063,7 @@ const CTASection = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-green-400" />
-                    <span>Start in 2 Minutes</span>
+                    <span>Ready in 30s</span>
                   </div>
                 </div>
               </LinearReveal>
@@ -1076,7 +1074,7 @@ const CTASection = () => {
                 href="/onboarding" 
                 className="inline-flex items-center gap-3 px-12 py-5 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-lg rounded-2xl shadow-glow-purple-lg hover:from-purple-700 hover:to-purple-800 hover:shadow-2xl active:scale-95 transition-all duration-200"
               >
-                Start Free Practice Now
+                Start Practicing
                 <ArrowRight className="w-6 h-6" />
               </Link>
             </LinearReveal>
