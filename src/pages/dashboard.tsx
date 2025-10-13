@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { useRouter } from 'next/router';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 // Dashboard Components
 import ConfidenceScore from '../components/dashboard/ConfidenceScore';
@@ -149,7 +150,8 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
       {/* Header */}
       <div className="bg-white/40 backdrop-blur-sm border-b border-white/20">
         <div className="max-w-7xl mx-auto px-6 py-8">
@@ -268,6 +270,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

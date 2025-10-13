@@ -11,9 +11,9 @@
 
 ## 🛡️ Privacy-First Design
 
-- **No Sign-Up Required**: Start using immediately with no personal information
+- **Optional Authentication**: Use anonymously or create an account for personalized experience
 - **No Message Storage**: All content is analyzed and immediately discarded
-- **Anonymous by Design**: Only anonymous UUIDs for basic usage analytics
+- **Secure User Data**: User profiles stored securely with Firebase
 - **Secure Processing**: All analysis happens through encrypted connections
 
 ## 🎯 Our Mission
@@ -23,6 +23,8 @@ We believe social intelligence tools should be accessible to everyone. Kairoo is
 ## 🚀 Technology Stack
 
 - **Frontend**: Next.js 15 with TypeScript and Tailwind CSS
+- **Authentication**: Firebase Auth with email/password and Google OAuth
+- **Database**: Firestore for user profiles and preferences
 - **AI Integration**: OpenAI GPT-4 for intelligent message analysis
 - **Architecture**: Pages Router with API routes
 - **Deployment**: Optimized for Vercel
@@ -33,6 +35,7 @@ We believe social intelligence tools should be accessible to everyone. Kairoo is
 
 - Node.js 18+ and npm 8+
 - OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
+- Firebase project ([Create one here](https://console.firebase.google.com/))
 
 ### Setup
 
@@ -49,8 +52,8 @@ We believe social intelligence tools should be accessible to everyone. Kairoo is
 
 3. **Configure environment**
    ```bash
-   cp .env.example .env.local
-   # Edit .env.local and add your OpenAI API key
+   # Create .env.local file with your API keys
+   # See FIREBASE_SETUP.md for Firebase configuration
    ```
 
 4. **Start development server**
@@ -82,7 +85,8 @@ We believe social intelligence tools should be accessible to everyone. Kairoo is
 3. **Add Environment Variables**
    - In Vercel dashboard, go to Project Settings → Environment Variables
    - Add `OPENAI_API_KEY` with your API key
-   - Make sure to add it for Production, Preview, and Development environments
+   - Add Firebase configuration variables (see FIREBASE_SETUP.md)
+   - Make sure to add them for Production, Preview, and Development environments
 
 4. **Deploy**
    - Vercel will automatically build and deploy
@@ -103,10 +107,22 @@ npm start
 ```
 kyroo/
 ├── src/
+│   ├── components/
+│   │   ├── ProtectedRoute.tsx # Route protection wrapper
+│   │   ├── UserProfile.tsx    # User profile management
+│   │   └── dashboard/         # Dashboard components
+│   ├── contexts/
+│   │   └── AuthContext.tsx    # Firebase authentication context
+│   ├── lib/
+│   │   └── firebase.ts        # Firebase configuration
 │   ├── pages/
-│   │   ├── index.tsx          # Landing page with warm, supportive messaging
+│   │   ├── index.tsx          # Landing page with authentication
+│   │   ├── signup.tsx         # User registration page
+│   │   ├── login.tsx          # User login page
+│   │   ├── forgot-password.tsx # Password reset page
+│   │   ├── dashboard.tsx      # Protected dashboard
 │   │   ├── app.tsx            # Main application with message analysis
-│   │   ├── _app.tsx           # Next.js app wrapper
+│   │   ├── _app.tsx           # Next.js app wrapper with AuthProvider
 │   │   ├── _document.tsx      # Custom document
 │   │   └── api/
 │   │       ├── analyze.ts     # OpenAI integration for message analysis
@@ -115,17 +131,26 @@ kyroo/
 │       └── globals.css        # Global styles with Tailwind
 ├── public/                    # Static assets
 ├── vercel.json               # Vercel deployment configuration
-├── .env.example              # Environment variables template
+├── FIREBASE_SETUP.md         # Firebase setup instructions
 └── SETUP.md                  # OpenAI API setup instructions
 ```
 
 ## 🎨 Features
+
+### Authentication System
+- **Email/Password Registration**: Secure account creation with validation
+- **Google OAuth Integration**: One-click sign-in with Google
+- **Password Reset**: Secure password recovery via email
+- **User Profile Management**: Edit display name and view account details
+- **Protected Routes**: Secure access to dashboard and user-specific features
+- **Session Persistence**: Automatic login state management
 
 ### Landing Page
 - **Warm, Supportive Messaging**: Designed for people in vulnerable situations
 - **Clear Value Proposition**: Explains how Kairoo helps with social navigation
 - **Privacy Assurance**: Detailed explanation of privacy protections
 - **Mission Statement**: Care-focused, not profit-driven approach
+- **Authentication Integration**: Seamless sign-up and sign-in flow
 
 ### Main Application
 - **Message Analysis**: Real-time AI-powered analysis using GPT-4
@@ -150,6 +175,14 @@ The app requires an OpenAI API key to function. See `SETUP.md` for detailed conf
 ### Environment Variables
 
 - `OPENAI_API_KEY`: Your OpenAI API key (required)
+- `NEXT_PUBLIC_FIREBASE_API_KEY`: Firebase API key (required)
+- `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`: Firebase auth domain (required)
+- `NEXT_PUBLIC_FIREBASE_PROJECT_ID`: Firebase project ID (required)
+- `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`: Firebase storage bucket (required)
+- `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`: Firebase messaging sender ID (required)
+- `NEXT_PUBLIC_FIREBASE_APP_ID`: Firebase app ID (required)
+
+See `FIREBASE_SETUP.md` for detailed Firebase configuration instructions.
 
 ## 🤝 Contributing
 

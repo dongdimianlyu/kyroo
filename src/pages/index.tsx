@@ -21,6 +21,8 @@ import {
   UserCheck,
   Clock
 } from "lucide-react";
+import { useAuth } from '@/contexts/AuthContext';
+import Hero from '@/components/Hero';
 
 // Linear's exact text reveal implementation
 const LinearTextReveal = ({ 
@@ -173,6 +175,7 @@ const LinearItem = ({ children, className = "" }: { children: React.ReactNode, c
 // Clean navigation
 const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
+  const { currentUser, userProfile } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -219,169 +222,48 @@ const Navigation = () => {
           ))}
         </div>
         
-        <Link 
-          href="/onboarding" 
-          className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white text-sm font-semibold rounded-2xl hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
-        >
-          Get Started
-        </Link>
+        {/* Authentication buttons */}
+        <div className="flex items-center gap-4">
+          {currentUser ? (
+            <>
+              <Link 
+                href="/dashboard" 
+                className="px-6 py-2.5 text-purple-600 text-sm font-medium rounded-xl hover:bg-purple-50 transition-all duration-200"
+              >
+                Dashboard
+              </Link>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                  {userProfile?.displayName?.charAt(0).toUpperCase() || 'U'}
+                </div>
+                <span className="text-sm font-medium text-neutral-700 hidden sm:block">
+                  {userProfile?.displayName || 'User'}
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              <Link 
+                href="/login" 
+                className="px-6 py-2.5 text-neutral-600 text-sm font-medium rounded-xl hover:bg-neutral-50 transition-all duration-200"
+              >
+                Sign In
+              </Link>
+              <Link 
+                href="/signup" 
+                className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white text-sm font-semibold rounded-2xl hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
+        </div>
       </nav>
     </motion.header>
   );
 };
 
-// Hero section with redesigned content
-const HeroSection = () => {
-  const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 600], [0, 200]);
-  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
-
-  return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-25 via-white to-neutral-50">
-      {/* Background */}
-      <motion.div 
-        style={{ y, opacity }}
-        className="absolute inset-0"
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-25 via-white to-neutral-50" />
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl opacity-50" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-200 rounded-full blur-3xl opacity-40" />
-        </div>
-      </motion.div>
-
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-32 pb-20 text-center">
-        <LinearContainer className="space-y-10">
-          <LinearItem>
-            <div className="inline-flex items-center space-x-2 rounded-full bg-violet-50 border border-violet-200 p-1 pr-4 text-sm font-medium text-violet-700 mb-8">
-              <span className="rounded-full bg-violet-600 px-3 py-1 text-white text-xs font-medium">Live Now</span>
-              <span>Voice AI that understands social context</span>
-            </div>
-          </LinearItem>
-
-          <div className="space-y-4">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-[1.05] tracking-[-0.02em]">
-              <div className="block">
-                <LinearTextReveal 
-                  text="Practice conversations" 
-                  delay={0.05}
-                  staggerDelay={0.02}
-                />
-              </div>
-              <div className="block">
-                <LinearTextReveal 
-                  text="with AI that gets it" 
-                  delay={0.15}
-                  staggerDelay={0.02}
-                />
-              </div>
-              <div className="block">
-                <LinearTextReveal 
-                  text="Build confidence, naturally" 
-                  delay={0.25}
-                  staggerDelay={0.03}
-                  className="text-violet-700 font-extrabold"
-                />
-              </div>
-            </h1>
-          </div>
-
-          <LinearReveal delay={0.35}>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Voice AI that understands context, picks up on social cues, and gives you feedback that actually helps. No judgment. Just practice.
-            </p>
-          </LinearReveal>
-
-          {/* Strong CTAs */}
-          <LinearReveal delay={0.45} className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
-            <Link 
-              href="/onboarding" 
-              className="group px-12 py-5 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-lg rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200 flex items-center gap-3"
-            >
-              Start Practicing
-              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
-            </Link>
-            
-            <Link 
-              href="/how-it-works" 
-              className="group px-10 py-4 text-neutral-700 font-medium rounded-2xl border border-neutral-200/80 bg-white/80 backdrop-blur-sm hover:border-neutral-300 hover:bg-white hover:shadow-md active:scale-95 transition-all duration-200 flex items-center gap-3"
-            >
-              See How It Works
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-            </Link>
-          </LinearReveal>
-
-          {/* Credibility bar */}
-          <LinearReveal delay={0.55}>
-            <div className="pt-8">
-              <p className="text-sm text-gray-500 mb-6">Used across 15+ countries</p>
-              <div className="flex items-center justify-center gap-8 opacity-60">
-                <div className="text-sm font-medium text-gray-600">🇺🇸 USA</div>
-                <div className="text-sm font-medium text-gray-600">🇬🇧 UK</div>
-                <div className="text-sm font-medium text-gray-600">🇨🇦 Canada</div>
-                <div className="text-sm font-medium text-gray-600">🇦🇺 Australia</div>
-                <div className="text-sm font-medium text-gray-600">🇩🇪 Germany</div>
-              </div>
-            </div>
-          </LinearReveal>
-        </LinearContainer>
-
-        {/* Hero visual and testimonial */}
-        <LinearReveal delay={0.65}>
-          <div className="mt-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* App mockup */}
-            <div className="order-2 lg:order-1">
-              <div className="relative bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
-                <img 
-                  src="/simulation-coach-mockup.svg" 
-                  alt="Kairoo app interface showing conversation practice and feedback"
-                  className="w-full h-auto"
-                />
-              </div>
-            </div>
-            
-            {/* Multiple testimonial cards */}
-            <div className="order-1 lg:order-2 space-y-6">
-              <div className="bg-gradient-to-br from-violet-50 to-purple-25 rounded-3xl p-6 border border-violet-100">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-violet-600 rounded-full flex items-center justify-center text-white font-semibold mr-3">
-                    A
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Anonymous User</p>
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 text-violet-500 fill-current" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <blockquote className="text-gray-700 leading-relaxed">
-                  "This is amazing. I love how it gets the context of conversations — the emotion, the subtopics. Most of my friends struggle with context clues and empathy. ABSOLUTELY FABULOUS!"
-                </blockquote>
-              </div>
-              
-              <div className="bg-gradient-to-br from-green-50 to-emerald-25 rounded-3xl p-6 border border-green-100">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-semibold mr-3">
-                    S
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Beta User</p>
-                    <p className="text-sm text-gray-600">Software Engineer</p>
-                  </div>
-                </div>
-                <blockquote className="text-gray-700 leading-relaxed">
-                  "No judgment, just practice. My interview nerves are actually gone now."
-                </blockquote>
-              </div>
-            </div>
-          </div>
-        </LinearReveal>
-      </div>
-    </section>
-  );
-};
+// HeroSection replaced by compact Hero component
 
 // Practice Feature Section - First part with orb
 const PracticeFeatureSection = () => {
@@ -1071,7 +953,7 @@ const CTASection = () => {
             
             <LinearReveal delay={0.4}>
               <Link 
-                href="/onboarding" 
+                href="/signup" 
                 className="inline-flex items-center gap-3 px-12 py-5 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold text-lg rounded-2xl shadow-glow-purple-lg hover:from-purple-700 hover:to-purple-800 hover:shadow-2xl active:scale-95 transition-all duration-200"
               >
                 Start Practicing
@@ -1129,7 +1011,7 @@ export default function Home() {
     <>
       <Navigation />
       <main>
-        <HeroSection />
+        <Hero />
         <ScenariosSection />
         <HowItWorksPreview />
         <PracticeFeatureSection />

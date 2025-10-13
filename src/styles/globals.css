@@ -250,6 +250,61 @@ select:focus {
   }
 }
 
+@layer components {
+  /* Audio equalizer bars (hero) */
+  .audio-bar {
+    width: 50px; /* wider */
+    height: 60px; /* shorter */
+    display: inline-block;
+    will-change: transform;
+    transform-origin: bottom center;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    border-radius: 9999px; /* more rounded sides (pill) */
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.10);
+  }
+
+  @media (min-width: 640px) { /* sm */
+    .audio-bar { width: 50px; height: 105px; }
+  }
+
+  @media (min-width: 768px) { /* md */
+    .audio-bar { width: 50px; height: 105px; }
+  }
+
+  /* Each bar gets a slightly different animation pattern and delay to feel organic */
+  .audio-bar-1 { animation-name: barPulse1; animation-duration: 1100ms; animation-delay: 40ms; }
+  .audio-bar-2 { animation-name: barPulse2; animation-duration: 1250ms; animation-delay: 0ms; }
+  .audio-bar-3 { animation-name: barPulse3; animation-duration: 1050ms; animation-delay: 80ms; }
+  .audio-bar-4 { animation-name: barPulse4; animation-duration: 1300ms; animation-delay: 20ms; }
+
+  /* Smooth pulse using scale (no jumpy height changes) */
+  @keyframes barPulse1 {
+    0%   { transform: scaleY(0.7) scaleX(1); }
+    50%  { transform: scaleY(1.0) scaleX(1.02); }
+    100% { transform: scaleY(0.8) scaleX(1); }
+  }
+
+  @keyframes barPulse2 {
+    0%   { transform: scaleY(0.65) scaleX(1); }
+    50%  { transform: scaleY(0.95) scaleX(1.03); }
+    100% { transform: scaleY(0.78) scaleX(1); }
+  }
+
+  @keyframes barPulse3 {
+    0%   { transform: scaleY(0.6) scaleX(1); }
+    50%  { transform: scaleY(0.9) scaleX(1.02); }
+    100% { transform: scaleY(0.75) scaleX(1); }
+  }
+
+  @keyframes barPulse4 {
+    0%   { transform: scaleY(0.68) scaleX(1); }
+    50%  { transform: scaleY(1.02) scaleX(1.03); }
+    100% { transform: scaleY(0.82) scaleX(1); }
+  }
+}
+
 /* Premium Orb Animations */
 @layer components {
   .animate-pulse-slow {
