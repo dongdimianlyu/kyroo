@@ -241,6 +241,73 @@ const Dashboard: React.FC = () => {
             </motion.div>
           )}
 
+          {/* Two-row marquee section (blue background) */}
+          <div className="rounded-3xl p-8" style={{ backgroundColor: '#1967FF' }}>
+            <div className="text-center mb-8">
+              <h3 className="text-3xl font-bold text-white">Practice conversations for any situation</h3>
+              <p className="text-white/90">Pick a scenario. Practice until it feels natural. Use it in real life.</p>
+            </div>
+            <div className="space-y-6">
+              <div className="marquee-container">
+                <div className="marquee-track">
+                  <div className="marquee-duplicate">
+                    {[
+                      { title: 'Telling Stories', tag: 'Beginner', emoji: '📚' },
+                      { title: 'Flirting & Compliments', tag: 'Social', emoji: '😊' },
+                      { title: 'Job Interview', tag: 'Work', emoji: '💻' },
+                      { title: 'Public Transport', tag: 'Travel', emoji: '🚆' },
+                      { title: 'Introductions', tag: 'Beginner', emoji: '👋' },
+                    ].concat([
+                      { title: 'Telling Stories', tag: 'Beginner', emoji: '📚' },
+                      { title: 'Flirting & Compliments', tag: 'Social', emoji: '😊' },
+                      { title: 'Job Interview', tag: 'Work', emoji: '💻' },
+                      { title: 'Public Transport', tag: 'Travel', emoji: '🚆' },
+                      { title: 'Introductions', tag: 'Beginner', emoji: '👋' },
+                    ]).map((item, i) => (
+                      <div key={`db-r1-${i}-${item.title}`} className="shrink-0 px-6 py-5 bg-white rounded-[28px] shadow-md flex items-center gap-4">
+                        <span className="text-2xl">{item.emoji}</span>
+                        <div className="leading-tight text-left">
+                          <div className="text-neutral-900 font-semibold text-lg">{item.title}</div>
+                          <div className="text-neutral-500 text-sm">{item.tag}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="marquee-container">
+                <div className="marquee-track reverse">
+                  <div className="marquee-duplicate">
+                    {[
+                      { title: 'Ordering Food', tag: 'Food', emoji: '🌭' },
+                      { title: 'Phone Calls', tag: 'Social', emoji: '📞' },
+                      { title: 'Work Routine', tag: 'Work', emoji: '☕' },
+                      { title: 'First Date', tag: 'Romance', emoji: '🌹' },
+                      { title: 'Presidential Debate', tag: 'Debate', emoji: '🎤' },
+                      { title: 'Buying a Gift', tag: 'Shopping', emoji: '🛍️' },
+                    ].concat([
+                      { title: 'Ordering Food', tag: 'Food', emoji: '🌭' },
+                      { title: 'Phone Calls', tag: 'Social', emoji: '📞' },
+                      { title: 'Work Routine', tag: 'Work', emoji: '☕' },
+                      { title: 'First Date', tag: 'Romance', emoji: '🌹' },
+                      { title: 'Presidential Debate', tag: 'Debate', emoji: '🎤' },
+                      { title: 'Buying a Gift', tag: 'Shopping', emoji: '🛍️' },
+                    ]).map((item, i) => (
+                      <div key={`db-r2-${i}-${item.title}`} className="shrink-0 px-6 py-5 bg-white rounded-[28px] shadow-md flex items-center gap-4">
+                        <span className="text-2xl">{item.emoji}</span>
+                        <div className="leading-tight text-left">
+                          <div className="text-neutral-900 font-semibold text-lg">{item.title}</div>
+                          <div className="text-neutral-500 text-sm">{item.tag}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Quick Actions */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
