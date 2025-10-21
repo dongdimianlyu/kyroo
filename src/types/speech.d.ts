@@ -68,12 +68,12 @@ interface SpeechGrammar {
   weight: number;
 }
 
-declare var SpeechRecognition: {
+declare const SpeechRecognition: {
   prototype: SpeechRecognition;
   new (): SpeechRecognition;
 };
 
-declare var webkitSpeechRecognition: {
+declare const webkitSpeechRecognition: {
   prototype: SpeechRecognition;
   new (): SpeechRecognition;
 };
@@ -81,7 +81,7 @@ declare var webkitSpeechRecognition: {
 // Extend the Window interface to include speech recognition
 declare global {
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof webkitSpeechRecognition;
+    SpeechRecognition?: typeof SpeechRecognition;
+    webkitSpeechRecognition?: typeof webkitSpeechRecognition;
   }
 } 

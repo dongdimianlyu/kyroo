@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { User, Mail, Calendar, Settings, LogOut, Edit3, Save, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, isFirebaseEnabled } from '@/lib/firebase';
 
 interface UserProfileProps {
   onClose?: () => void;
@@ -21,6 +21,11 @@ const UserProfile: React.FC<UserProfileProps> = ({ onClose }) => {
 
     if (!displayName.trim()) {
       setError('Display name cannot be empty');
+      return;
+    }
+
+    if (!isFirebaseEnabled || !db) {
+      setError('Firebase is not properly configured');
       return;
     }
 

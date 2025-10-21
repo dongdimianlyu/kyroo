@@ -77,7 +77,7 @@ const FloatingOrb = React.memo(({ isSpeaking, isListening, loading, lastUserTran
           </p>
           <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/50 transition-all duration-300 hover:shadow-2xl">
             <p className="text-slate-700 italic leading-relaxed">
-              "{currentTranscript || lastUserTranscript}"
+              &ldquo;{currentTranscript || lastUserTranscript}&rdquo;
             </p>
           </div>
         </div>
@@ -354,7 +354,7 @@ function App() {
           // If no hint is returned, show a generic message
           setCurrentHint({
             id: crypto.randomUUID(),
-            message: "Keep up the great work! You're doing just fine.",
+            message: "Keep up the great work! You&apos;re doing just fine.",
             type: 'encouragement',
             timestamp: new Date(),
           });
@@ -744,13 +744,14 @@ function App() {
 
     // Initialize speech recognition
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = 'en-US';
-      
-      recognitionRef.current.onresult = (event) => {
+      if (recognitionRef.current) {
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.interimResults = true;
+        recognitionRef.current.lang = 'en-US';
+        
+        recognitionRef.current.onresult = (event) => {
         let finalTranscript = '';
         let interimTranscript = '';
         
@@ -810,6 +811,7 @@ function App() {
           }, 1000);
         }
       };
+      }
       
       setSpeechEnabled(true);
     }
@@ -1086,7 +1088,7 @@ function App() {
                   <div>
                     <h2 className="text-xl font-bold">Welcome to Kairoo, {userProfile.name}!</h2>
                     <p className="text-purple-100">
-                      Your personalized practice space is ready. Let's start building your confidence!
+                      Your personalized practice space is ready. Let&apos;s start building your confidence!
                     </p>
                   </div>
                 </div>
@@ -1242,7 +1244,7 @@ function App() {
                           >
                             <div className="flex items-center space-x-3 mb-2">
                               <span className="text-2xl">👤</span>
-                              <span className="font-semibold text-neutral-900">I'll start first</span>
+                              <span className="font-semibold text-neutral-900">I&apos;ll start first</span>
                             </div>
                             <p className="text-sm text-neutral-600">You will begin the conversation</p>
                           </button>
@@ -1295,7 +1297,7 @@ function App() {
                 <div className="max-w-3xl mx-auto py-8">
                   <div className="text-center mb-12">
                     <h2 className="text-4xl font-bold text-neutral-900 mb-3">Practice Complete!</h2>
-                    <p className="text-lg text-neutral-600">Here's your performance summary.</p>
+                    <p className="text-lg text-neutral-600">Here&apos;s your performance summary.</p>
                   </div>
 
                   {/* Stats Card */}
@@ -1554,7 +1556,7 @@ function App() {
                   <div>
                     <h2 className="text-2xl font-bold text-neutral-900 mb-4">Coming Soon</h2>
                     <p className="text-neutral-600 mb-8">
-                      We're building this section with care to give you the best experience.
+                      We&apos;re building this section with care to give you the best experience.
                     </p>
                   </div>
 
@@ -1599,7 +1601,19 @@ function App() {
 
   // Render Dashboard page
   if (activeNav === 'Dashboard') {
-    return <Dashboard />;
+    return (
+      <div className="min-h-screen bg-neutral-50 flex">
+        <Sidebar 
+          activeNav={activeNav}
+          setActiveNav={setActiveNav}
+          isTransitioning={isTransitioning}
+          setIsTransitioning={setIsTransitioning}
+        />
+        <div className="flex-1">
+          <Dashboard />
+        </div>
+      </div>
+    );
   }
 
   // Render Analysis page (renamed from Dashboard)
@@ -1702,7 +1716,7 @@ function App() {
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Preview of what you'll see after analysis
+                Preview of what you&apos;ll see after analysis
               </div>
             )}
           </div>
