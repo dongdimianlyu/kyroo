@@ -126,7 +126,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    if (!auth) return;
+    if (!auth) {
+      // Firebase not configured; render app without a signed-in user
+      setCurrentUser(null);
+      setUserProfile(null);
+      setLoading(false);
+      return;
+    }
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
