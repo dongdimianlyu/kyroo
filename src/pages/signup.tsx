@@ -56,7 +56,7 @@ const SignupPage: React.FC = () => {
     try {
       setLoading(true);
       await signup(formData.email, formData.password, formData.displayName);
-      router.push('/dashboard');
+      router.push('/app');
     } catch (error: any) {
       console.error('Signup error:', error);
       if (error.code === 'auth/email-already-in-use') {
@@ -78,7 +78,7 @@ const SignupPage: React.FC = () => {
       setLoading(true);
       setError('');
       await loginWithGoogle();
-      router.push('/dashboard');
+      router.push('/app');
     } catch (error: any) {
       console.error('Google signup error:', error);
       if (error.code === 'auth/popup-closed-by-user') {

@@ -32,10 +32,10 @@ const ConfidenceScore: React.FC<ConfidenceScoreProps> = ({
   const strokeDashoffset = circumference - (animatedScore / 100) * circumference;
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'from-emerald-400 to-green-500';
-    if (score >= 60) return 'from-purple-400 to-purple-600';
-    if (score >= 40) return 'from-orange-400 to-amber-500';
-    return 'from-red-400 to-red-500';
+    if (score >= 80) return 'from-[#00d4ff] to-[#3fa3ff]';
+    if (score >= 60) return 'from-[#7b61ff] to-[#5b3bff]';
+    if (score >= 40) return 'from-[#7b61ff] to-[#9b6bff]';
+    return 'from-[#ff6b6b] to-[#f43f5e]';
   };
 
   const getScoreText = (score: number) => {
@@ -95,8 +95,8 @@ const ConfidenceScore: React.FC<ConfidenceScoreProps> = ({
               {/* Gradient Definition */}
               <defs>
                 <linearGradient id="confidenceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" className={`stop-purple-400`} />
-                  <stop offset="100%" className={`stop-purple-600`} />
+                  <stop offset="0%" stopColor="#7b61ff" />
+                  <stop offset="100%" stopColor="#5b3bff" />
                 </linearGradient>
               </defs>
             </svg>
@@ -170,9 +170,9 @@ const ConfidenceScore: React.FC<ConfidenceScoreProps> = ({
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            className="absolute -top-4 -right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg"
+            className="absolute -top-4 -right-4 bg-gradient-to-r from-[#00d4ff] to-[#5b3bff] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg"
           >
-            🎉 Excellent!
+            Excellent
           </motion.div>
         )}
       </AnimatePresence>

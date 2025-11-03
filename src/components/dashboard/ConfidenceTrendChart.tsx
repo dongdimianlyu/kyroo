@@ -40,28 +40,28 @@ const ConfidenceTrendChart: React.FC<ConfidenceTrendChartProps> = ({ data }) => 
       {
         label: 'Confidence Score',
         data: data.map(item => item.score),
-        borderColor: 'rgba(139, 92, 246, 1)', // purple-500
+        borderColor: 'rgba(91, 59, 255, 1)', // cooler purple
         backgroundColor: (context: any) => {
           const chart = context.chart;
           const { ctx, chartArea } = chart;
           
           if (!chartArea) {
-            return 'rgba(139, 92, 246, 0.1)';
+            return 'rgba(91, 59, 255, 0.1)';
           }
           
           const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-          gradient.addColorStop(0, 'rgba(139, 92, 246, 0.3)');
-          gradient.addColorStop(0.5, 'rgba(139, 92, 246, 0.2)');
-          gradient.addColorStop(1, 'rgba(139, 92, 246, 0.05)');
+          gradient.addColorStop(0, 'rgba(91, 59, 255, 0.35)');
+          gradient.addColorStop(0.5, 'rgba(123, 97, 255, 0.18)');
+          gradient.addColorStop(1, 'rgba(123, 97, 255, 0.06)');
           return gradient;
         },
         borderWidth: 3,
-        pointBackgroundColor: 'rgba(139, 92, 246, 1)',
+        pointBackgroundColor: 'rgba(123, 97, 255, 1)',
         pointBorderColor: '#ffffff',
         pointBorderWidth: 3,
         pointRadius: 6,
         pointHoverRadius: 8,
-        pointHoverBackgroundColor: 'rgba(139, 92, 246, 1)',
+        pointHoverBackgroundColor: 'rgba(91, 59, 255, 1)',
         pointHoverBorderColor: '#ffffff',
         pointHoverBorderWidth: 4,
         fill: true,
@@ -73,19 +73,19 @@ const ConfidenceTrendChart: React.FC<ConfidenceTrendChartProps> = ({ data }) => 
             
             // Color based on trend
             if (currentScore > previousScore) {
-              return 'rgba(34, 197, 94, 1)'; // green for improvement
+              return 'rgba(0, 212, 255, 1)'; // cool cyan for improvement
             } else if (currentScore < previousScore) {
-              return 'rgba(239, 68, 68, 1)'; // red for decline
+              return 'rgba(255, 107, 107, 1)'; // soft red for decline
             }
-            return 'rgba(139, 92, 246, 1)'; // purple for stable
+            return 'rgba(91, 59, 255, 1)'; // purple for stable
           }
         }
       },
       {
         label: 'Sessions',
         data: data.map(item => item.sessions_count * 20), // Scale for visibility
-        borderColor: 'rgba(59, 130, 246, 0.6)', // blue-500 with opacity
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        borderColor: 'rgba(0, 194, 255, 0.5)',
+        backgroundColor: 'rgba(0, 194, 255, 0.08)',
         borderWidth: 2,
         pointBackgroundColor: 'rgba(59, 130, 246, 0.8)',
         pointBorderColor: '#ffffff',
@@ -125,7 +125,7 @@ const ConfidenceTrendChart: React.FC<ConfidenceTrendChartProps> = ({ data }) => 
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         titleColor: 'rgb(31, 41, 55)', // neutral-800
         bodyColor: 'rgb(75, 85, 99)', // neutral-600
-        borderColor: 'rgba(139, 92, 246, 0.2)',
+        borderColor: 'rgba(91, 59, 255, 0.25)',
         borderWidth: 1,
         cornerRadius: 12,
         padding: 12,
@@ -280,7 +280,7 @@ const ConfidenceTrendChart: React.FC<ConfidenceTrendChartProps> = ({ data }) => 
         <div className="mt-6 pt-4 border-t border-neutral-200/50 flex items-center justify-between text-sm">
           <div className="flex items-center space-x-4 text-neutral-600">
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#5b3bff' }}></div>
               <span>Confidence Score</span>
             </div>
             <div className="text-neutral-500">•</div>

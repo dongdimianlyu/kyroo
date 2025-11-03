@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
     try {
       setLoading(true);
       await login(formData.email, formData.password);
-      router.push('/dashboard');
+      router.push('/app');
     } catch (error: any) {
       console.error('Login error:', error);
       if (error.code === 'auth/user-not-found') {
@@ -67,7 +67,7 @@ const LoginPage: React.FC = () => {
       setLoading(true);
       setError('');
       await loginWithGoogle();
-      router.push('/dashboard');
+      router.push('/app');
     } catch (error: any) {
       console.error('Google login error:', error);
       if (error.code === 'auth/popup-closed-by-user') {

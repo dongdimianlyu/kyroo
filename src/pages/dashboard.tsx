@@ -3,6 +3,37 @@ import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { useRouter } from 'next/router';
 import ProtectedRoute from '../components/ProtectedRoute';
+import { Award, Briefcase, Coffee, Crown, Gift, Mic2, Phone, ShoppingBag, Star, Train } from 'lucide-react';
+
+// Minimal inline icons (non-AI) for neutral aesthetics
+const BookIcon = ({ className = '' }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+    <path d="M4 4v15.5A2.5 2.5 0 0 1 6.5 22H20V5a1 1 0 0 0-1-1H6a2 2 0 0 0-2 2z" />
+  </svg>
+);
+
+const HeartIcon = ({ className = '' }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8z" />
+  </svg>
+);
+
+const HandshakeIcon = ({ className = '' }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 5l-2 2-3-3-2 2 5 5 4-4" />
+    <path d="M22 8l-6 6-4-4" />
+    <path d="M2 12l6 6 4-4" />
+  </svg>
+);
+
+const RoseIcon = ({ className = '' }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2C9 2 7 4 7 7s2 6 5 6 5-3 5-6-2-5-5-5z" />
+    <path d="M12 13v9" />
+    <path d="M8 17c1.5 0 2.5 1 4 1s2.5-1 4-1" />
+  </svg>
+);
 
 // Dashboard Components
 import ConfidenceScore from '../components/dashboard/ConfidenceScore';
@@ -14,7 +45,7 @@ import ConfidenceTrendChart from '../components/dashboard/ConfidenceTrendChart';
 // Data and Types
 import { UserProgress, ConfidenceTrend, ActivityItem } from '../types/dashboard';
 
-const Dashboard: React.FC = () => {
+const DashboardContent: React.FC = () => {
   const router = useRouter();
   const [userProgress, setUserProgress] = useState<UserProgress | null>(null);
   const [recentActivities, setRecentActivities] = useState<ActivityItem[]>([]);
@@ -123,12 +154,12 @@ const Dashboard: React.FC = () => {
   };
 
   const getMilestoneMessage = (confidence: number) => {
-    if (confidence >= 90) return "🌟 You're a confidence champion!";
-    if (confidence >= 80) return '🎉 Amazing confidence level!';
-    if (confidence >= 70) return '✨ Great progress!';
-    if (confidence >= 60) return "🚀 You're building momentum!";
-    if (confidence >= 40) return '💪 Keep going strong!';
-    return '🎯 Every step counts!';
+    if (confidence >= 90) return 'Elite performance — keep it up.';
+    if (confidence >= 80) return 'Excellent momentum — great work.';
+    if (confidence >= 70) return 'Strong progress — stay consistent.';
+    if (confidence >= 60) return 'Good trajectory — you’re improving.';
+    if (confidence >= 40) return 'Steady gains — keep practicing.';
+    return 'Every step forward counts.';
   };
 
   if (loading || !userProgress) {
@@ -140,7 +171,16 @@ const Dashboard: React.FC = () => {
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
           >
-            <span className="text-white text-2xl">🎯</span>
+            <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2v4" />
+              <path d="M12 18v4" />
+              <path d="M4.93 4.93l2.83 2.83" />
+              <path d="M16.24 16.24l2.83 2.83" />
+              <path d="M2 12h4" />
+              <path d="M18 12h4" />
+              <path d="M4.93 19.07l2.83-2.83" />
+              <path d="M16.24 7.76l2.83-2.83" />
+            </svg>
           </motion.div>
           <h2 className="text-xl font-bold text-neutral-800 mb-2">Loading your dashboard...</h2>
           <p className="text-neutral-600">Preparing your confidence insights</p>
@@ -158,7 +198,7 @@ const Dashboard: React.FC = () => {
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold text-neutral-900 mb-2">{getGreeting()}! 👋</h1>
+                <h1 className="text-4xl font-bold text-neutral-900 mb-2">{getGreeting()}</h1>
                 <p className="text-lg text-neutral-600">{getMilestoneMessage(userProgress.overall_confidence)}</p>
               </div>
 
@@ -233,7 +273,17 @@ const Dashboard: React.FC = () => {
                         : 'bg-gradient-to-br from-neutral-100 to-neutral-200 border-neutral-300'
                     }`}
                   >
-                    <div className="text-2xl mb-2">{achievement.icon}</div>
+                    <div className="mb-2 flex items-center justify-center">
+                      {achievement.rarity === 'legendary' ? (
+                        <Crown className="w-6 h-6 text-yellow-600" />
+                      ) : achievement.rarity === 'epic' ? (
+                        <Star className="w-6 h-6 text-purple-700" />
+                      ) : achievement.rarity === 'rare' ? (
+                        <Award className="w-6 h-6 text-blue-700" />
+                      ) : (
+                        <Award className="w-6 h-6 text-neutral-600" />
+                      )}
+                    </div>
                     <div className="text-xs font-bold text-neutral-800">{achievement.title}</div>
                   </motion.div>
                 ))}
@@ -252,20 +302,20 @@ const Dashboard: React.FC = () => {
                 <div className="marquee-track">
                   <div className="marquee-duplicate">
                     {[
-                      { title: 'Telling Stories', tag: 'Beginner', emoji: '📚' },
-                      { title: 'Flirting & Compliments', tag: 'Social', emoji: '😊' },
-                      { title: 'Job Interview', tag: 'Work', emoji: '💻' },
-                      { title: 'Public Transport', tag: 'Travel', emoji: '🚆' },
-                      { title: 'Introductions', tag: 'Beginner', emoji: '👋' },
+                      { title: 'Telling Stories', tag: 'Beginner', Icon: BookIcon },
+                      { title: 'Flirting & Compliments', tag: 'Social', Icon: HeartIcon },
+                      { title: 'Job Interview', tag: 'Work', Icon: Briefcase },
+                      { title: 'Public Transport', tag: 'Travel', Icon: Train },
+                      { title: 'Introductions', tag: 'Beginner', Icon: HandshakeIcon },
                     ].concat([
-                      { title: 'Telling Stories', tag: 'Beginner', emoji: '📚' },
-                      { title: 'Flirting & Compliments', tag: 'Social', emoji: '😊' },
-                      { title: 'Job Interview', tag: 'Work', emoji: '💻' },
-                      { title: 'Public Transport', tag: 'Travel', emoji: '🚆' },
-                      { title: 'Introductions', tag: 'Beginner', emoji: '👋' },
+                      { title: 'Telling Stories', tag: 'Beginner', Icon: BookIcon },
+                      { title: 'Flirting & Compliments', tag: 'Social', Icon: HeartIcon },
+                      { title: 'Job Interview', tag: 'Work', Icon: Briefcase },
+                      { title: 'Public Transport', tag: 'Travel', Icon: Train },
+                      { title: 'Introductions', tag: 'Beginner', Icon: HandshakeIcon },
                     ]).map((item, i) => (
                       <div key={`db-r1-${i}-${item.title}`} className="shrink-0 px-6 py-5 bg-white rounded-[28px] shadow-md flex items-center gap-4">
-                        <span className="text-2xl">{item.emoji}</span>
+                        <item.Icon className="w-5 h-5 text-neutral-600" />
                         <div className="leading-tight text-left">
                           <div className="text-neutral-900 font-semibold text-lg">{item.title}</div>
                           <div className="text-neutral-500 text-sm">{item.tag}</div>
@@ -280,22 +330,22 @@ const Dashboard: React.FC = () => {
                 <div className="marquee-track reverse">
                   <div className="marquee-duplicate">
                     {[
-                      { title: 'Ordering Food', tag: 'Food', emoji: '🌭' },
-                      { title: 'Phone Calls', tag: 'Social', emoji: '📞' },
-                      { title: 'Work Routine', tag: 'Work', emoji: '☕' },
-                      { title: 'First Date', tag: 'Romance', emoji: '🌹' },
-                      { title: 'Presidential Debate', tag: 'Debate', emoji: '🎤' },
-                      { title: 'Buying a Gift', tag: 'Shopping', emoji: '🛍️' },
+                      { title: 'Ordering Food', tag: 'Food', Icon: ShoppingBag },
+                      { title: 'Phone Calls', tag: 'Social', Icon: Phone },
+                      { title: 'Work Routine', tag: 'Work', Icon: Coffee },
+                      { title: 'First Date', tag: 'Romance', Icon: RoseIcon },
+                      { title: 'Presidential Debate', tag: 'Debate', Icon: Mic2 },
+                      { title: 'Buying a Gift', tag: 'Shopping', Icon: Gift },
                     ].concat([
-                      { title: 'Ordering Food', tag: 'Food', emoji: '🌭' },
-                      { title: 'Phone Calls', tag: 'Social', emoji: '📞' },
-                      { title: 'Work Routine', tag: 'Work', emoji: '☕' },
-                      { title: 'First Date', tag: 'Romance', emoji: '🌹' },
-                      { title: 'Presidential Debate', tag: 'Debate', emoji: '🎤' },
-                      { title: 'Buying a Gift', tag: 'Shopping', emoji: '🛍️' },
+                      { title: 'Ordering Food', tag: 'Food', Icon: ShoppingBag },
+                      { title: 'Phone Calls', tag: 'Social', Icon: Phone },
+                      { title: 'Work Routine', tag: 'Work', Icon: Coffee },
+                      { title: 'First Date', tag: 'Romance', Icon: RoseIcon },
+                      { title: 'Presidential Debate', tag: 'Debate', Icon: Mic2 },
+                      { title: 'Buying a Gift', tag: 'Shopping', Icon: Gift },
                     ]).map((item, i) => (
                       <div key={`db-r2-${i}-${item.title}`} className="shrink-0 px-6 py-5 bg-white rounded-[28px] shadow-md flex items-center gap-4">
-                        <span className="text-2xl">{item.emoji}</span>
+                        <item.Icon className="w-5 h-5 text-neutral-600" />
                         <div className="leading-tight text-left">
                           <div className="text-neutral-900 font-semibold text-lg">{item.title}</div>
                           <div className="text-neutral-500 text-sm">{item.tag}</div>
@@ -339,6 +389,19 @@ const Dashboard: React.FC = () => {
     </div>
     </ProtectedRoute>
   );
+};
+
+const Dashboard: React.FC = () => {
+  const router = useRouter();
+  useEffect(() => {
+    if (router.pathname === '/dashboard') {
+      router.replace('/app');
+    }
+  }, [router.pathname]);
+  if (router.pathname === '/dashboard') {
+    return null;
+  }
+  return <DashboardContent />;
 };
 
 export default Dashboard; 

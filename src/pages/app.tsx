@@ -6,6 +6,8 @@ import NewOrb from '../components/NewOrb';
 import { useRouter } from 'next/router';
 import Sidebar from '../components/Sidebar';
 import Dashboard from './dashboard';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -180,6 +182,7 @@ function App() {
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [anonId, setAnonId] = useState('');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const toggleSidebar = () => setSidebarCollapsed((c) => !c);
 
   // Simulation state
   const [scenario, setScenario] = useState('');
@@ -198,6 +201,10 @@ function App() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel['id']>('medium');
   const [selectedFeeling, setSelectedFeeling] = useState<FeelingState['id']>('okay');
   const [whoStartsFirst, setWhoStartsFirst] = useState<'ai' | 'user'>('ai');
+  
+  // Multi-step setup for Practice Scenarios
+  const [practiceStep, setPracticeStep] = useState(0);
+  const practiceSteps = ['scenario', 'difficulty', 'feeling', 'starter', 'hints'];
   
   // Real-time hints state
   const [hintsEnabled, setHintsEnabled] = useState(true);
@@ -1029,6 +1036,7 @@ function App() {
     // Reset enhanced setup
     setSelectedDifficulty('medium');
     setSelectedFeeling('okay');
+    setPracticeStep(0);
     
     // Reset hints
     setCurrentHint(null);
@@ -1068,14 +1076,16 @@ function App() {
   // Render Practice Scenarios page
   if (activeNav === 'Practice Scenarios') {
     return (
-      <div className="min-h-screen bg-neutral-50 flex">
+      <div className="min-h-screen bg-neutral-50 flex overflow-hidden">
         <Sidebar 
           activeNav={activeNav}
           setActiveNav={setActiveNav}
           isTransitioning={isTransitioning}
           setIsTransitioning={setIsTransitioning}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={toggleSidebar}
         />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col overflow-hidden">
           
           {/* Welcome Banner for First-Time Users */}
           {showWelcomeBanner && userProfile && (
@@ -1083,7 +1093,9 @@ function App() {
               <div className="max-w-4xl mx-auto flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <span className="text-2xl">🎉</span>
+                    <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.9 7.82 20 9 12.91l-5-3.64 5.91-.99L12 2z" />
+                    </svg>
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">Welcome to Kairoo, {userProfile.name}!</h2>
@@ -1127,169 +1139,273 @@ function App() {
               </div>
 
               {!isSimulationActive && !showSummary ? (
-                /* Enhanced Scenario Setup */
-                <div className="max-w-4xl mx-auto">
-                  <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
-                    <div className="text-center mb-8">
-                      <div className="w-16 h-16 bg-secondary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <svg className="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
+                /* Multi-Screen Practice Setup */
+                <div className="min-h-[80vh] flex items-center justify-center p-8">
+                  <div className="w-full max-w-4xl">
+                    {/* Progress Indicator */}
+                    <div className="mb-8">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-semibold text-purple-600">
+                          Step {practiceStep + 1} of {practiceSteps.length}
+                        </span>
+                        <span className="text-sm text-neutral-500">
+                          {Math.round(((practiceStep + 1) / practiceSteps.length) * 100)}% complete
+                        </span>
                       </div>
-                      <h2 className="text-2xl font-bold text-neutral-900 mb-4">Start a Practice Session</h2>
-                      <p className="text-neutral-600">
-                        Practice conversations in a safe space with personalized AI coaching and feedback.
-                      </p>
-                    </div>
-
-                    <div className="space-y-8">
-                      {/* Scenario Description */}
-                      <div>
-                        <label className="block text-sm font-medium text-neutral-700 mb-3">
-                          What situation would you like to practice?
-                        </label>
-                        <textarea
-                          value={scenario}
-                          onChange={(e) => setScenario(e.target.value)}
-                          placeholder="e.g., Having lunch with a new classmate, Texting a friend who might be upset, Asking for help with homework..."
-                          className="input-field h-32 resize-none"
-                          disabled={loading}
+                      <div className="w-full bg-purple-100 rounded-full h-2">
+                        <motion.div 
+                          className="bg-gradient-to-r from-purple-600 via-purple-500 to-purple-400 h-2 rounded-full"
+                          initial={{ width: "0%" }}
+                          animate={{ width: `${((practiceStep + 1) / practiceSteps.length) * 100}%` }}
+                          transition={{ duration: 0.3 }}
                         />
                       </div>
+                    </div>
 
-                      {/* Difficulty Level Selection */}
-                      <div>
-                        <label className="block text-sm font-medium text-neutral-700 mb-4">
-                          Choose difficulty level
-                        </label>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          {difficultyLevels.map((level) => (
-                            <button
-                              key={level.id}
-                              onClick={() => setSelectedDifficulty(level.id)}
-                              className={`p-4 rounded-xl border-2 transition-all text-left ${
-                                selectedDifficulty === level.id
-                                  ? 'border-primary-500 bg-primary-50'
-                                  : 'border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-25'
-                              }`}
-                              disabled={loading}
-                            >
-                              <div className="flex items-center space-x-3 mb-2">
-                                <span className="text-2xl">{level.icon}</span>
-                                <span className="font-semibold text-neutral-900">{level.label}</span>
+                    {/* Screen Container */}
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={practiceStep}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="relative overflow-hidden"
+                      >
+                        {/* Background with purple texture gradient */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-700 to-indigo-900 opacity-10 rounded-3xl" 
+                             style={{
+                               backgroundImage: `radial-gradient(circle at 20% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                                                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                                                radial-gradient(circle at 40% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%)`
+                             }}
+                        ></div>
+                        
+                        <div className="relative bg-gradient-to-br from-purple-50 via-purple-100 to-indigo-50 rounded-3xl border-2 border-purple-200 shadow-2xl p-12 min-h-[500px] flex flex-col">
+                          {/* Scenario Screen */}
+                          {practiceStep === 0 && (
+                            <div className="flex-1 flex flex-col items-center justify-center">
+                              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
+                                <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
                               </div>
-                              <p className="text-sm text-neutral-600">{level.description}</p>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
+                              <h2 className="text-4xl font-bold text-purple-900 mb-4 text-center">What situation would you like to practice?</h2>
+                              <p className="text-purple-700 text-lg mb-8 text-center max-w-2xl">Describe a conversation scenario you want to practice</p>
+                              <textarea
+                                value={scenario}
+                                onChange={(e) => setScenario(e.target.value)}
+                                placeholder="e.g., Having lunch with a new classmate, Texting a friend who might be upset, Asking for help with homework..."
+                                className="w-full max-w-2xl h-40 bg-white/80 backdrop-blur-sm border-2 border-purple-300 rounded-2xl p-6 text-lg focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-200 resize-none"
+                                disabled={loading}
+                                autoFocus
+                              />
+                            </div>
+                          )}
 
-                      {/* Feeling Check-in */}
-                      <div>
-                        <label className="block text-sm font-medium text-neutral-700 mb-4">
-                          How are you feeling today?
-                        </label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {feelingStates.map((feeling) => (
-                            <button
-                              key={feeling.id}
-                              type="button"
-                              onClick={() => setSelectedFeeling(feeling.id)}
-                              className={`w-full p-4 rounded-xl border-2 transition-all text-left cursor-pointer ${
-                                selectedFeeling === feeling.id
-                                  ? 'border-purple-500 bg-purple-50'
-                                  : 'border-neutral-200 bg-white hover:border-purple-300 hover:bg-purple-50'
-                              }`}
-                              disabled={loading}
-                            >
-                              <div className="flex items-center space-x-3 mb-2">
-                                <span className="text-2xl flex-shrink-0">{feeling.icon}</span>
-                                <span className="font-semibold text-neutral-900 flex-1">{feeling.label}</span>
+                          {/* Difficulty Screen */}
+                          {practiceStep === 1 && (
+                            <div className="flex-1 flex flex-col items-center justify-center">
+                              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
+                                <span className="text-5xl">😌</span>
                               </div>
-                              <p className="text-sm text-neutral-600">{feeling.description}</p>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Who Starts First */}
-                      <div>
-                        <label className="block text-sm font-medium text-neutral-700 mb-4">
-                          Who should start the conversation?
-                        </label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <button
-                            onClick={() => setWhoStartsFirst('ai')}
-                            className={`p-4 rounded-xl border-2 transition-all text-left ${
-                              whoStartsFirst === 'ai'
-                                ? 'border-primary-500 bg-primary-50'
-                                : 'border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-25'
-                            }`}
-                            disabled={loading}
-                          >
-                            <div className="flex items-center space-x-3 mb-2">
-                              <span className="text-2xl">🤖</span>
-                              <span className="font-semibold text-neutral-900">AI starts first</span>
+                              <h2 className="text-4xl font-bold text-purple-900 mb-4 text-center">Choose difficulty level</h2>
+                              <p className="text-purple-700 text-lg mb-12 text-center">Pick the level that matches what you're ready for</p>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl">
+                                {difficultyLevels.map((level) => (
+                                  <button
+                                    key={level.id}
+                                    onClick={() => setSelectedDifficulty(level.id)}
+                                    className={`p-6 rounded-2xl border-3 transition-all text-center transform hover:scale-105 ${
+                                      selectedDifficulty === level.id
+                                        ? 'border-purple-600 bg-white shadow-xl ring-4 ring-purple-200'
+                                        : 'border-purple-200 bg-white/80 backdrop-blur-sm hover:border-purple-400 hover:shadow-lg'
+                                    }`}
+                                    disabled={loading}
+                                  >
+                                    <div className="text-5xl mb-3">{level.icon}</div>
+                                    <div className="font-bold text-xl text-purple-900 mb-2">{level.label}</div>
+                                    <p className="text-sm text-purple-700">{level.description}</p>
+                                  </button>
+                                ))}
+                              </div>
                             </div>
-                            <p className="text-sm text-neutral-600">The other person will begin the conversation</p>
-                          </button>
-                          <button
-                            onClick={() => setWhoStartsFirst('user')}
-                            className={`p-4 rounded-xl border-2 transition-all text-left ${
-                              whoStartsFirst === 'user'
-                                ? 'border-primary-500 bg-primary-50'
-                                : 'border-neutral-200 bg-white hover:border-primary-300 hover:bg-primary-25'
-                            }`}
-                            disabled={loading}
-                          >
-                            <div className="flex items-center space-x-3 mb-2">
-                              <span className="text-2xl">👤</span>
-                              <span className="font-semibold text-neutral-900">I&apos;ll start first</span>
+                          )}
+
+                          {/* Feeling Screen */}
+                          {practiceStep === 2 && (
+                            <div className="flex-1 flex flex-col items-center justify-center">
+                              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
+                                <span className="text-5xl">❤️</span>
+                              </div>
+                              <h2 className="text-4xl font-bold text-purple-900 mb-4 text-center">How are you feeling today?</h2>
+                              <p className="text-purple-700 text-lg mb-12 text-center">This helps us tailor the conversation to your needs</p>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+                                {feelingStates.map((feeling) => (
+                                  <button
+                                    key={feeling.id}
+                                    onClick={() => setSelectedFeeling(feeling.id)}
+                                    className={`p-6 rounded-2xl border-3 transition-all text-left transform hover:scale-105 ${
+                                      selectedFeeling === feeling.id
+                                        ? 'border-purple-600 bg-white shadow-xl ring-4 ring-purple-200'
+                                        : 'border-purple-200 bg-white/80 backdrop-blur-sm hover:border-purple-400 hover:shadow-lg'
+                                    }`}
+                                    disabled={loading}
+                                  >
+                                    <div className="flex items-start space-x-4">
+                                      <span className="text-5xl flex-shrink-0">{feeling.icon}</span>
+                                      <div className="flex-1">
+                                        <div className="font-bold text-xl text-purple-900 mb-2">{feeling.label}</div>
+                                        <p className="text-sm text-purple-700">{feeling.description}</p>
+                                      </div>
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
                             </div>
-                            <p className="text-sm text-neutral-600">You will begin the conversation</p>
-                          </button>
-                        </div>
-                      </div>
+                          )}
 
-                      {/* Real-time Hints Toggle */}
-                      <div className="bg-neutral-50 rounded-xl p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="font-medium text-neutral-900 mb-1">Real-time Coaching Hints</h3>
-                            <p className="text-sm text-neutral-600">Get gentle suggestions during your conversation</p>
-                          </div>
-                          <button
-                            onClick={() => setHintsEnabled(!hintsEnabled)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                              hintsEnabled ? 'bg-primary-600' : 'bg-neutral-300'
-                            }`}
-                            disabled={loading}
-                          >
-                            <span
-                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                hintsEnabled ? 'translate-x-6' : 'translate-x-1'
-                              }`}
-                            />
-                          </button>
-                        </div>
-                      </div>
+                          {/* Who Starts Screen */}
+                          {practiceStep === 3 && (
+                            <div className="flex-1 flex flex-col items-center justify-center">
+                              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
+                                <span className="text-5xl">🎬</span>
+                              </div>
+                              <h2 className="text-4xl font-bold text-purple-900 mb-4 text-center">Who should start the conversation?</h2>
+                              <p className="text-purple-700 text-lg mb-12 text-center">Choose who begins the dialogue</p>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
+                                <button
+                                  onClick={() => setWhoStartsFirst('ai')}
+                                  className={`p-8 rounded-2xl border-3 transition-all text-center transform hover:scale-105 ${
+                                    whoStartsFirst === 'ai'
+                                      ? 'border-purple-600 bg-white shadow-xl ring-4 ring-purple-200'
+                                      : 'border-purple-200 bg-white/80 backdrop-blur-sm hover:border-purple-400 hover:shadow-lg'
+                                  }`}
+                                  disabled={loading}
+                                >
+                                  <div className="mb-4">
+                                    <svg className="w-12 h-12 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                      <rect x="3" y="4" width="18" height="12" rx="2" />
+                                      <path d="M7 20h10" />
+                                      <path d="M12 16v4" />
+                                      <circle cx="9" cy="10" r="1" />
+                                      <circle cx="15" cy="10" r="1" />
+                                    </svg>
+                                  </div>
+                                  <div className="font-bold text-xl text-purple-900 mb-3">AI starts first</div>
+                                  <p className="text-sm text-purple-700">The other person will begin the conversation</p>
+                                </button>
+                                <button
+                                  onClick={() => setWhoStartsFirst('user')}
+                                  className={`p-8 rounded-2xl border-3 transition-all text-center transform hover:scale-105 ${
+                                    whoStartsFirst === 'user'
+                                      ? 'border-purple-600 bg-white shadow-xl ring-4 ring-purple-200'
+                                      : 'border-purple-200 bg-white/80 backdrop-blur-sm hover:border-purple-400 hover:shadow-lg'
+                                  }`}
+                                  disabled={loading}
+                                >
+                                  <div className="mb-4">
+                                    <svg className="w-12 h-12 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M20 21a8 8 0 1 0-16 0" />
+                                      <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                  </div>
+                                  <div className="font-bold text-xl text-purple-900 mb-3">I&apos;ll start first</div>
+                                  <p className="text-sm text-purple-700">You will begin the conversation</p>
+                                </button>
+                              </div>
+                            </div>
+                          )}
 
-                      {error && (
-                        <div className="bg-error-50 border border-error-200 rounded-xl p-4">
-                          <p className="text-error-600 text-sm">{error}</p>
+                          {/* Hints Screen */}
+                          {practiceStep === 4 && (
+                            <div className="flex-1 flex flex-col items-center justify-center">
+                              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
+                                <span className="text-5xl">💡</span>
+                              </div>
+                              <h2 className="text-4xl font-bold text-purple-900 mb-4 text-center">Real-time Coaching Hints</h2>
+                              <p className="text-purple-700 text-lg mb-12 text-center">Get gentle suggestions during your conversation</p>
+                              <div className="w-full max-w-md">
+                                <div className="bg-white rounded-3xl p-12 border-3 border-purple-200 shadow-xl">
+                                  <div className="flex flex-col items-center">
+                                    <div className="mb-6">
+                                      {hintsEnabled ? (
+                                        <svg className="w-12 h-12 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <path d="M9 18h6" />
+                                          <path d="M10 22h4" />
+                                          <path d="M2 12a10 10 0 0 1 20 0c0 3.5-2 4.5-4 6H6c-2-1.5-4-2.5-4-6z" />
+                                        </svg>
+                                      ) : (
+                                        <svg className="w-12 h-12 text-neutral-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                          <path d="M9 18h6" />
+                                          <path d="M10 22h4" />
+                                          <path d="M2 12a10 10 0 0 1 20 0c0 3.5-2 4.5-4 6H6c-2-1.5-4-2.5-4-6z" />
+                                          <line x1="1" y1="1" x2="23" y2="23" />
+                                        </svg>
+                                      )}
+                                    </div>
+                                    <button
+                                      onClick={() => setHintsEnabled(!hintsEnabled)}
+                                      className={`relative inline-flex h-16 w-32 items-center rounded-full transition-colors ${
+                                        hintsEnabled ? 'bg-gradient-to-r from-purple-600 to-purple-700' : 'bg-neutral-300'
+                                      } shadow-inner`}
+                                      disabled={loading}
+                                    >
+                                      <motion.span
+                                        className="inline-block h-12 w-12 transform rounded-full bg-white shadow-lg"
+                                        animate={{ x: hintsEnabled ? 80 : 8 }}
+                                        transition={{ duration: 0.3 }}
+                                      />
+                                    </button>
+                                    <p className="mt-6 text-lg font-semibold text-purple-900">
+                                      {hintsEnabled ? 'Enabled' : 'Disabled'}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </motion.div>
+                    </AnimatePresence>
 
-                      <div className="pt-4">
+                    {/* Navigation Buttons */}
+                    <div className="flex justify-between mt-8">
+                      <button
+                        onClick={() => setPracticeStep(Math.max(0, practiceStep - 1))}
+                        disabled={practiceStep === 0 || loading}
+                        className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-purple-300 text-purple-700 font-semibold rounded-xl hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all disabled:hover:bg-white transform hover:scale-105"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                        Back
+                      </button>
+                      
+                      {practiceStep < practiceSteps.length - 1 ? (
+                        <button
+                          onClick={() => setPracticeStep(Math.min(practiceSteps.length - 1, practiceStep + 1))}
+                          disabled={loading || (practiceStep === 0 && !scenario.trim())}
+                          className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-purple-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                        >
+                          Next
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                      ) : (
                         <button
                           onClick={startSimulation}
                           disabled={loading || !scenario.trim()}
-                          className="w-full button-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                         >
-                          {loading ? 'Starting practice session...' : 'Begin Practice'}
+                          {loading ? 'Starting...' : 'Begin Practice'}
+                          <ChevronRight className="w-5 h-5" />
                         </button>
-                      </div>
+                      )}
                     </div>
+
+                    {error && (
+                      <div className="mt-6 bg-red-50 border-2 border-red-200 rounded-xl p-4">
+                        <p className="text-red-600 text-sm text-center">{error}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : showSummary && simulationSummary ? (
@@ -1404,7 +1520,16 @@ function App() {
                     className="p-2 text-neutral-600 hover:text-secondary-600 hover:bg-secondary-50 rounded-lg transition-smooth"
                     title={isAudioMuted ? "Enable audio" : "Mute audio"}
                   >
-                    {isAudioMuted ? '🔇' : '🔈'}
+                    {isAudioMuted ? (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 9v6h4l5 5V4l-5 5H9z" />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 9v6h4l5 5V4l-5 5H9z" />
+                      </svg>
+                    )}
                   </button>
 
                   {/* Hints Toggle */}
@@ -1417,7 +1542,11 @@ function App() {
                     }`}
                     title={hintsEnabled ? "Disable coaching hints" : "Enable coaching hints"}
                   >
-                    💡
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18h6" />
+                      <path d="M10 22h4" />
+                      <path d="M2 12a10 10 0 0 1 20 0c0 3.5-2 4.5-4 6H6c-2-1.5-4-2.5-4-6z" />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -1426,7 +1555,12 @@ function App() {
               {sceneDescription && (
                 <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
                   <h3 className="font-semibold text-neutral-900 mb-3 flex items-center">
-                    <span className="w-6 h-6 bg-secondary-100 rounded-lg flex items-center justify-center mr-2 text-sm">📍</span>
+                    <span className="w-6 h-6 bg-secondary-100 rounded-lg flex items-center justify-center mr-2 text-sm">
+                      <svg className="w-3.5 h-3.5 text-secondary-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>
+                    </span>
                     Scene Setting
                   </h3>
                   <p className="text-neutral-600 italic">{sceneDescription}</p>
@@ -1528,6 +1662,8 @@ function App() {
           setActiveNav={setActiveNav}
           isTransitioning={isTransitioning}
           setIsTransitioning={setIsTransitioning}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={toggleSidebar}
         />
         <div className="flex-1">
         
@@ -1608,9 +1744,22 @@ function App() {
           setActiveNav={setActiveNav}
           isTransitioning={isTransitioning}
           setIsTransitioning={setIsTransitioning}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={toggleSidebar}
         />
         <div className="flex-1">
-          <Dashboard />
+          <div className="w-full overflow-hidden">
+            <div
+              style={{
+                transform: 'scale(0.92)',
+                transformOrigin: 'top left',
+                width: '100%'
+              }}
+              className="transition-transform duration-300 ease-out"
+            >
+              <Dashboard />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -1619,119 +1768,214 @@ function App() {
   // Render Analysis page (renamed from Dashboard)
   if (activeNav === 'Analysis') {
     return (
-      <div className="min-h-screen bg-neutral-50 flex">
+      <div className="min-h-screen flex" style={{
+        background: 'linear-gradient(135deg, #f6f6ff 0%, #eef0ff 40%, #e9e6ff 100%)'
+      }}>
         <Sidebar 
           activeNav={activeNav}
           setActiveNav={setActiveNav}
           isTransitioning={isTransitioning}
           setIsTransitioning={setIsTransitioning}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={toggleSidebar}
         />
         <div className="flex-1">
         
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-6 py-8">
           <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-neutral-900 mb-2">Message Analysis</h1>
-              <p className="text-neutral-600">
-                Understand tone, spot manipulation, and get personalized response suggestions.
-              </p>
-            </div>
-
-        {/* Input Section */}
-        <div className="mb-12">
-          <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-8">
-            <div className="max-w-4xl mx-auto">
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* Message Input */}
-                <div className="space-y-4">
-                  <label htmlFor="message" className="block text-sm font-medium text-neutral-700">
-                    What happened?
-                  </label>
-                  <input
-                    type="text"
-                    id="message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className="input-field"
-                    placeholder="Paste the message you received or describe what happened…"
-                    disabled={loading}
-                  />
-                </div>
-
-                {/* Context Input */}
-                <div className="space-y-4">
-                  <label htmlFor="context" className="block text-sm font-medium text-neutral-700">
-                    Context
-                  </label>
-                  <textarea
-                    id="context"
-                    value={context}
-                    onChange={(e) => setContext(e.target.value)}
-                    className="input-field h-40 resize-none"
-                    placeholder="Add context"
-                    disabled={loading}
-                  />
-                  
-                  {/* Analyze Button */}
-                  <button
-                    onClick={handleAnalyze}
-                    disabled={!message.trim() || loading}
-                    className="w-full button-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? (
-                      <span className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Analyzing...
-                      </span>
-                    ) : (
-                      'Analyze Message'
-                    )}
-                  </button>
+            {/* Playful Header */}
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-12 text-center"
+            >
+              <div className="inline-flex items-center gap-3 mb-4">
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-3xl flex items-center justify-center shadow-2xl transform rotate-12"
+                       style={{ background: 'linear-gradient(135deg, #7b61ff 0%, #5b3bff 100%)' }}>
+                    <svg className="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="M21 21l-4.3-4.3" />
+                    </svg>
+                  </div>
                 </div>
               </div>
+              <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent"
+                  style={{ backgroundImage: 'linear-gradient(90deg, #7b61ff 0%, #5b3bff 50%, #3e2ee6 100%)' }}>
+                Message Analysis
+              </h1>
+              <p className="text-xl max-w-2xl mx-auto" style={{ color: '#5b3bff' }}>
+                Understand tone, spot manipulation, and get personalized response suggestions
+              </p>
+            </motion.div>
 
-              {/* Error Display */}
-              {error && (
-                <div className="mt-6 p-4 bg-error-50 border border-error-200 rounded-xl">
-                  <p className="text-error-600 text-sm">{error}</p>
+        {/* Enhanced Input Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-12"
+        >
+          <div className="relative overflow-hidden rounded-3xl border-2 border-purple-200 shadow-2xl" style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(250,245,255,0.9) 100%)',
+            backdropFilter: 'blur(10px)'
+          }}>
+            {/* Decorative gradient overlay */}
+            <div className="absolute inset-0 opacity-10"
+                 style={{
+                   background: 'radial-gradient(circle at 30% 30%, rgba(168, 85, 247, 0.5) 0%, transparent 50%), radial-gradient(circle at 70% 70%, rgba(236, 72, 153, 0.5) 0%, transparent 50%)'
+                 }}
+            ></div>
+            
+            <div className="relative p-8">
+              <div className="max-w-4xl mx-auto">
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Message Input */}
+                  <div className="space-y-4">
+                    <label htmlFor="message" className="flex items-center gap-2 text-lg font-bold" style={{ color: '#522fff' }}>
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z" />
+                      </svg>
+                      What happened?
+                    </label>
+                    <input
+                      type="text"
+                      id="message"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      className="w-full px-4 py-3 bg-white/80 border-2 rounded-2xl focus:outline-none transition-all"
+                      style={{ borderColor: '#d8ccff', boxShadow: '0 0 0 0 rgba(0,0,0,0)' }}
+                      placeholder="Paste the message you received or describe what happened…"
+                      disabled={loading}
+                    />
+                  </div>
+
+                  {/* Context Input */}
+                  <div className="space-y-4">
+                    <label htmlFor="context" className="flex items-center gap-2 text-lg font-bold" style={{ color: '#522fff' }}>
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+                      </svg>
+                      Context
+                    </label>
+                    <textarea
+                      id="context"
+                      value={context}
+                      onChange={(e) => setContext(e.target.value)}
+                      className="w-full px-4 py-3 bg-white/80 border-2 rounded-2xl focus:outline-none resize-none transition-all h-40"
+                      style={{ borderColor: '#d8ccff' }}
+                      placeholder="Add context (optional)"
+                      disabled={loading}
+                    />
+                    
+                    {/* Enhanced Analyze Button */}
+                    <button
+                      onClick={handleAnalyze}
+                      disabled={!message.trim() || loading}
+                      className="w-full py-4 px-6 text-white font-bold text-lg rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 hover:shadow-2xl disabled:hover:scale-100 relative overflow-hidden group"
+                      style={{ backgroundImage: 'linear-gradient(90deg, #7b61ff 0%, #6c48ff 50%, #5b3bff 100%)' }}
+                    >
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        {loading ? (
+                          <>
+                            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Analyzing...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M9 19c-2 2-6 2-6 2s0-4 2-6l8-8a5.657 5.657 0 018 8l-8 8z" />
+                              <path d="M14 7l3 3" />
+                            </svg>
+                            Analyze Message
+                          </>
+                        )}
+                      </span>
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundImage: 'linear-gradient(90deg, #8a75ff 0%, #745cff 50%, #624dff 100%)' }}></div>
+                    </button>
+                  </div>
                 </div>
-              )}
+
+                {/* Error Display */}
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="mt-6 p-4 bg-red-50 border-2 border-red-200 rounded-2xl"
+                  >
+                    <p className="text-red-600 text-sm flex items-center gap-2">
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12" y2="17" />
+                      </svg>
+                      {error}
+                    </p>
+                  </motion.div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Results Section */}
+        {/* Enhanced Results Section */}
         <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-neutral-900">
-              {hasResults ? 'Analysis Results' : 'Analysis Preview'}
-            </h2>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="flex items-center justify-between"
+          >
+            <div className="flex items-center gap-3">
+              <h2 className="text-3xl font-bold" style={{ color: '#3e2ee6' }}>
+                {hasResults ? 'Analysis Results' : 'Analysis Preview'}
+              </h2>
+            </div>
             {!hasResults && (
-              <div className="flex items-center text-sm text-neutral-500">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" style={{ backgroundColor: '#efeaff', color: '#5b3bff' }}>
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v4" />
+                  <path d="M12 18v4" />
+                  <path d="M4.93 4.93l2.83 2.83" />
+                  <path d="M16.24 16.24l2.83 2.83" />
+                  <path d="M2 12h4" />
+                  <path d="M18 12h4" />
+                  <path d="M4.93 19.07l2.83-2.83" />
+                  <path d="M16.24 7.76l2.83-2.83" />
                 </svg>
-                Preview of what you&apos;ll see after analysis
+                Preview
               </div>
             )}
-          </div>
+          </motion.div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Tone Analysis Card */}
-            <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6 hover:shadow-md transition-smooth">
-              <div className="flex items-center mb-6">
-                <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center mr-3">
-                  <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="relative overflow-hidden rounded-3xl border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(245,243,255,0.95) 100%)',
+                backdropFilter: 'blur(10px)'
+              }}
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-purple-200 to-transparent opacity-50 rounded-full blur-2xl"></div>
+              <div className="relative p-6">
+                <div className="flex items-center mb-6">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mr-3 shadow-lg" style={{ background: 'linear-gradient(135deg, #7b61ff 0%, #6c48ff 100%)' }}>
+                    <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 3v18h18" />
+                      <path d="M7 15l4-4 3 3 5-5" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold" style={{ color: '#3e2ee6' }}>Tone Analysis</h3>
                 </div>
-                <h3 className="text-lg font-semibold text-neutral-900">Tone Analysis</h3>
-              </div>
               
               <div className="space-y-6">
                 <ToneBar
@@ -1761,76 +2005,112 @@ function App() {
                   rightEmoji="😤"
                 />
               </div>
-            </div>
+              </div>
+            </motion.div>
 
             {/* Suggested Replies Card */}
-            <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6 hover:shadow-md transition-smooth">
-              <div className="flex items-center mb-6">
-                <div className="w-10 h-10 bg-success-100 rounded-xl flex items-center justify-center mr-3">
-                  <svg className="w-5 h-5 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-semibold text-neutral-900">Suggested Replies</h3>
-              </div>
-              
-              <div className="space-y-4">
-                {displayResults.responses.map((reply, index) => (
-                  <div key={index} className={`border border-neutral-200 rounded-xl p-4 transition-smooth ${
-                    hasResults ? 'hover:bg-neutral-50' : 'bg-neutral-50'
-                  }`}>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className={`text-xs font-medium px-3 py-1 rounded-full ${
-                        hasResults 
-                          ? 'text-primary-600 bg-primary-50' 
-                          : 'text-neutral-500 bg-neutral-100'
-                      }`}>
-                        {reply.tone}
-                      </span>
-                      <button
-                        onClick={() => copyToClipboard(reply.text)}
-                        className={`transition-smooth p-2 rounded-lg ${
-                          hasResults 
-                            ? 'text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100' 
-                            : 'text-neutral-300 cursor-not-allowed'
-                        }`}
-                        title={hasResults ? "Copy to clipboard" : "Analyze message first"}
-                        disabled={!hasResults}
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                      </button>
-                    </div>
-                    <p className={`text-sm leading-relaxed ${
-                      hasResults ? 'text-neutral-700' : 'text-neutral-500 italic'
-                    }`}>
-                      {reply.text}
-                    </p>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="relative overflow-hidden rounded-3xl border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(250,245,255,0.95) 100%)',
+                backdropFilter: 'blur(10px)'
+              }}
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-pink-200 to-transparent opacity-50 rounded-full blur-2xl"></div>
+              <div className="relative p-6">
+                <div className="flex items-center mb-6">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mr-3 shadow-lg" style={{ background: 'linear-gradient(135deg, #7b61ff 0%, #6c48ff 100%)' }}>
+                    <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z" />
+                    </svg>
                   </div>
-                ))}
+                  <h3 className="text-xl font-bold" style={{ color: '#3e2ee6' }}>Suggested Replies</h3>
+                </div>
+              
+                <div className="space-y-4">
+                  {displayResults.responses.map((reply, index) => (
+                    <motion.div 
+                      key={index} 
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.8 + index * 0.1 }}
+                      className={`rounded-2xl p-5 border-2 transition-all ${
+                        hasResults 
+                          ? 'border-purple-200 bg-white/60 backdrop-blur-sm hover:border-purple-300 hover:shadow-lg' 
+                          : 'border-purple-100 bg-purple-50/50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <span className={`text-sm font-bold px-4 py-2 rounded-full ${
+                          hasResults 
+                            ? 'text-white bg-gradient-to-r from-purple-600 to-pink-600' 
+                            : 'text-neutral-500 bg-neutral-100'
+                        }`}>
+                          {reply.tone}
+                        </span>
+                        <button
+                          onClick={() => copyToClipboard(reply.text)}
+                          className={`transition-all p-2 rounded-xl ${
+                            hasResults 
+                              ? 'text-purple-600 hover:text-white hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600' 
+                              : 'text-neutral-300 cursor-not-allowed'
+                          }`}
+                          title={hasResults ? "Copy to clipboard" : "Analyze message first"}
+                          disabled={!hasResults}
+                        >
+                          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                          </svg>
+                        </button>
+                      </div>
+                      <p className={`text-sm leading-relaxed ${
+                        hasResults ? 'text-neutral-700' : 'text-neutral-500 italic'
+                      }`}>
+                        {reply.text}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Guidance Card */}
-            <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6 hover:shadow-md transition-smooth">
-              <div className="flex items-center mb-6">
-                <div className="w-10 h-10 bg-secondary-100 rounded-xl flex items-center justify-center mr-3">
-                  <svg className="w-5 h-5 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="relative overflow-hidden rounded-3xl border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(245,243,255,0.95) 100%)',
+                backdropFilter: 'blur(10px)'
+              }}
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-orange-200 to-transparent opacity-50 rounded-full blur-2xl"></div>
+              <div className="relative p-6">
+                <div className="flex items-center mb-6">
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mr-3 shadow-lg" style={{ background: 'linear-gradient(135deg, #7b61ff 0%, #6c48ff 100%)' }}>
+                    <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18h6" />
+                      <path d="M10 22h4" />
+                      <path d="M2 12a10 10 0 0 1 20 0c0 3.5-2 4.5-4 6H6c-2-1.5-4-2.5-4-6z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold" style={{ color: '#3e2ee6' }}>Guidance</h3>
                 </div>
-                <h3 className="text-lg font-semibold text-neutral-900">Guidance</h3>
-              </div>
               
-              <div className="bg-neutral-50 rounded-xl p-4">
-                <p className={`text-sm leading-relaxed ${
-                  hasResults ? 'text-neutral-700' : 'text-neutral-500 italic'
-                }`}>
-                  {displayResults.advice}
-                </p>
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border-2 border-purple-100">
+                  <p className={`text-sm leading-relaxed ${
+                    hasResults ? 'text-neutral-700' : 'text-neutral-500 italic'
+                  }`}>
+                    {displayResults.advice}
+                  </p>
+                </div>
               </div>
-            </div>
+            </motion.div>
           </div>
           </div>
           </div>

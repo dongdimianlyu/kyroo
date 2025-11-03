@@ -1,4 +1,5 @@
 import React from 'react';
+import { BarChart3, Flame, BadgeCheck, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface StatisticsCardsProps {
@@ -13,7 +14,7 @@ interface StatCardProps {
   title: string;
   value: string | number;
   subtitle: string;
-  icon: string;
+  icon: React.ReactNode;
   gradient: string;
   change?: number;
   delay?: number;
@@ -39,8 +40,8 @@ const StatCard: React.FC<StatCardProps> = ({
       <div className={`bg-gradient-to-br ${gradient} p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 backdrop-blur-sm`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-            <span className="text-2xl">{icon}</span>
+          <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm text-white">
+            {icon}
           </div>
           {change !== undefined && (
             <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${
@@ -114,8 +115,8 @@ const StatisticsCards: React.FC<StatisticsCardsProps> = ({
         title="Practice Sessions"
         value={totalSessions}
         subtitle="Total completed"
-        icon="🎯"
-        gradient="from-purple-500 to-purple-700"
+        icon={<BarChart3 className="w-5 h-5" />}
+        gradient="from-[#7061ff] to-[#5b3bff]"
         change={12}
         delay={0}
       />
@@ -124,8 +125,8 @@ const StatisticsCards: React.FC<StatisticsCardsProps> = ({
         title="Current Streak"
         value={`${currentStreak} days`}
         subtitle="Keep it going!"
-        icon="🔥"
-        gradient="from-orange-500 to-red-600"
+        icon={<Flame className="w-5 h-5" />}
+        gradient="from-[#5965ff] to-[#7b61ff]"
         change={currentStreak > 0 ? 1 : 0}
         delay={0.1}
       />
@@ -134,8 +135,8 @@ const StatisticsCards: React.FC<StatisticsCardsProps> = ({
         title="Scenarios Mastered"
         value={scenariosMastered}
         subtitle="Different types"
-        icon="👑"
-        gradient="from-emerald-500 to-teal-600"
+        icon={<BadgeCheck className="w-5 h-5" />}
+        gradient="from-[#3fa3ff] to-[#00c2ff]"
         change={2}
         delay={0.2}
       />
@@ -144,8 +145,8 @@ const StatisticsCards: React.FC<StatisticsCardsProps> = ({
         title="Personal Best"
         value={`${personalBest}%`}
         subtitle={`Avg: ${averageSessionTime}m per session`}
-        icon="⭐"
-        gradient="from-pink-500 to-violet-600"
+        icon={<Star className="w-5 h-5" />}
+        gradient="from-[#7b61ff] to-[#9b6bff]"
         delay={0.3}
       />
     </div>

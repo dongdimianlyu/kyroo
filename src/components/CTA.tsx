@@ -5,10 +5,10 @@ import { ArrowRight, CheckCircle } from "lucide-react";
 
 export default function CTA() {
   return (
-    <section className="py-28 bg-gradient-to-br from-neutral-900 to-neutral-800 relative overflow-hidden">
+    <section className="py-28 bg-gradient-to-br from-purple-50 via-white to-neutral-50 relative overflow-hidden">
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600 rounded-full blur-3xl opacity-30" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl opacity-25" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl opacity-40" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-fuchsia-300 rounded-full blur-3xl opacity-35" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
@@ -17,7 +17,7 @@ export default function CTA() {
           whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
-          className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-[-0.02em] leading-[1.1]"
+          className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-900 tracking-[-0.02em] leading-[1.1]"
         >
           Start practicing with Kairoo today
         </motion.h2>
@@ -26,7 +26,7 @@ export default function CTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-xl text-neutral-300 max-w-3xl mx-auto mt-5"
+          className="text-xl text-neutral-600 max-w-3xl mx-auto mt-5"
         >
           Improve your clarity, tone, and empathy through guided AI feedback.
         </motion.p>

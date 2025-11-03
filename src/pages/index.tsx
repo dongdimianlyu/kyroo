@@ -230,7 +230,7 @@ const Navigation = () => {
           {currentUser ? (
             <>
               <Link 
-                href="/dashboard" 
+                href="/app" 
                 className="px-6 py-2.5 text-purple-600 text-sm font-medium rounded-xl hover:bg-purple-50 transition-all duration-200"
               >
                 Dashboard
@@ -644,7 +644,7 @@ const ScenariosSection = () => {
   ];
 
   return (
-    <section className="py-24" style={{ backgroundColor: '#1967FF' }}>
+    <section className="py-24 bg-gradient-to-br from-purple-500 via-fuchsia-500 to-pink-500">
       <div className="max-w-7xl mx-auto px-6">
         <LinearReveal className="text-center mb-16">
           <div className="space-y-6">
@@ -811,10 +811,10 @@ const MissionExcerpt = () => {
 // Updated Footer CTA
 const CTASection = () => {
   return (
-    <section className="py-24 bg-gradient-to-br from-neutral-900 to-neutral-800 relative overflow-hidden">
+    <section className="py-24 bg-gradient-to-br from-purple-50 via-white to-neutral-50 relative overflow-hidden">
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600 rounded-full blur-3xl opacity-30" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl opacity-25" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl opacity-40" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-fuchsia-300 rounded-full blur-3xl opacity-35" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
@@ -824,35 +824,35 @@ const CTASection = () => {
               <div className="space-y-2">
                 <LinearTextReveal 
                   text="Start practicing"
-                  className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-[-0.02em]"
+                  className="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-900 leading-[1.1] tracking-[-0.02em]"
                   staggerDelay={0.03}
                 />
                 <br />
                 <LinearTextReveal 
                   text="better conversations"
-                  className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-[-0.02em]"
+                  className="text-4xl sm:text-5xl lg:text-6xl font-bold text-purple-700 leading-[1.1] tracking-[-0.02em]"
                   delay={0.2}
                   staggerDelay={0.03}
                 />
               </div>
               <LinearReveal delay={0.2}>
-                <p className="text-xl text-neutral-300 max-w-3xl mx-auto leading-relaxed">
+                <p className="text-xl text-neutral-600 max-w-3xl mx-auto leading-relaxed">
                   Free to use. No signup required. Start practicing in 30 seconds.
                 </p>
               </LinearReveal>
               
               <LinearReveal delay={0.3}>
-                <div className="flex items-center justify-center gap-8 text-sm text-neutral-400 mb-6">
+                <div className="flex items-center justify-center gap-8 text-sm text-neutral-600 mb-6">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <CheckCircle className="w-4 h-4 text-green-500" />
                     <span>Always Free</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <CheckCircle className="w-4 h-4 text-green-500" />
                     <span>Private & Secure</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <CheckCircle className="w-4 h-4 text-green-500" />
                     <span>Ready in 30s</span>
                   </div>
                 </div>
