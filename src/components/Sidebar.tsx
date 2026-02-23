@@ -62,17 +62,17 @@ const navItems = [
 
 const Sidebar: React.FC<SidebarProps> = ({ activeNav, setActiveNav, setIsTransitioning, collapsed = false, onToggleCollapse }) => {
   return (
-    <aside className={`${collapsed ? 'w-20' : 'w-64'} shrink-0 min-h-screen bg-white/60 backdrop-blur-xl border-r border-neutral-200/50 flex flex-col transition-all duration-300 ease-out`}>
+    <aside className={`${collapsed ? 'w-20' : 'w-64'} shrink-0 min-h-screen bg-white/80 backdrop-blur-2xl border-r border-neutral-200/40 flex flex-col transition-all duration-300 ease-out`}>
       {/* Header */}
-      <div className={`${collapsed ? 'p-4' : 'p-8'} border-b border-neutral-200/50 transition-all duration-300`}>
+      <div className={`${collapsed ? 'p-4' : 'p-6'} border-b border-neutral-200/40 transition-all duration-300`}>
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-xl">K</span>
+            <div className="w-9 h-9 bg-neutral-900 rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-sm">K</span>
             </div>
             {!collapsed && (
               <div className="transition-opacity duration-200">
-                <h1 className="text-xl font-bold text-neutral-900">Kairoo</h1>
+                <h1 className="text-lg font-semibold text-neutral-900 tracking-tight">Kairoo</h1>
               </div>
             )}
           </div>
@@ -94,8 +94,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeNav, setActiveNav, setIsTransit
       </div>
       
       {/* Navigation */}
-      <nav className={`${collapsed ? 'p-3' : 'p-6'} flex-1 transition-all duration-300`}>
-        <div className="space-y-2">
+      <nav className={`${collapsed ? 'p-3' : 'p-4'} flex-1 transition-all duration-300`}>
+        <div className="space-y-1">
           {navItems.map((item) => (
             <button
               key={item.name}
@@ -109,25 +109,25 @@ const Sidebar: React.FC<SidebarProps> = ({ activeNav, setActiveNav, setIsTransit
                 }
               }}
               title={collapsed ? item.name : undefined}
-              className={`w-full flex ${collapsed ? 'items-center justify-center' : 'items-start'} gap-4 ${collapsed ? 'p-3' : 'p-4'} rounded-2xl ${collapsed ? 'text-center' : 'text-left'} transition-all duration-200 group ${
+              className={`w-full flex ${collapsed ? 'items-center justify-center' : 'items-center'} gap-3 ${collapsed ? 'p-3' : 'px-3 py-2.5'} rounded-xl ${collapsed ? 'text-center' : 'text-left'} transition-all duration-200 group ${
                 activeNav === item.name
-                  ? 'bg-purple-50/80 border border-purple-200/60 shadow-sm'
-                  : 'hover:bg-neutral-50/80 hover:shadow-sm border border-transparent'
+                  ? 'bg-neutral-100/80 border border-neutral-200/50'
+                  : 'hover:bg-neutral-50 border border-transparent'
               }`}
             >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-200 ${
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-200 ${
                 activeNav === item.name
-                  ? 'bg-purple-100 text-purple-600'
-                  : 'bg-neutral-100 text-neutral-600 group-hover:bg-neutral-200 group-hover:text-neutral-700'
+                  ? 'bg-neutral-900 text-white'
+                  : 'bg-neutral-100 text-neutral-500 group-hover:bg-neutral-200 group-hover:text-neutral-600'
               }`}>
-                <item.Icon className="w-5 h-5" />
+                <item.Icon className="w-4 h-4" />
               </div>
               {!collapsed && (
                 <div className="flex-1 min-w-0">
-                  <div className={`font-semibold text-sm transition-colors duration-200 ${
+                  <div className={`font-medium text-[13px] transition-colors duration-200 ${
                     activeNav === item.name
-                      ? 'text-purple-900'
-                      : 'text-neutral-900 group-hover:text-neutral-900'
+                      ? 'text-neutral-900'
+                      : 'text-neutral-600 group-hover:text-neutral-900'
                   }`}>
                     {item.name}
                   </div>
@@ -139,42 +139,29 @@ const Sidebar: React.FC<SidebarProps> = ({ activeNav, setActiveNav, setIsTransit
       </nav>
       
       {/* Bottom CTA */}
-      <div className={`${collapsed ? 'p-3' : 'p-6'} border-t border-neutral-200/50 transition-all duration-300`}>
+      <div className={`${collapsed ? 'p-3' : 'p-4'} border-t border-neutral-200/40 transition-all duration-300`}>
         {!collapsed ? (
-          <div className="bg-gradient-to-br from-purple-50 to-purple-75 rounded-2xl p-6 border border-purple-200/40">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.9 7.82 20 9 12.91l-5-3.64 5.91-.99L12 2z" />
-                </svg>
-              </div>
-              <h4 className="font-bold text-neutral-900 text-sm">Ready to Practice?</h4>
-            </div>
-            <p className="text-sm text-neutral-600 mb-5 leading-relaxed">
-              Start a conversation simulation to build your confidence in social situations.
+          <div className="rounded-xl p-4 bg-neutral-50 border border-neutral-200/40">
+            <p className="text-[13px] text-neutral-500 mb-3 leading-relaxed">
+              Build confidence through practice.
             </p>
             <Link 
               href="/app?view=practice"
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold text-sm rounded-xl shadow-sm hover:shadow-glow-purple-lg hover:from-purple-700 hover:to-purple-800 active:scale-95 transition-all duration-200"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-neutral-900 text-white font-medium text-[13px] rounded-lg hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M22 2l-7 7" />
-                <path d="M14 10l-2 2" />
-              </svg>
-              New Practice Session
+              New session
             </Link>
           </div>
         ) : (
           <Link 
             href="/app?view=practice"
-            className="w-full inline-flex items-center justify-center gap-2 px-3 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold text-xs rounded-xl shadow-sm hover:shadow-glow-purple-lg hover:from-purple-700 hover:to-purple-800 active:scale-95 transition-all duration-200"
+            className="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 bg-neutral-900 text-white font-medium text-xs rounded-lg hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
             title="New Practice Session"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
-              <path d="M22 2l-7 7" />
-              <path d="M14 10l-2 2" />
+              <path d="M12 8v8" />
+              <path d="M8 12h8" />
             </svg>
           </Link>
         )}

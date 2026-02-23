@@ -121,42 +121,39 @@ const Navigation = () => {
       transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? "bg-white/95 backdrop-blur-xl border-b border-neutral-200/50 shadow-premium" 
+          ? "bg-white/90 backdrop-blur-2xl border-b border-neutral-200/40 shadow-[0_1px_3px_rgba(0,0,0,0.04)]" 
           : "bg-transparent"
       }`}
     >
       <nav className="flex items-center justify-between p-6 lg:px-8 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-glow-purple">
-            <span className="text-white font-bold text-lg">K</span>
+          <div className="w-9 h-9 bg-neutral-900 rounded-xl flex items-center justify-center">
+            <span className="text-white font-bold text-sm">K</span>
           </div>
-          <span className="text-xl font-bold text-neutral-900 tracking-tight">Kairoo</span>
+          <span className="text-lg font-semibold text-neutral-900 tracking-tight">Kairoo</span>
         </Link>
         
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link, index) => (
+          {navLinks.map((link) => (
             <Link 
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium transition-colors duration-200 relative group ${
+              className={`text-[13px] font-medium transition-colors duration-200 ${
                 link.href === "/contact" 
-                  ? "text-purple-700" 
-                  : "text-neutral-600 hover:text-neutral-900"
+                  ? "text-neutral-900" 
+                  : "text-neutral-500 hover:text-neutral-900"
               }`}
             >
               {link.label}
-              <span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-purple-600 to-purple-700 transition-all duration-300 ${
-                link.href === "/contact" ? "w-full" : "w-0 group-hover:w-full"
-              }`}></span>
             </Link>
           ))}
         </div>
         
         <Link 
           href="/onboarding" 
-          className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-purple-700 text-white text-sm font-semibold rounded-2xl hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
+          className="px-5 py-2.5 bg-neutral-900 text-white text-[13px] font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
         >
-          Get Started
+          Get started
         </Link>
       </nav>
     </motion.header>
@@ -170,44 +167,38 @@ const ContactHero = () => {
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-25 via-white to-neutral-50">
-      <motion.div 
-        style={{ y, opacity }}
-        className="absolute inset-0"
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-25 via-white to-neutral-50" />
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-300 rounded-full blur-3xl opacity-50" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-200 rounded-full blur-3xl opacity-40" />
-        </div>
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+      <motion.div style={{ y, opacity }} className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 via-white to-white" />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #94a3b8 1px, transparent 0)', backgroundSize: '32px 32px' }} />
       </motion.div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 pt-32 pb-20">
-        <LinearReveal className="mb-12">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 pt-32 pb-24">
+        <LinearReveal className="mb-16">
           <Link 
             href="/" 
-            className="inline-flex items-center gap-3 text-neutral-600 hover:text-neutral-900 transition-colors duration-200 group"
+            className="inline-flex items-center gap-2 text-neutral-400 hover:text-neutral-600 transition-colors duration-200 group"
           >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
-            <span className="text-sm font-medium">Back to home</span>
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-300" />
+            <span className="text-[13px] font-medium">Home</span>
           </Link>
         </LinearReveal>
 
-        <div className="text-center space-y-8">
-          <LinearTextReveal 
-            text="Contact Us"
-            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-[1.05] tracking-[-0.02em]"
-            delay={0.1}
-            staggerDelay={0.05}
-          />
-          
-          <LinearReveal delay={0.6}>
-            <div className="w-24 h-1 bg-gradient-to-r from-purple-600 to-purple-700 rounded-full mx-auto"></div>
+        <div className="space-y-8">
+          <LinearReveal delay={0.1}>
+            <p className="text-[13px] font-semibold text-purple-600 uppercase tracking-[0.15em]">Contact us</p>
           </LinearReveal>
           
-          <LinearReveal delay={0.8}>
-            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              We read every note. Reach out with questions, feedback, or partnerships and we’ll get back quickly.
+          <LinearTextReveal 
+            text="We read every message."
+            className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-neutral-900 leading-[1.12] tracking-[-0.03em]"
+            delay={0.15}
+            staggerDelay={0.025}
+          />
+
+          <LinearReveal delay={0.5}>
+            <p className="text-lg sm:text-xl text-neutral-500 max-w-2xl leading-relaxed">
+              Questions, feedback, or just want to share your story. We&apos;re here and we respond quickly.
             </p>
           </LinearReveal>
         </div>
@@ -218,58 +209,44 @@ const ContactHero = () => {
 
 const ContactContent = () => {
   return (
-    <section className="py-24 bg-gradient-to-br from-white to-neutral-50">
-      <div className="max-w-4xl mx-auto px-6">
+    <section className="py-24 sm:py-32 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-white to-neutral-50/30" />
+      <div className="relative max-w-3xl mx-auto px-6">
         <LinearReveal delay={0.1}>
-          <div className="text-center mb-20">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-[1.2] tracking-[-0.02em] mb-8">
-              We're here to <span className="text-purple-700">help</span>
-            </h2>
-            <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Whether you're exploring Kairoo or already practicing, we're a message away.
+          <div className="max-w-xl mx-auto text-center mb-16">
+            <div className="w-12 h-12 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-500 mx-auto mb-6">
+              <Mail className="w-5 h-5" />
+            </div>
+            <h2 className="text-2xl font-bold text-neutral-900 mb-3">Get in touch</h2>
+            <p className="text-[15px] text-neutral-500 leading-relaxed">
+              For questions, feedback, or just to share your story.
             </p>
           </div>
         </LinearReveal>
 
-        <LinearReveal delay={0.3}>
-          <div className="max-w-2xl mx-auto mb-20">
-            <div className="group p-12 bg-white/80 backdrop-blur-sm rounded-3xl border border-neutral-200/50 shadow-premium hover:shadow-premium-lg hover:-translate-y-2 hover:border-neutral-300/60 transition-all duration-300 text-center">
-              <div className="flex justify-center mb-8">
-                <div className="p-6 bg-purple-100 rounded-3xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-glow-purple transition-all duration-300">
-                  <Mail className="w-10 h-10" />
-                </div>
-              </div>
-              <h3 className="text-3xl font-bold text-neutral-900 mb-6">Get in Touch</h3>
-              <p className="text-xl text-neutral-600 leading-relaxed mb-8">
-                For questions, feedback, support, or just to share your story—we read every message and respond quickly.
-              </p>
-              <div className="space-y-6">
-                <p className="text-2xl text-purple-700 font-semibold">jiarenlyu@gmail.com</p>
-                <a 
-                  href="mailto:jiarenlyu@gmail.com"
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-2xl shadow-glow-purple hover:from-purple-700 hover:to-purple-800 hover:shadow-glow-purple-lg active:scale-95 transition-all duration-200"
-                >
-                  Send us an email
-                  <Mail className="w-5 h-5" />
-                </a>
-              </div>
+        <LinearReveal delay={0.2}>
+          <div className="max-w-md mx-auto mb-16">
+            <div className="p-8 bg-white rounded-2xl border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] text-center">
+              <p className="text-lg font-semibold text-neutral-900 mb-4">jiarenlyu@gmail.com</p>
+              <a 
+                href="mailto:jiarenlyu@gmail.com"
+                className="group inline-flex items-center gap-2.5 px-6 py-3 bg-neutral-900 text-white font-medium text-[15px] rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
+              >
+                Send us an email
+                <Mail className="w-4 h-4" />
+              </a>
             </div>
           </div>
         </LinearReveal>
 
-        <LinearReveal delay={0.6}>
+        <LinearReveal delay={0.3}>
           <div className="text-center">
-            <div className="bg-gradient-to-br from-purple-50 to-purple-25 rounded-3xl p-8 lg:p-12 border border-purple-100">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                A note from the team
-              </h3>
-              <p className="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">
-                We're building Kairoo with care and attention to craft. Your thoughts help us make the product simpler,
-                faster, and more supportive.
+            <div className="p-8 rounded-2xl bg-neutral-50 border border-neutral-200/40">
+              <p className="text-[15px] text-neutral-600 leading-relaxed mb-4">
+                We&apos;re building Kairoo with care. Your thoughts help us make it simpler, faster, and more supportive.
               </p>
-              <p className="text-purple-700 font-semibold">
-                With appreciation,<br />
-                The Kairoo Team
+              <p className="text-sm font-medium text-neutral-900">
+                — The Kairoo Team
               </p>
             </div>
           </div>

@@ -81,32 +81,30 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-25 via-white to-neutral-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-neutral-50 via-white to-white flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        {/* Back button */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-neutral-400 hover:text-neutral-600 mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to home
+          <span className="text-[13px] font-medium">Home</span>
         </Link>
 
-        {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center shadow-glow-purple">
-              <span className="text-white font-bold text-lg">K</span>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="w-9 h-9 bg-neutral-900 rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-sm">K</span>
             </div>
-            <span className="text-xl font-bold text-neutral-900 tracking-tight">Kairoo</span>
+            <span className="text-lg font-semibold text-neutral-900 tracking-tight">Kairoo</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h1>
-          <p className="text-gray-600">Sign in to continue practicing</p>
+          <h1 className="text-2xl font-bold text-neutral-900 mb-2">Welcome back</h1>
+          <p className="text-[15px] text-neutral-500">Sign in to continue practicing</p>
         </div>
 
         {/* Form */}
@@ -114,7 +112,7 @@ const LoginPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8"
+          className="bg-white rounded-2xl border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-8"
         >
           {error && (
             <motion.div
@@ -179,7 +177,7 @@ const LoginPage: React.FC = () => {
             <div className="text-right">
               <Link
                 href="/forgot-password"
-                className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                className="text-sm text-neutral-500 hover:text-neutral-700 font-medium"
               >
                 Forgot your password?
               </Link>
@@ -189,7 +187,7 @@ const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-purple-800 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full py-3 px-4 bg-neutral-900 text-white font-medium rounded-xl hover:bg-neutral-800 focus:ring-2 focus:ring-neutral-300 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {loading ? 'Signing In...' : 'Sign In'}
             </button>
@@ -206,7 +204,7 @@ const LoginPage: React.FC = () => {
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="w-full py-3 px-4 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-3"
+            className="w-full py-3 px-4 border border-neutral-200 text-neutral-700 font-medium rounded-xl hover:bg-neutral-50 focus:ring-2 focus:ring-neutral-200 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-3"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -232,7 +230,7 @@ const LoginPage: React.FC = () => {
           {/* Signup Link */}
           <p className="text-center text-sm text-gray-600 mt-6">
             Don't have an account?{' '}
-            <Link href="/signup" className="text-purple-600 hover:text-purple-700 font-medium">
+            <Link href="/signup" className="text-neutral-900 hover:text-neutral-700 font-medium">
               Create one
             </Link>
           </p>

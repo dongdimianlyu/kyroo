@@ -177,22 +177,22 @@ export default function Onboarding() {
         <meta name="description" content="Welcome to Kairoo - Let's personalize your experience" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-purple-25 via-white to-neutral-50">
+      <div className="min-h-screen bg-gradient-to-b from-neutral-50 via-white to-white">
         {/* Progress Bar */}
         {currentStep !== 'welcome' && currentStep !== 'complete' && (
-          <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-b border-neutral-200/50">
-            <div className="content-width mx-auto container-padding py-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-semibold text-neutral-700">
+          <div className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-2xl border-b border-neutral-200/40">
+            <div className="content-width mx-auto container-padding py-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[13px] font-medium text-neutral-500">
                   Step {currentStepIndex} of {steps.length - 2}
                 </span>
-                <span className="text-sm font-semibold text-neutral-700">
-                  {Math.round(progress)}% complete
+                <span className="text-[13px] font-medium text-neutral-500">
+                  {Math.round(progress)}%
                 </span>
               </div>
-              <div className="w-full bg-neutral-200 rounded-full h-3 shadow-inner">
+              <div className="w-full bg-neutral-100 rounded-full h-1.5">
                 <motion.div 
-                  className="bg-gradient-to-r from-purple-600 to-purple-700 h-3 rounded-full shadow-glow-purple"
+                  className="bg-neutral-900 h-1.5 rounded-full"
                   initial={{ width: "0%" }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
@@ -221,12 +221,12 @@ export default function Onboarding() {
             </AnimatePresence>
 
             {currentStep !== 'welcome' && currentStep !== 'complete' && (
-              <div className="mt-20 text-center">
+              <div className="mt-16 text-center">
                 <button
                   onClick={skipOnboarding}
-                  className="btn-ghost text-neutral-500 hover:text-neutral-700"
+                  className="text-[13px] text-neutral-400 hover:text-neutral-600 transition-colors"
                 >
-                  I'll do this later, skip for now
+                  Skip for now
                 </button>
               </div>
             )}
@@ -239,55 +239,55 @@ export default function Onboarding() {
 
 // Welcome Step Component
 const WelcomeStep = ({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) => (
-  <motion.div variants={itemVariants} className="text-center space-y-12 max-w-5xl mx-auto">
+  <motion.div variants={itemVariants} className="text-center space-y-12 max-w-3xl mx-auto">
     <div className="space-y-8">
-      <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-700 rounded-3xl flex items-center justify-center mx-auto shadow-glow-purple-lg">
-        <Sparkles className="w-12 h-12 text-white" />
+      <div className="w-14 h-14 bg-neutral-900 rounded-2xl flex items-center justify-center mx-auto">
+        <Sparkles className="w-6 h-6 text-white" />
       </div>
       
-      <div className="space-y-6">
-        <h1 className="heading-1">
+      <div className="space-y-4">
+        <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-[-0.02em]">
           Welcome to Kairoo
         </h1>
-        <p className="body-large max-w-3xl mx-auto">
-          Let's quickly personalize your experience so we can provide the most helpful support for your communication goals.
+        <p className="text-lg text-neutral-500 max-w-xl mx-auto leading-relaxed">
+          Let&apos;s personalize your experience so we can help you practice the conversations that matter most.
         </p>
       </div>
     </div>
 
     <div className="space-y-10">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-        <div className="card card-hover p-8 text-center">
-          <Brain className="w-10 h-10 text-purple-600 mb-6 mx-auto" />
-          <h3 className="text-lg font-bold text-neutral-900 mb-3">Personalized</h3>
-          <p className="text-neutral-600 leading-relaxed">Tailored to your goals and style</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
+        <div className="p-6 rounded-xl bg-white border border-neutral-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] text-center">
+          <Brain className="w-5 h-5 text-neutral-500 mb-4 mx-auto" />
+          <h3 className="text-[15px] font-semibold text-neutral-900 mb-1">Personalized</h3>
+          <p className="text-[13px] text-neutral-500">Tailored to your goals</p>
         </div>
         
-        <div className="card card-hover p-8 text-center">
-          <Heart className="w-10 h-10 text-purple-600 mb-6 mx-auto" />
-          <h3 className="text-lg font-bold text-neutral-900 mb-3">Supportive</h3>
-          <p className="text-neutral-600 leading-relaxed">A safe, judgment-free space</p>
+        <div className="p-6 rounded-xl bg-white border border-neutral-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] text-center">
+          <Heart className="w-5 h-5 text-neutral-500 mb-4 mx-auto" />
+          <h3 className="text-[15px] font-semibold text-neutral-900 mb-1">Supportive</h3>
+          <p className="text-[13px] text-neutral-500">Safe, judgment-free</p>
         </div>
         
-        <div className="card card-hover p-8 text-center">
-          <Target className="w-10 h-10 text-purple-600 mb-6 mx-auto" />
-          <h3 className="text-lg font-bold text-neutral-900 mb-3">Effective</h3>
-          <p className="text-neutral-600 leading-relaxed">Real practice for real conversations</p>
+        <div className="p-6 rounded-xl bg-white border border-neutral-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] text-center">
+          <Target className="w-5 h-5 text-neutral-500 mb-4 mx-auto" />
+          <h3 className="text-[15px] font-semibold text-neutral-900 mb-1">Effective</h3>
+          <p className="text-[13px] text-neutral-500">Real practice, real results</p>
         </div>
       </div>
       
-      <div className="pt-6">
+      <div className="pt-4">
         <button
           onClick={onNext}
-          className="group btn-primary py-5 px-12 text-lg font-semibold flex items-center gap-3 mx-auto min-h-[64px]"
+          className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-neutral-900 text-white font-medium text-[15px] rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200 mx-auto"
         >
-          Let's get started
-          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+          Get started
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" />
         </button>
       </div>
       
-      <p className="caption">
-        This will take about 2 minutes. You can skip anytime.
+      <p className="text-[13px] text-neutral-400">
+        Takes about 2 minutes. Skip anytime.
       </p>
     </div>
   </motion.div>

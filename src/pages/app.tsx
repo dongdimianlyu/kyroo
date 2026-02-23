@@ -1144,17 +1144,17 @@ function App() {
                   <div className="w-full max-w-4xl">
                     {/* Progress Indicator */}
                     <div className="mb-8">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-semibold text-purple-600">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-[13px] font-medium text-neutral-500">
                           Step {practiceStep + 1} of {practiceSteps.length}
                         </span>
-                        <span className="text-sm text-neutral-500">
-                          {Math.round(((practiceStep + 1) / practiceSteps.length) * 100)}% complete
+                        <span className="text-[13px] font-medium text-neutral-500">
+                          {Math.round(((practiceStep + 1) / practiceSteps.length) * 100)}%
                         </span>
                       </div>
-                      <div className="w-full bg-purple-100 rounded-full h-2">
+                      <div className="w-full bg-neutral-100 rounded-full h-1.5">
                         <motion.div 
-                          className="bg-gradient-to-r from-purple-600 via-purple-500 to-purple-400 h-2 rounded-full"
+                          className="bg-neutral-900 h-1.5 rounded-full"
                           initial={{ width: "0%" }}
                           animate={{ width: `${((practiceStep + 1) / practiceSteps.length) * 100}%` }}
                           transition={{ duration: 0.3 }}
@@ -1172,31 +1172,22 @@ function App() {
                         transition={{ duration: 0.3 }}
                         className="relative overflow-hidden"
                       >
-                        {/* Background with purple texture gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-purple-700 to-indigo-900 opacity-10 rounded-3xl" 
-                             style={{
-                               backgroundImage: `radial-gradient(circle at 20% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
-                                                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                                                radial-gradient(circle at 40% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%)`
-                             }}
-                        ></div>
-                        
-                        <div className="relative bg-gradient-to-br from-purple-50 via-purple-100 to-indigo-50 rounded-3xl border-2 border-purple-200 shadow-2xl p-12 min-h-[500px] flex flex-col">
+                        <div className="relative bg-white rounded-2xl border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-10 min-h-[450px] flex flex-col">
                           {/* Scenario Screen */}
                           {practiceStep === 0 && (
                             <div className="flex-1 flex flex-col items-center justify-center">
-                              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
-                                <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className="w-12 h-12 bg-neutral-900 rounded-xl flex items-center justify-center mb-6">
+                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                 </svg>
                               </div>
-                              <h2 className="text-4xl font-bold text-purple-900 mb-4 text-center">What situation would you like to practice?</h2>
-                              <p className="text-purple-700 text-lg mb-8 text-center max-w-2xl">Describe a conversation scenario you want to practice</p>
+                              <h2 className="text-2xl font-bold text-neutral-900 mb-2 text-center">What situation would you like to practice?</h2>
+                              <p className="text-[15px] text-neutral-500 mb-6 text-center max-w-lg">Describe a conversation scenario you want to practice</p>
                               <textarea
                                 value={scenario}
                                 onChange={(e) => setScenario(e.target.value)}
                                 placeholder="e.g., Having lunch with a new classmate, Texting a friend who might be upset, Asking for help with homework..."
-                                className="w-full max-w-2xl h-40 bg-white/80 backdrop-blur-sm border-2 border-purple-300 rounded-2xl p-6 text-lg focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-200 resize-none"
+                                className="w-full max-w-lg h-32 bg-white border border-neutral-200/60 rounded-xl p-4 text-[15px] focus:outline-none focus:border-neutral-300 focus:ring-2 focus:ring-neutral-200/50 resize-none"
                                 disabled={loading}
                                 autoFocus
                               />
@@ -1206,26 +1197,26 @@ function App() {
                           {/* Difficulty Screen */}
                           {practiceStep === 1 && (
                             <div className="flex-1 flex flex-col items-center justify-center">
-                              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
-                                <span className="text-5xl">😌</span>
+                              <div className="w-12 h-12 bg-neutral-900 rounded-xl flex items-center justify-center mb-6">
+                                <span className="text-2xl">😌</span>
                               </div>
-                              <h2 className="text-4xl font-bold text-purple-900 mb-4 text-center">Choose difficulty level</h2>
-                              <p className="text-purple-700 text-lg mb-12 text-center">Pick the level that matches what you're ready for</p>
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-3xl">
+                              <h2 className="text-2xl font-bold text-neutral-900 mb-2 text-center">Choose difficulty level</h2>
+                              <p className="text-[15px] text-neutral-500 mb-8 text-center">Pick the level that matches what you&apos;re ready for</p>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full max-w-2xl">
                                 {difficultyLevels.map((level) => (
                                   <button
                                     key={level.id}
                                     onClick={() => setSelectedDifficulty(level.id)}
-                                    className={`p-6 rounded-2xl border-3 transition-all text-center transform hover:scale-105 ${
+                                    className={`p-5 rounded-xl border transition-all text-center ${
                                       selectedDifficulty === level.id
-                                        ? 'border-purple-600 bg-white shadow-xl ring-4 ring-purple-200'
-                                        : 'border-purple-200 bg-white/80 backdrop-blur-sm hover:border-purple-400 hover:shadow-lg'
+                                        ? 'border-neutral-300 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                                        : 'border-neutral-200/60 bg-white hover:border-neutral-300 hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
                                     }`}
                                     disabled={loading}
                                   >
-                                    <div className="text-5xl mb-3">{level.icon}</div>
-                                    <div className="font-bold text-xl text-purple-900 mb-2">{level.label}</div>
-                                    <p className="text-sm text-purple-700">{level.description}</p>
+                                    <div className="text-2xl mb-2">{level.icon}</div>
+                                    <div className="font-semibold text-[15px] text-neutral-900 mb-1">{level.label}</div>
+                                    <p className="text-[13px] text-neutral-500">{level.description}</p>
                                   </button>
                                 ))}
                               </div>
@@ -1235,28 +1226,28 @@ function App() {
                           {/* Feeling Screen */}
                           {practiceStep === 2 && (
                             <div className="flex-1 flex flex-col items-center justify-center">
-                              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
-                                <span className="text-5xl">❤️</span>
+                              <div className="w-12 h-12 bg-neutral-900 rounded-xl flex items-center justify-center mb-6">
+                                <span className="text-2xl">❤️</span>
                               </div>
-                              <h2 className="text-4xl font-bold text-purple-900 mb-4 text-center">How are you feeling today?</h2>
-                              <p className="text-purple-700 text-lg mb-12 text-center">This helps us tailor the conversation to your needs</p>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+                              <h2 className="text-2xl font-bold text-neutral-900 mb-2 text-center">How are you feeling today?</h2>
+                              <p className="text-[15px] text-neutral-500 mb-8 text-center">This helps us tailor the conversation to your needs</p>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-2xl">
                                 {feelingStates.map((feeling) => (
                                   <button
                                     key={feeling.id}
                                     onClick={() => setSelectedFeeling(feeling.id)}
-                                    className={`p-6 rounded-2xl border-3 transition-all text-left transform hover:scale-105 ${
+                                    className={`p-5 rounded-xl border transition-all text-left ${
                                       selectedFeeling === feeling.id
-                                        ? 'border-purple-600 bg-white shadow-xl ring-4 ring-purple-200'
-                                        : 'border-purple-200 bg-white/80 backdrop-blur-sm hover:border-purple-400 hover:shadow-lg'
+                                        ? 'border-neutral-300 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                                        : 'border-neutral-200/60 bg-white hover:border-neutral-300 hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
                                     }`}
                                     disabled={loading}
                                   >
-                                    <div className="flex items-start space-x-4">
-                                      <span className="text-5xl flex-shrink-0">{feeling.icon}</span>
+                                    <div className="flex items-start gap-3">
+                                      <span className="text-2xl flex-shrink-0">{feeling.icon}</span>
                                       <div className="flex-1">
-                                        <div className="font-bold text-xl text-purple-900 mb-2">{feeling.label}</div>
-                                        <p className="text-sm text-purple-700">{feeling.description}</p>
+                                        <div className="font-semibold text-[15px] text-neutral-900 mb-1">{feeling.label}</div>
+                                        <p className="text-[13px] text-neutral-500">{feeling.description}</p>
                                       </div>
                                     </div>
                                   </button>
@@ -1268,23 +1259,23 @@ function App() {
                           {/* Who Starts Screen */}
                           {practiceStep === 3 && (
                             <div className="flex-1 flex flex-col items-center justify-center">
-                              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
-                                <span className="text-5xl">🎬</span>
+                              <div className="w-12 h-12 bg-neutral-900 rounded-xl flex items-center justify-center mb-6">
+                                <span className="text-2xl">🎬</span>
                               </div>
-                              <h2 className="text-4xl font-bold text-purple-900 mb-4 text-center">Who should start the conversation?</h2>
-                              <p className="text-purple-700 text-lg mb-12 text-center">Choose who begins the dialogue</p>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
+                              <h2 className="text-2xl font-bold text-neutral-900 mb-2 text-center">Who should start the conversation?</h2>
+                              <p className="text-[15px] text-neutral-500 mb-8 text-center">Choose who begins the dialogue</p>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-lg">
                                 <button
                                   onClick={() => setWhoStartsFirst('ai')}
-                                  className={`p-8 rounded-2xl border-3 transition-all text-center transform hover:scale-105 ${
+                                  className={`p-6 rounded-xl border transition-all text-center ${
                                     whoStartsFirst === 'ai'
-                                      ? 'border-purple-600 bg-white shadow-xl ring-4 ring-purple-200'
-                                      : 'border-purple-200 bg-white/80 backdrop-blur-sm hover:border-purple-400 hover:shadow-lg'
+                                      ? 'border-neutral-300 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                                      : 'border-neutral-200/60 bg-white hover:border-neutral-300 hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
                                   }`}
                                   disabled={loading}
                                 >
-                                  <div className="mb-4">
-                                    <svg className="w-12 h-12 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <div className="mb-3">
+                                    <svg className="w-8 h-8 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                       <rect x="3" y="4" width="18" height="12" rx="2" />
                                       <path d="M7 20h10" />
                                       <path d="M12 16v4" />
@@ -1292,26 +1283,26 @@ function App() {
                                       <circle cx="15" cy="10" r="1" />
                                     </svg>
                                   </div>
-                                  <div className="font-bold text-xl text-purple-900 mb-3">AI starts first</div>
-                                  <p className="text-sm text-purple-700">The other person will begin the conversation</p>
+                                  <div className="font-semibold text-[15px] text-neutral-900 mb-2">AI starts first</div>
+                                  <p className="text-[13px] text-neutral-500">The other person will begin</p>
                                 </button>
                                 <button
                                   onClick={() => setWhoStartsFirst('user')}
-                                  className={`p-8 rounded-2xl border-3 transition-all text-center transform hover:scale-105 ${
+                                  className={`p-6 rounded-xl border transition-all text-center ${
                                     whoStartsFirst === 'user'
-                                      ? 'border-purple-600 bg-white shadow-xl ring-4 ring-purple-200'
-                                      : 'border-purple-200 bg-white/80 backdrop-blur-sm hover:border-purple-400 hover:shadow-lg'
+                                      ? 'border-neutral-300 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]'
+                                      : 'border-neutral-200/60 bg-white hover:border-neutral-300 hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
                                   }`}
                                   disabled={loading}
                                 >
-                                  <div className="mb-4">
-                                    <svg className="w-12 h-12 text-purple-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <div className="mb-3">
+                                    <svg className="w-8 h-8 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                       <path d="M20 21a8 8 0 1 0-16 0" />
                                       <circle cx="12" cy="7" r="4" />
                                     </svg>
                                   </div>
-                                  <div className="font-bold text-xl text-purple-900 mb-3">I&apos;ll start first</div>
-                                  <p className="text-sm text-purple-700">You will begin the conversation</p>
+                                  <div className="font-semibold text-[15px] text-neutral-900 mb-2">I&apos;ll start first</div>
+                                  <p className="text-[13px] text-neutral-500">You will begin</p>
                                 </button>
                               </div>
                             </div>
@@ -1320,23 +1311,23 @@ function App() {
                           {/* Hints Screen */}
                           {practiceStep === 4 && (
                             <div className="flex-1 flex flex-col items-center justify-center">
-                              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
-                                <span className="text-5xl">💡</span>
+                              <div className="w-12 h-12 bg-neutral-900 rounded-xl flex items-center justify-center mb-6">
+                                <span className="text-2xl">💡</span>
                               </div>
-                              <h2 className="text-4xl font-bold text-purple-900 mb-4 text-center">Real-time Coaching Hints</h2>
-                              <p className="text-purple-700 text-lg mb-12 text-center">Get gentle suggestions during your conversation</p>
-                              <div className="w-full max-w-md">
-                                <div className="bg-white rounded-3xl p-12 border-3 border-purple-200 shadow-xl">
+                              <h2 className="text-2xl font-bold text-neutral-900 mb-2 text-center">Real-time coaching hints</h2>
+                              <p className="text-[15px] text-neutral-500 mb-8 text-center">Get gentle suggestions during your conversation</p>
+                              <div className="w-full max-w-sm">
+                                <div className="bg-white rounded-2xl p-8 border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
                                   <div className="flex flex-col items-center">
-                                    <div className="mb-6">
+                                    <div className="mb-5">
                                       {hintsEnabled ? (
-                                        <svg className="w-12 h-12 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <svg className="w-8 h-8 text-neutral-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                           <path d="M9 18h6" />
                                           <path d="M10 22h4" />
                                           <path d="M2 12a10 10 0 0 1 20 0c0 3.5-2 4.5-4 6H6c-2-1.5-4-2.5-4-6z" />
                                         </svg>
                                       ) : (
-                                        <svg className="w-12 h-12 text-neutral-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <svg className="w-8 h-8 text-neutral-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                           <path d="M9 18h6" />
                                           <path d="M10 22h4" />
                                           <path d="M2 12a10 10 0 0 1 20 0c0 3.5-2 4.5-4 6H6c-2-1.5-4-2.5-4-6z" />
@@ -1346,18 +1337,18 @@ function App() {
                                     </div>
                                     <button
                                       onClick={() => setHintsEnabled(!hintsEnabled)}
-                                      className={`relative inline-flex h-16 w-32 items-center rounded-full transition-colors ${
-                                        hintsEnabled ? 'bg-gradient-to-r from-purple-600 to-purple-700' : 'bg-neutral-300'
-                                      } shadow-inner`}
+                                      className={`relative inline-flex h-12 w-24 items-center rounded-full transition-colors ${
+                                        hintsEnabled ? 'bg-neutral-900' : 'bg-neutral-200'
+                                      }`}
                                       disabled={loading}
                                     >
                                       <motion.span
-                                        className="inline-block h-12 w-12 transform rounded-full bg-white shadow-lg"
-                                        animate={{ x: hintsEnabled ? 80 : 8 }}
+                                        className="inline-block h-8 w-8 transform rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.1)]"
+                                        animate={{ x: hintsEnabled ? 56 : 4 }}
                                         transition={{ duration: 0.3 }}
                                       />
                                     </button>
-                                    <p className="mt-6 text-lg font-semibold text-purple-900">
+                                    <p className="mt-4 text-[15px] font-medium text-neutral-900">
                                       {hintsEnabled ? 'Enabled' : 'Disabled'}
                                     </p>
                                   </div>
@@ -1370,13 +1361,13 @@ function App() {
                     </AnimatePresence>
 
                     {/* Navigation Buttons */}
-                    <div className="flex justify-between mt-8">
+                    <div className="flex justify-between mt-6">
                       <button
                         onClick={() => setPracticeStep(Math.max(0, practiceStep - 1))}
                         disabled={practiceStep === 0 || loading}
-                        className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-purple-300 text-purple-700 font-semibold rounded-xl hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all disabled:hover:bg-white transform hover:scale-105"
+                        className="flex items-center gap-2 px-5 py-2.5 bg-white border border-neutral-200/60 text-neutral-700 font-medium text-[13px] rounded-xl hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                       >
-                        <ChevronLeft className="w-5 h-5" />
+                        <ChevronLeft className="w-4 h-4" />
                         Back
                       </button>
                       
@@ -1384,19 +1375,19 @@ function App() {
                         <button
                           onClick={() => setPracticeStep(Math.min(practiceSteps.length - 1, practiceStep + 1))}
                           disabled={loading || (practiceStep === 0 && !scenario.trim())}
-                          className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-purple-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                          className="flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white font-medium text-[13px] rounded-xl hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                         >
                           Next
-                          <ChevronRight className="w-5 h-5" />
+                          <ChevronRight className="w-4 h-4" />
                         </button>
                       ) : (
                         <button
                           onClick={startSimulation}
                           disabled={loading || !scenario.trim()}
-                          className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white font-semibold rounded-xl hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                          className="flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white font-medium text-[13px] rounded-xl hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                         >
-                          {loading ? 'Starting...' : 'Begin Practice'}
-                          <ChevronRight className="w-5 h-5" />
+                          {loading ? 'Starting...' : 'Begin practice'}
+                          <ChevronRight className="w-4 h-4" />
                         </button>
                       )}
                     </div>

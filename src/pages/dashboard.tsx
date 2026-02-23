@@ -164,14 +164,14 @@ const DashboardContent: React.FC = () => {
 
   if (loading || !userProgress) {
     return (
-      <div className="bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center min-h-[60vh]">
+      <div className="bg-white flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <motion.div
-            className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            className="w-10 h-10 bg-neutral-900 rounded-xl flex items-center justify-center mx-auto mb-4"
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
           >
-            <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2v4" />
               <path d="M12 18v4" />
               <path d="M4.93 4.93l2.83 2.83" />
@@ -182,8 +182,8 @@ const DashboardContent: React.FC = () => {
               <path d="M16.24 7.76l2.83-2.83" />
             </svg>
           </motion.div>
-          <h2 className="text-xl font-bold text-neutral-800 mb-2">Loading your dashboard...</h2>
-          <p className="text-neutral-600">Preparing your confidence insights</p>
+          <h2 className="text-lg font-semibold text-neutral-900 mb-1">Loading dashboard...</h2>
+          <p className="text-[13px] text-neutral-500">Preparing your insights</p>
         </div>
       </div>
     );
@@ -191,28 +191,26 @@ const DashboardContent: React.FC = () => {
 
   return (
     <ProtectedRoute>
-      <div className="bg-gradient-to-br from-purple-50 via-white to-blue-50">
+      <div className="bg-white">
       {/* Header */}
-      <div className="bg-white/40 backdrop-blur-sm border-b border-white/20">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+      <div className="border-b border-neutral-200/40">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold text-neutral-900 mb-2">{getGreeting()}</h1>
-                <p className="text-lg text-neutral-600">{getMilestoneMessage(userProgress.overall_confidence)}</p>
+                <h1 className="text-2xl font-bold text-neutral-900 mb-1">{getGreeting()}</h1>
+                <p className="text-[15px] text-neutral-500">{getMilestoneMessage(userProgress.overall_confidence)}</p>
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <button
                 onClick={() => router.push('/app?view=practice')}
-                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
+                className="px-5 py-2.5 bg-neutral-900 text-white text-[13px] font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200 flex items-center gap-2"
               >
-                <span>Start Practice</span>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span>Start practice</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
-              </motion.button>
+              </button>
             </div>
           </motion.div>
         </div>
@@ -252,106 +250,113 @@ const DashboardContent: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 0.5 }}
-              className="bg-white/70 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl"
+              className="bg-white rounded-2xl p-6 border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
             >
-              <h3 className="text-xl font-bold text-neutral-800 mb-4">Recent Achievements</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Recent achievements</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 {userProgress.achievements.slice(0, 6).map((achievement, index) => (
                   <motion.div
                     key={achievement.id}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 1.2 + index * 0.1, duration: 0.3 }}
-                    whileHover={{ scale: 1.1, y: -4 }}
-                    className={`text-center p-4 rounded-2xl border-2 ${
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    className={`text-center p-3 rounded-xl border ${
                       achievement.rarity === 'legendary'
-                        ? 'bg-gradient-to-br from-yellow-100 to-orange-100 border-yellow-300'
+                        ? 'bg-amber-50 border-amber-200/60'
                         : achievement.rarity === 'epic'
-                        ? 'bg-gradient-to-br from-purple-100 to-purple-200 border-purple-300'
+                        ? 'bg-purple-50 border-purple-200/60'
                         : achievement.rarity === 'rare'
-                        ? 'bg-gradient-to-br from-blue-100 to-blue-200 border-blue-300'
-                        : 'bg-gradient-to-br from-neutral-100 to-neutral-200 border-neutral-300'
+                        ? 'bg-blue-50 border-blue-200/60'
+                        : 'bg-neutral-50 border-neutral-200/60'
                     }`}
                   >
-                    <div className="mb-2 flex items-center justify-center">
+                    <div className="mb-1.5 flex items-center justify-center">
                       {achievement.rarity === 'legendary' ? (
-                        <Crown className="w-6 h-6 text-yellow-600" />
+                        <Crown className="w-4 h-4 text-amber-600" />
                       ) : achievement.rarity === 'epic' ? (
-                        <Star className="w-6 h-6 text-purple-700" />
+                        <Star className="w-4 h-4 text-purple-600" />
                       ) : achievement.rarity === 'rare' ? (
-                        <Award className="w-6 h-6 text-blue-700" />
+                        <Award className="w-4 h-4 text-blue-600" />
                       ) : (
-                        <Award className="w-6 h-6 text-neutral-600" />
+                        <Award className="w-4 h-4 text-neutral-500" />
                       )}
                     </div>
-                    <div className="text-xs font-bold text-neutral-800">{achievement.title}</div>
+                    <div className="text-[11px] font-semibold text-neutral-800">{achievement.title}</div>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
           )}
 
-          {/* Two-row marquee section (blue background) */}
-          <div className="rounded-3xl p-8" style={{ backgroundColor: '#1967FF' }}>
-            <div className="text-center mb-8">
-              <h3 className="text-3xl font-bold text-white">Practice conversations for any situation</h3>
-              <p className="text-white/90">Pick a scenario. Practice until it feels natural. Use it in real life.</p>
+          {/* Two-row marquee section */}
+          <div className="rounded-2xl p-8 bg-neutral-950 relative overflow-hidden">
+            <div className="absolute inset-0 grain-texture" />
+            <div className="absolute inset-0 opacity-15">
+              <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-purple-600 rounded-full blur-[120px]" />
+              <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] bg-indigo-500 rounded-full blur-[100px]" />
             </div>
-            <div className="space-y-6">
-              <div className="marquee-container">
-                <div className="marquee-track">
-                  <div className="marquee-duplicate">
-                    {[
-                      { title: 'Telling Stories', tag: 'Beginner', Icon: BookIcon },
-                      { title: 'Flirting & Compliments', tag: 'Social', Icon: HeartIcon },
-                      { title: 'Job Interview', tag: 'Work', Icon: Briefcase },
-                      { title: 'Public Transport', tag: 'Travel', Icon: Train },
-                      { title: 'Introductions', tag: 'Beginner', Icon: HandshakeIcon },
-                    ].concat([
-                      { title: 'Telling Stories', tag: 'Beginner', Icon: BookIcon },
-                      { title: 'Flirting & Compliments', tag: 'Social', Icon: HeartIcon },
-                      { title: 'Job Interview', tag: 'Work', Icon: Briefcase },
-                      { title: 'Public Transport', tag: 'Travel', Icon: Train },
-                      { title: 'Introductions', tag: 'Beginner', Icon: HandshakeIcon },
-                    ]).map((item, i) => (
-                      <div key={`db-r1-${i}-${item.title}`} className="shrink-0 px-6 py-5 bg-white rounded-[28px] shadow-md flex items-center gap-4">
-                        <item.Icon className="w-5 h-5 text-neutral-600" />
-                        <div className="leading-tight text-left">
-                          <div className="text-neutral-900 font-semibold text-lg">{item.title}</div>
-                          <div className="text-neutral-500 text-sm">{item.tag}</div>
+            <div className="relative z-10">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold text-white mb-2">Practice for any situation</h3>
+                <p className="text-[15px] text-neutral-400">Pick a scenario. Practice until it feels natural.</p>
+              </div>
+              <div className="space-y-3">
+                <div className="marquee-container">
+                  <div className="marquee-track">
+                    <div className="marquee-duplicate">
+                      {[
+                        { title: 'Telling Stories', tag: 'Beginner', Icon: BookIcon },
+                        { title: 'Flirting & Compliments', tag: 'Social', Icon: HeartIcon },
+                        { title: 'Job Interview', tag: 'Work', Icon: Briefcase },
+                        { title: 'Public Transport', tag: 'Travel', Icon: Train },
+                        { title: 'Introductions', tag: 'Beginner', Icon: HandshakeIcon },
+                      ].concat([
+                        { title: 'Telling Stories', tag: 'Beginner', Icon: BookIcon },
+                        { title: 'Flirting & Compliments', tag: 'Social', Icon: HeartIcon },
+                        { title: 'Job Interview', tag: 'Work', Icon: Briefcase },
+                        { title: 'Public Transport', tag: 'Travel', Icon: Train },
+                        { title: 'Introductions', tag: 'Beginner', Icon: HandshakeIcon },
+                      ]).map((item, i) => (
+                        <div key={`db-r1-${i}-${item.title}`} className="shrink-0 px-5 py-4 bg-white/[0.06] border border-white/[0.08] rounded-2xl flex items-center gap-3">
+                          <item.Icon className="w-4 h-4 text-neutral-400" />
+                          <div className="leading-tight text-left">
+                            <div className="text-white font-semibold text-[15px]">{item.title}</div>
+                            <div className="text-neutral-500 text-xs">{item.tag}</div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="marquee-container">
-                <div className="marquee-track reverse">
-                  <div className="marquee-duplicate">
-                    {[
-                      { title: 'Ordering Food', tag: 'Food', Icon: ShoppingBag },
-                      { title: 'Phone Calls', tag: 'Social', Icon: Phone },
-                      { title: 'Work Routine', tag: 'Work', Icon: Coffee },
-                      { title: 'First Date', tag: 'Romance', Icon: RoseIcon },
-                      { title: 'Presidential Debate', tag: 'Debate', Icon: Mic2 },
-                      { title: 'Buying a Gift', tag: 'Shopping', Icon: Gift },
-                    ].concat([
-                      { title: 'Ordering Food', tag: 'Food', Icon: ShoppingBag },
-                      { title: 'Phone Calls', tag: 'Social', Icon: Phone },
-                      { title: 'Work Routine', tag: 'Work', Icon: Coffee },
-                      { title: 'First Date', tag: 'Romance', Icon: RoseIcon },
-                      { title: 'Presidential Debate', tag: 'Debate', Icon: Mic2 },
-                      { title: 'Buying a Gift', tag: 'Shopping', Icon: Gift },
-                    ]).map((item, i) => (
-                      <div key={`db-r2-${i}-${item.title}`} className="shrink-0 px-6 py-5 bg-white rounded-[28px] shadow-md flex items-center gap-4">
-                        <item.Icon className="w-5 h-5 text-neutral-600" />
-                        <div className="leading-tight text-left">
-                          <div className="text-neutral-900 font-semibold text-lg">{item.title}</div>
-                          <div className="text-neutral-500 text-sm">{item.tag}</div>
+                <div className="marquee-container">
+                  <div className="marquee-track reverse">
+                    <div className="marquee-duplicate">
+                      {[
+                        { title: 'Ordering Food', tag: 'Food', Icon: ShoppingBag },
+                        { title: 'Phone Calls', tag: 'Social', Icon: Phone },
+                        { title: 'Work Routine', tag: 'Work', Icon: Coffee },
+                        { title: 'First Date', tag: 'Romance', Icon: RoseIcon },
+                        { title: 'Presidential Debate', tag: 'Debate', Icon: Mic2 },
+                        { title: 'Buying a Gift', tag: 'Shopping', Icon: Gift },
+                      ].concat([
+                        { title: 'Ordering Food', tag: 'Food', Icon: ShoppingBag },
+                        { title: 'Phone Calls', tag: 'Social', Icon: Phone },
+                        { title: 'Work Routine', tag: 'Work', Icon: Coffee },
+                        { title: 'First Date', tag: 'Romance', Icon: RoseIcon },
+                        { title: 'Presidential Debate', tag: 'Debate', Icon: Mic2 },
+                        { title: 'Buying a Gift', tag: 'Shopping', Icon: Gift },
+                      ]).map((item, i) => (
+                        <div key={`db-r2-${i}-${item.title}`} className="shrink-0 px-5 py-4 bg-white/[0.06] border border-white/[0.08] rounded-2xl flex items-center gap-3">
+                          <item.Icon className="w-4 h-4 text-neutral-400" />
+                          <div className="leading-tight text-left">
+                            <div className="text-white font-semibold text-[15px]">{item.title}</div>
+                            <div className="text-neutral-500 text-xs">{item.tag}</div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -363,23 +368,21 @@ const DashboardContent: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2, duration: 0.5 }}
-            className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 backdrop-blur-sm rounded-3xl p-6 border border-purple-200/30"
+            className="rounded-2xl p-6 bg-neutral-50 border border-neutral-200/40"
           >
             <div className="text-center">
-              <h3 className="text-lg font-bold text-neutral-800 mb-2">Ready for your next challenge?</h3>
-              <p className="text-neutral-600 mb-6">Choose a practice scenario that matches your current confidence level</p>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-1">Ready for your next session?</h3>
+              <p className="text-[13px] text-neutral-500 mb-5">Pick a scenario that matches your goals</p>
 
-              <div className="flex flex-wrap gap-4 justify-center">
-                {['Job Interview', 'Small Talk', 'Presentation', 'Networking'].map((scenario, index) => (
-                  <motion.button
+              <div className="flex flex-wrap gap-2 justify-center">
+                {['Job Interview', 'Small Talk', 'Presentation', 'Networking'].map((scenario) => (
+                  <button
                     key={scenario}
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
                     onClick={() => router.push('/app?view=practice')}
-                    className="px-6 py-3 bg-white/80 backdrop-blur-sm rounded-2xl font-medium text-neutral-800 border border-white/50 hover:bg-white/90 hover:shadow-lg transition-all duration-300"
+                    className="px-4 py-2 bg-white rounded-lg font-medium text-[13px] text-neutral-700 border border-neutral-200/60 hover:border-neutral-300 hover:bg-neutral-50 active:scale-[0.98] transition-all duration-200"
                   >
                     {scenario}
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             </div>
