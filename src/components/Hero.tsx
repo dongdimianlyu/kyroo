@@ -4,25 +4,29 @@ import React from "react";
 // Uses CSS keyframes defined in globals.css for 60fps, GPU-friendly animation
 export default function Hero() {
   return (
-    <section className="relative min-h-screen w-full flex items-center justify-center px-6">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-neutral-50 via-white to-white" />
-      <div className="absolute inset-0 -z-10 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #94a3b8 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-
-      <div className="w-full max-w-4xl mx-auto text-center flex flex-col items-center justify-center gap-8 sm:gap-10">
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-neutral-900 tracking-[-0.03em] leading-[1.08]">
-          Meet Kairoo
+    <section className="relative min-h-[110vh] flex flex-col items-center justify-center pt-20 pb-40 rounded-xl" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat' }}>
+      <div className="flex flex-col items-center justify-center gap-y-4 max-w-[90rem] mx-auto w-full py-10 px-2">
+        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-zinc-900/80 border border-zinc-700/50 w-fit mt-10">
+          <div className="w-5 h-5 rounded bg-orange-500 flex items-center justify-center">
+            <span className="text-white font-bold text-[11px]">Y</span>
+          </div>
+          <span className="text-white/80 text-sm font-medium">Backed by Y Combinator</span>
+        </div>
+        
+        <h1 className="eight-title text-center font-medium tracking-tighter text-slate-100 mt-4">
+          Meet <span className="landing-text-gradient">Kairoo</span>
         </h1>
 
-        <div className="relative h-28 sm:h-30 md:h-30 flex items-end justify-center gap-5 sm:gap-6">
+        <p className="text-center one-title text-slate-100 max-w-xl mx-auto mt-2">
+          Practice conversations with AI. Build confidence. Find your voice.
+        </p>
+
+        <div className="relative h-28 sm:h-30 md:h-30 flex items-end justify-center gap-5 sm:gap-6 mt-8">
           <span className="audio-bar audio-bar-1 bg-sky-500" />
           <span className="audio-bar audio-bar-2 bg-amber-500" />
           <span className="audio-bar audio-bar-3 bg-pink-500" />
           <span className="audio-bar audio-bar-4 bg-green-500" />
         </div>
-
-        <p className="text-lg sm:text-xl text-neutral-500 max-w-xl leading-relaxed">
-          Practice conversations with AI. Build confidence. Find your voice.
-        </p>
       </div>
     </section>
   );

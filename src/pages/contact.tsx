@@ -121,16 +121,16 @@ const Navigation = () => {
       transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? "bg-white/90 backdrop-blur-2xl border-b border-neutral-200/40 shadow-[0_1px_3px_rgba(0,0,0,0.04)]" 
+          ? "bg-zinc-950/80 backdrop-blur-xl border-b border-white/5" 
           : "bg-transparent"
       }`}
     >
-      <nav className="flex items-center justify-between p-6 lg:px-8 max-w-7xl mx-auto">
+      <nav className="flex items-center justify-between p-6 lg:px-8 max-w-[90rem] mx-auto w-full">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-neutral-900 rounded-xl flex items-center justify-center">
+          <div className="w-9 h-9 bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-800">
             <span className="text-white font-bold text-sm">K</span>
           </div>
-          <span className="text-lg font-semibold text-neutral-900 tracking-tight">Kairoo</span>
+          <span className="text-lg font-semibold text-white tracking-tight">Kairoo</span>
         </Link>
         
         <div className="hidden md:flex items-center gap-8">
@@ -138,10 +138,10 @@ const Navigation = () => {
             <Link 
               key={link.href}
               href={link.href}
-              className={`text-[13px] font-medium transition-colors duration-200 ${
+              className={`text-sm font-medium transition-colors duration-200 ${
                 link.href === "/contact" 
-                  ? "text-neutral-900" 
-                  : "text-neutral-500 hover:text-neutral-900"
+                  ? "text-white" 
+                  : "text-zinc-400 hover:text-white"
               }`}
             >
               {link.label}
@@ -151,7 +151,7 @@ const Navigation = () => {
         
         <Link 
           href="/onboarding" 
-          className="px-5 py-2.5 bg-neutral-900 text-white text-[13px] font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
+          className="px-5 py-2.5 bg-white text-zinc-900 text-[13px] font-semibold rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200"
         >
           Get started
         </Link>
@@ -169,8 +169,8 @@ const ContactHero = () => {
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
       <motion.div style={{ y, opacity }} className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 via-white to-white" />
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #94a3b8 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+        <div className="absolute inset-0 bg-zinc-950" />
+        <div className="absolute top-0 right-0 w-full h-[800px] opacity-20 pointer-events-none" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: '100% 100%', backgroundPosition: 'center', transform: 'rotate(180deg)' }} />
       </motion.div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 pt-32 pb-24">
@@ -191,13 +191,13 @@ const ContactHero = () => {
           
           <LinearTextReveal 
             text="We read every message."
-            className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-neutral-900 leading-[1.12] tracking-[-0.03em]"
+            className="eight-title font-medium tracking-tighter text-slate-100"
             delay={0.15}
             staggerDelay={0.025}
           />
 
           <LinearReveal delay={0.5}>
-            <p className="text-lg sm:text-xl text-neutral-500 max-w-2xl leading-relaxed">
+            <p className="one-title text-slate-100 max-w-2xl">
               Questions, feedback, or just want to share your story. We&apos;re here and we respond quickly.
             </p>
           </LinearReveal>
@@ -210,15 +210,14 @@ const ContactHero = () => {
 const ContactContent = () => {
   return (
     <section className="py-24 sm:py-32 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-white to-neutral-50/30" />
       <div className="relative max-w-3xl mx-auto px-6">
         <LinearReveal delay={0.1}>
           <div className="max-w-xl mx-auto text-center mb-16">
-            <div className="w-12 h-12 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-500 mx-auto mb-6">
+            <div className="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center text-zinc-400 mx-auto mb-6">
               <Mail className="w-5 h-5" />
             </div>
-            <h2 className="text-2xl font-bold text-neutral-900 mb-3">Get in touch</h2>
-            <p className="text-[15px] text-neutral-500 leading-relaxed">
+            <h2 className="text-2xl font-bold text-white mb-3">Get in touch</h2>
+            <p className="text-[15px] text-zinc-400 leading-relaxed">
               For questions, feedback, or just to share your story.
             </p>
           </div>
@@ -226,11 +225,11 @@ const ContactContent = () => {
 
         <LinearReveal delay={0.2}>
           <div className="max-w-md mx-auto mb-16">
-            <div className="p-8 bg-white rounded-2xl border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] text-center">
-              <p className="text-lg font-semibold text-neutral-900 mb-4">jiarenlyu@gmail.com</p>
+            <div className="p-8 bg-zinc-900 rounded-2xl border border-white/10 shadow-2xl text-center">
+              <p className="text-lg font-semibold text-white mb-4">jiarenlyu@gmail.com</p>
               <a 
                 href="mailto:jiarenlyu@gmail.com"
-                className="group inline-flex items-center gap-2.5 px-6 py-3 bg-neutral-900 text-white font-medium text-[15px] rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
+                className="group inline-flex items-center gap-2.5 px-6 py-3 bg-white text-zinc-900 font-semibold text-[15px] rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200"
               >
                 Send us an email
                 <Mail className="w-4 h-4" />
@@ -241,11 +240,11 @@ const ContactContent = () => {
 
         <LinearReveal delay={0.3}>
           <div className="text-center">
-            <div className="p-8 rounded-2xl bg-neutral-50 border border-neutral-200/40">
-              <p className="text-[15px] text-neutral-600 leading-relaxed mb-4">
+            <div className="p-8 rounded-2xl bg-zinc-900/50 border border-white/10 backdrop-blur-sm">
+              <p className="text-[15px] text-zinc-400 leading-relaxed mb-4">
                 We&apos;re building Kairoo with care. Your thoughts help us make it simpler, faster, and more supportive.
               </p>
-              <p className="text-sm font-medium text-neutral-900">
+              <p className="text-sm font-medium text-white">
                 — The Kairoo Team
               </p>
             </div>
@@ -276,9 +275,12 @@ export default function Contact() {
   return (
     <>
       <Navigation />
-      <main>
-        <ContactHero />
-        <ContactContent />
+      <main className="bg-zinc-950 min-h-screen text-white overflow-x-hidden relative" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed', backgroundRepeat: 'no-repeat' }}>
+        <div className="absolute inset-0 bg-zinc-950/40 pointer-events-none" />
+        <div className="relative z-10">
+          <ContactHero />
+          <ContactContent />
+        </div>
       </main>
     </>
   );

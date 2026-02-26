@@ -78,16 +78,16 @@ const Navigation = () => {
       transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? "bg-white/90 backdrop-blur-2xl border-b border-neutral-200/40 shadow-[0_1px_3px_rgba(0,0,0,0.04)]" 
+          ? "bg-zinc-950/80 backdrop-blur-xl border-b border-white/5" 
           : "bg-transparent"
       }`}
     >
-      <nav className="flex items-center justify-between p-6 lg:px-8 max-w-7xl mx-auto">
+      <nav className="flex items-center justify-between p-6 lg:px-8 max-w-[90rem] mx-auto w-full">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-neutral-900 rounded-xl flex items-center justify-center">
+          <div className="w-9 h-9 bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-800">
             <span className="text-white font-bold text-sm">K</span>
           </div>
-          <span className="text-lg font-semibold text-neutral-900 tracking-tight">Kairoo</span>
+          <span className="text-lg font-semibold text-white tracking-tight">Kairoo</span>
         </Link>
         
         <div className="hidden md:flex items-center gap-8">
@@ -95,10 +95,10 @@ const Navigation = () => {
             <Link 
               key={link.href}
               href={link.href}
-              className={`text-[13px] font-medium transition-colors duration-200 ${
+              className={`text-sm font-medium transition-colors duration-200 ${
                 link.href === "/mission" 
-                  ? "text-neutral-900" 
-                  : "text-neutral-500 hover:text-neutral-900"
+                  ? "text-white" 
+                  : "text-zinc-400 hover:text-white"
               }`}
             >
               {link.label}
@@ -108,7 +108,7 @@ const Navigation = () => {
         
         <Link 
           href="/onboarding" 
-          className="px-5 py-2.5 bg-neutral-900 text-white text-[13px] font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
+          className="px-5 py-2.5 bg-white text-zinc-900 text-[13px] font-semibold rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200"
         >
           Get started
         </Link>
@@ -125,8 +125,8 @@ const MissionHero = () => {
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
       <motion.div style={{ y, opacity }} className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 via-white to-white" />
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #94a3b8 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+        <div className="absolute inset-0 bg-zinc-950" />
+        <div className="absolute top-0 right-0 w-full h-[800px] opacity-20 pointer-events-none" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: '100% 100%', backgroundPosition: 'center', transform: 'rotate(180deg)' }} />
       </motion.div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 pt-32 pb-24">
@@ -147,13 +147,13 @@ const MissionHero = () => {
           
           <LinearTextReveal 
             text="Everyone deserves a safe place to find their voice."
-            className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-neutral-900 leading-[1.12] tracking-[-0.03em]"
+            className="eight-title font-medium tracking-tighter text-slate-100"
             delay={0.15}
             staggerDelay={0.025}
           />
 
           <LinearReveal delay={0.5}>
-            <p className="text-lg sm:text-xl text-neutral-500 max-w-2xl leading-relaxed">
+            <p className="one-title text-slate-100 max-w-2xl">
               Kairoo is a free, open tool for practicing conversations. No subscriptions. No premium tiers. Just a quiet space to grow.
             </p>
           </LinearReveal>
@@ -208,22 +208,22 @@ const MissionContent = () => {
   return (
     <>
       {/* Why section */}
-      <section className="py-24 sm:py-32 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-white via-neutral-50/50 to-white" />
+      <section className="py-24 sm:py-32 relative" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed', backgroundRepeat: 'no-repeat' }}>
+        <div className="absolute inset-0 bg-zinc-950/40" />
         <div className="relative max-w-3xl mx-auto px-6">
           <LinearReveal>
             <div className="space-y-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-[-0.02em]">
+              <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient tracking-[-0.02em]">
                 Why this exists
               </h2>
-              <div className="space-y-6 text-lg text-neutral-600 leading-relaxed">
+              <div className="space-y-6 text-lg text-zinc-400 leading-relaxed">
                 <p>
                   Communication shapes everything — relationships, careers, self-worth. But not everyone gets the same chance to practice it.
                 </p>
                 <p>
                   Some people grow up in homes where hard conversations just don't happen. Others deal with anxiety that makes every interaction feel like a test. Some are navigating a new culture, a new language, or a brain that processes social cues differently.
                 </p>
-                <p className="text-neutral-900 font-medium">
+                <p className="text-white font-medium">
                   We built Kairoo because we've been there. And we think the solution is simple: give people a private, pressure-free space to practice the conversations that matter to them.
                 </p>
               </div>
@@ -234,50 +234,41 @@ const MissionContent = () => {
 
       {/* Quotes section */}
       <section className="py-24 sm:py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-neutral-950" />
-        <div className="absolute inset-0 grain-texture" />
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-purple-600 rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/4 -right-32 w-[400px] h-[400px] bg-purple-500 rounded-full blur-[100px]" />
-        </div>
-
         <div className="relative z-10 max-w-5xl mx-auto px-6">
           <LinearReveal>
             <p className="text-[13px] font-semibold text-purple-400 uppercase tracking-[0.15em] mb-4">From real people</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-[-0.02em] mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient tracking-[-0.02em] mb-16">
               In their own words
             </h2>
-          </LinearReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {quotes.map((quote, index) => (
-              <LinearReveal key={index} delay={0.1 + index * 0.08}>
-                <div className="group relative bg-white/[0.04] backdrop-blur-sm rounded-2xl p-8 border border-white/[0.06] hover:bg-white/[0.07] hover:border-white/[0.1] transition-all duration-500">
-                  <div className="absolute top-6 left-8 text-5xl font-serif text-white/10 leading-none select-none">&ldquo;</div>
-                  <blockquote className="relative z-10 text-[15px] text-neutral-300 leading-relaxed mb-6 pt-4">
-                    {quote.text}
-                  </blockquote>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-white/[0.08] border border-white/[0.1] flex items-center justify-center">
-                      <span className="text-xs font-semibold text-neutral-400">{quote.author}</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {quotes.map((quote, index) => (
+                <LinearReveal key={index} delay={0.1 + index * 0.08}>
+                  <div className="group relative bg-white/[0.04] backdrop-blur-sm rounded-2xl p-8 border border-white/[0.06] hover:bg-white/[0.07] hover:border-white/[0.1] transition-all duration-500">
+                    <div className="absolute top-6 left-8 text-5xl font-serif text-white/10 leading-none select-none">&ldquo;</div>
+                    <blockquote className="relative z-10 text-[15px] text-neutral-300 leading-relaxed mb-6 pt-4">
+                      {quote.text}
+                    </blockquote>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-white/[0.08] border border-white/[0.1] flex items-center justify-center">
+                        <span className="text-xs font-semibold text-neutral-400">{quote.author}</span>
+                      </div>
+                      <span className="text-[13px] text-neutral-500">{quote.context}</span>
                     </div>
-                    <span className="text-[13px] text-neutral-500">{quote.context}</span>
                   </div>
-                </div>
-              </LinearReveal>
-            ))}
-          </div>
+                </LinearReveal>
+              ))}
+            </div>
+          </LinearReveal>
         </div>
       </section>
 
       {/* Values section */}
       <section className="py-24 sm:py-32 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-white to-neutral-50/30" />
         <div className="relative max-w-5xl mx-auto px-6">
           <LinearReveal>
             <div className="max-w-2xl mb-16">
               <p className="text-[13px] font-semibold text-purple-600 uppercase tracking-[0.15em] mb-4">What we believe</p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-[-0.02em]">
+              <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient tracking-[-0.02em]">
                 Built on principles, not profit
               </h2>
             </div>
@@ -286,12 +277,12 @@ const MissionContent = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {values.map((value, index) => (
               <LinearReveal key={value.title} delay={0.1 + index * 0.08}>
-                <div className="group p-8 bg-white rounded-2xl border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:border-neutral-200 hover:-translate-y-0.5 transition-all duration-500">
-                  <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center text-neutral-600 mb-6 group-hover:bg-purple-50 group-hover:text-purple-600 transition-colors duration-300">
+                <div className="group p-8 bg-zinc-900 rounded-2xl border border-white/10 shadow-2xl hover:border-white/20 hover:-translate-y-0.5 transition-all duration-500">
+                  <div className="w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-white mb-6 group-hover:bg-purple-500/20 group-hover:text-purple-400 transition-colors duration-300">
                     {value.icon}
                   </div>
-                  <h3 className="text-lg font-semibold text-neutral-900 mb-3">{value.title}</h3>
-                  <p className="text-[15px] text-neutral-500 leading-relaxed">{value.description}</p>
+                  <h3 className="text-lg font-semibold text-white mb-3">{value.title}</h3>
+                  <p className="text-[15px] text-zinc-400 leading-relaxed">{value.description}</p>
                 </div>
               </LinearReveal>
             ))}
@@ -301,11 +292,10 @@ const MissionContent = () => {
 
       {/* What this means in practice */}
       <section className="py-24 sm:py-32 relative">
-        <div className="absolute inset-0 bg-neutral-50/50" />
         <div className="relative max-w-3xl mx-auto px-6">
           <LinearReveal>
             <div className="space-y-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-[-0.02em]">
+              <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient tracking-[-0.02em]">
                 What this means in practice
               </h2>
               <div className="space-y-6">
@@ -316,13 +306,13 @@ const MissionContent = () => {
                   { icon: <Users className="w-4 h-4" />, title: "Built by people who get it", desc: "We're not building this from the outside looking in. We understand what it's like to struggle with communication." }
                 ].map((item, index) => (
                   <LinearReveal key={item.title} delay={0.05 + index * 0.06}>
-                    <div className="flex gap-5 p-5 rounded-xl bg-white border border-neutral-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.05)] transition-all duration-300">
-                      <div className="w-9 h-9 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500 flex-shrink-0 mt-0.5">
+                    <div className="flex gap-5 p-5 rounded-xl bg-zinc-900 border border-white/10 shadow-2xl hover:border-white/20 transition-all duration-300">
+                      <div className="w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-400 flex-shrink-0 mt-0.5">
                         {item.icon}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-neutral-900 mb-1">{item.title}</h4>
-                        <p className="text-[15px] text-neutral-500 leading-relaxed">{item.desc}</p>
+                        <h4 className="font-semibold text-white mb-1">{item.title}</h4>
+                        <p className="text-[15px] text-zinc-400 leading-relaxed">{item.desc}</p>
                       </div>
                     </div>
                   </LinearReveal>
@@ -335,20 +325,19 @@ const MissionContent = () => {
 
       {/* CTA */}
       <section className="py-24 sm:py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/30 to-white" />
         <div className="relative max-w-3xl mx-auto px-6 text-center">
           <LinearReveal>
             <div className="space-y-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-[-0.02em]">
+              <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient tracking-[-0.02em]">
                 Practice changes things.
               </h2>
-              <p className="text-lg text-neutral-500 max-w-xl mx-auto leading-relaxed">
+              <p className="text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed">
                 You don't need to be ready. You just need to start. Kairoo is free, private, and here whenever you are.
               </p>
               <div className="pt-2">
                 <Link 
                   href="/onboarding"
-                  className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-neutral-900 text-white font-medium text-[15px] rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
+                  className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-white text-zinc-900 font-semibold text-[15px] rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200 shadow-lg"
                 >
                   Start practicing
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" />
@@ -366,9 +355,12 @@ export default function Mission() {
   return (
     <>
       <Navigation />
-      <main>
-        <MissionHero />
-        <MissionContent />
+      <main className="bg-zinc-950 min-h-screen text-white overflow-x-hidden relative" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed', backgroundRepeat: 'no-repeat' }}>
+        <div className="absolute inset-0 bg-zinc-950/40 pointer-events-none" />
+        <div className="relative z-10">
+          <MissionHero />
+          <MissionContent />
+        </div>
       </main>
     </>
   );

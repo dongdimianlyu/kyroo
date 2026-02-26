@@ -164,14 +164,14 @@ const DashboardContent: React.FC = () => {
 
   if (loading || !userProgress) {
     return (
-      <div className="bg-white flex items-center justify-center min-h-[60vh]">
+      <div className="bg-zinc-950 flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
           <motion.div
-            className="w-10 h-10 bg-neutral-900 rounded-xl flex items-center justify-center mx-auto mb-4"
+            className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mx-auto mb-4"
             animate={{ rotate: 360 }}
             transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
           >
-            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-5 h-5 text-zinc-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2v4" />
               <path d="M12 18v4" />
               <path d="M4.93 4.93l2.83 2.83" />
@@ -182,8 +182,8 @@ const DashboardContent: React.FC = () => {
               <path d="M16.24 7.76l2.83-2.83" />
             </svg>
           </motion.div>
-          <h2 className="text-lg font-semibold text-neutral-900 mb-1">Loading dashboard...</h2>
-          <p className="text-[13px] text-neutral-500">Preparing your insights</p>
+          <h2 className="text-lg font-semibold text-white mb-1">Loading dashboard...</h2>
+          <p className="text-[13px] text-zinc-400">Preparing your insights</p>
         </div>
       </div>
     );
@@ -191,20 +191,20 @@ const DashboardContent: React.FC = () => {
 
   return (
     <ProtectedRoute>
-      <div className="bg-white">
+      <div className="bg-zinc-950 min-h-screen">
       {/* Header */}
-      <div className="border-b border-neutral-200/40">
+      <div className="border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-6">
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-neutral-900 mb-1">{getGreeting()}</h1>
-                <p className="text-[15px] text-neutral-500">{getMilestoneMessage(userProgress.overall_confidence)}</p>
+                <h1 className="text-2xl font-bold text-white mb-1">{getGreeting()}</h1>
+                <p className="text-[15px] text-zinc-400">{getMilestoneMessage(userProgress.overall_confidence)}</p>
               </div>
 
               <button
                 onClick={() => router.push('/app?view=practice')}
-                className="px-5 py-2.5 bg-neutral-900 text-white text-[13px] font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200 flex items-center gap-2"
+                className="px-5 py-2.5 bg-white text-zinc-900 text-[13px] font-semibold rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200 flex items-center gap-2 shadow-lg"
               >
                 <span>Start practice</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,9 +250,9 @@ const DashboardContent: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 0.5 }}
-              className="bg-white rounded-2xl p-6 border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
+              className="bg-zinc-900 rounded-2xl p-6 border border-white/10 shadow-2xl"
             >
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Recent achievements</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">Recent achievements</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 {userProgress.achievements.slice(0, 6).map((achievement, index) => (
                   <motion.div
@@ -263,26 +263,26 @@ const DashboardContent: React.FC = () => {
                     whileHover={{ scale: 1.05, y: -2 }}
                     className={`text-center p-3 rounded-xl border ${
                       achievement.rarity === 'legendary'
-                        ? 'bg-amber-50 border-amber-200/60'
+                        ? 'bg-amber-500/10 border-amber-500/30'
                         : achievement.rarity === 'epic'
-                        ? 'bg-purple-50 border-purple-200/60'
+                        ? 'bg-purple-500/10 border-purple-500/30'
                         : achievement.rarity === 'rare'
-                        ? 'bg-blue-50 border-blue-200/60'
-                        : 'bg-neutral-50 border-neutral-200/60'
+                        ? 'bg-blue-500/10 border-blue-500/30'
+                        : 'bg-white/5 border-white/10'
                     }`}
                   >
                     <div className="mb-1.5 flex items-center justify-center">
                       {achievement.rarity === 'legendary' ? (
-                        <Crown className="w-4 h-4 text-amber-600" />
+                        <Crown className="w-4 h-4 text-amber-400" />
                       ) : achievement.rarity === 'epic' ? (
-                        <Star className="w-4 h-4 text-purple-600" />
+                        <Star className="w-4 h-4 text-purple-400" />
                       ) : achievement.rarity === 'rare' ? (
-                        <Award className="w-4 h-4 text-blue-600" />
+                        <Award className="w-4 h-4 text-blue-400" />
                       ) : (
-                        <Award className="w-4 h-4 text-neutral-500" />
+                        <Award className="w-4 h-4 text-zinc-400" />
                       )}
                     </div>
-                    <div className="text-[11px] font-semibold text-neutral-800">{achievement.title}</div>
+                    <div className="text-[11px] font-semibold text-white">{achievement.title}</div>
                   </motion.div>
                 ))}
               </div>
@@ -368,18 +368,18 @@ const DashboardContent: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2, duration: 0.5 }}
-            className="rounded-2xl p-6 bg-neutral-50 border border-neutral-200/40"
+            className="rounded-2xl p-6 bg-zinc-900 border border-white/10 shadow-2xl"
           >
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-neutral-900 mb-1">Ready for your next session?</h3>
-              <p className="text-[13px] text-neutral-500 mb-5">Pick a scenario that matches your goals</p>
+              <h3 className="text-lg font-semibold text-white mb-1">Ready for your next session?</h3>
+              <p className="text-[13px] text-zinc-400 mb-5">Pick a scenario that matches your goals</p>
 
               <div className="flex flex-wrap gap-2 justify-center">
                 {['Job Interview', 'Small Talk', 'Presentation', 'Networking'].map((scenario) => (
                   <button
                     key={scenario}
                     onClick={() => router.push('/app?view=practice')}
-                    className="px-4 py-2 bg-white rounded-lg font-medium text-[13px] text-neutral-700 border border-neutral-200/60 hover:border-neutral-300 hover:bg-neutral-50 active:scale-[0.98] transition-all duration-200"
+                    className="px-4 py-2 bg-white/5 rounded-lg font-medium text-[13px] text-zinc-300 border border-white/10 hover:border-white/20 hover:bg-white/10 active:scale-[0.98] transition-all duration-200"
                   >
                     {scenario}
                   </button>

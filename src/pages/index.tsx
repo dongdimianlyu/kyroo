@@ -199,16 +199,16 @@ const Navigation = () => {
       transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? "bg-white/90 backdrop-blur-2xl border-b border-neutral-200/40 shadow-[0_1px_3px_rgba(0,0,0,0.04)]" 
+          ? "bg-zinc-950/80 backdrop-blur-xl border-b border-white/5" 
           : "bg-transparent"
       }`}
     >
-      <nav className="flex items-center justify-between p-6 lg:px-8 max-w-7xl mx-auto">
+      <nav className="flex items-center justify-between p-6 lg:px-8 max-w-[90rem] mx-auto w-full">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-neutral-900 rounded-xl flex items-center justify-center">
+          <div className="w-9 h-9 bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-800">
             <span className="text-white font-bold text-sm">K</span>
           </div>
-          <span className="text-lg font-semibold text-neutral-900 tracking-tight">Kairoo</span>
+          <span className="text-lg font-semibold text-white tracking-tight">Kairoo</span>
         </Link>
         
         <div className="hidden md:flex items-center gap-8">
@@ -216,7 +216,7 @@ const Navigation = () => {
             <Link 
               key={link.href}
               href={link.href}
-              className="text-[13px] font-medium text-neutral-500 hover:text-neutral-900 transition-colors duration-200"
+              className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-200"
             >
               {link.label}
             </Link>
@@ -228,12 +228,12 @@ const Navigation = () => {
             <>
               <Link 
                 href="/app" 
-                className="px-4 py-2 text-neutral-600 text-[13px] font-medium rounded-lg hover:bg-neutral-50 transition-all duration-200"
+                className="px-4 py-2 text-zinc-300 text-sm font-medium rounded-lg hover:bg-zinc-800/50 hover:text-white transition-all duration-200"
               >
                 Dashboard
               </Link>
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-neutral-900 rounded-lg flex items-center justify-center text-white font-semibold text-xs">
+                <div className="w-8 h-8 bg-zinc-800 rounded-lg flex items-center justify-center text-white font-semibold text-xs border border-zinc-700">
                   {userProfile?.displayName?.charAt(0).toUpperCase() || 'U'}
                 </div>
               </div>
@@ -242,15 +242,15 @@ const Navigation = () => {
             <>
               <Link 
                 href="/login" 
-                className="px-4 py-2 text-neutral-500 text-[13px] font-medium rounded-lg hover:text-neutral-900 transition-all duration-200"
+                className="px-4 py-2 text-zinc-300 text-sm font-medium rounded-lg hover:bg-zinc-800/50 hover:text-white transition-all duration-200"
               >
-                Sign in
+                Log in
               </Link>
               <Link 
                 href="/signup" 
-                className="px-5 py-2.5 bg-neutral-900 text-white text-[13px] font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
+                className="px-5 py-2 bg-white text-zinc-900 text-sm font-semibold rounded-lg hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200"
               >
-                Get started
+                Sign up
               </Link>
             </>
           )}
@@ -265,8 +265,8 @@ const Navigation = () => {
 // Practice Feature Section
 const PracticeFeatureSection = () => {
   return (
-    <section className="py-24 sm:py-32 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-white to-neutral-50/30" />
+    <section className="py-24 sm:py-32 relative" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed', backgroundRepeat: 'no-repeat' }}>
+      <div className="absolute inset-0 bg-zinc-950/40" />
       <div className="relative max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <LinearReveal delay={0.1}>
@@ -287,12 +287,12 @@ const PracticeFeatureSection = () => {
             <div className="space-y-8">
               <div className="space-y-5">
                 <p className="text-[13px] font-semibold text-purple-600 uppercase tracking-[0.15em]">Voice practice</p>
-                <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 leading-[1.15] tracking-[-0.02em]">
+                <h2 className="text-3xl sm:text-4xl font-bold text-white leading-[1.15] tracking-[-0.02em]">
                   Have a real conversation with AI that listens
                 </h2>
               </div>
               
-              <p className="text-lg text-neutral-500 leading-relaxed">
+              <p className="text-lg text-zinc-400 leading-relaxed">
                 Practice real conversations in a safe space. From casual small talk to important meetings — at your own pace, with no pressure.
               </p>
               
@@ -305,7 +305,7 @@ const PracticeFeatureSection = () => {
                   <LinearReveal key={feature} delay={0.3 + index * 0.05}>
                     <div className="flex items-center gap-3">
                       <div className="w-1.5 h-1.5 bg-purple-500 rounded-full flex-shrink-0" />
-                      <span className="text-[15px] text-neutral-600">{feature}</span>
+                      <span className="text-[15px] text-zinc-300">{feature}</span>
                     </div>
                   </LinearReveal>
                 ))}
@@ -321,20 +321,20 @@ const PracticeFeatureSection = () => {
 // Feedback Feature Section
 const FeedbackFeatureSection = () => {
   return (
-    <section className="py-24 sm:py-32 relative">
-      <div className="absolute inset-0 bg-neutral-50/50" />
+    <section className="py-24 sm:py-32 relative" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed', backgroundRepeat: 'no-repeat' }}>
+      <div className="absolute inset-0 bg-zinc-950/40" />
       <div className="relative max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <LinearReveal delay={0.1}>
             <div className="space-y-8">
               <div className="space-y-5">
                 <p className="text-[13px] font-semibold text-emerald-600 uppercase tracking-[0.15em]">Gentle feedback</p>
-                <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 leading-[1.15] tracking-[-0.02em]">
+                <h2 className="text-3xl sm:text-4xl font-bold text-white leading-[1.15] tracking-[-0.02em]">
                   See what you did well. Learn what to try next.
                 </h2>
               </div>
               
-              <p className="text-lg text-neutral-500 leading-relaxed">
+              <p className="text-lg text-zinc-400 leading-relaxed">
                 After each session, get a clear summary — strengths first, then gentle suggestions. No harsh criticism. Just honest, supportive guidance.
               </p>
               
@@ -347,7 +347,7 @@ const FeedbackFeatureSection = () => {
                   <LinearReveal key={feature} delay={0.2 + index * 0.05}>
                     <div className="flex items-center gap-3">
                       <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full flex-shrink-0" />
-                      <span className="text-[15px] text-neutral-600">{feature}</span>
+                      <span className="text-[15px] text-zinc-300">{feature}</span>
                     </div>
                   </LinearReveal>
                 ))}
@@ -357,15 +357,15 @@ const FeedbackFeatureSection = () => {
 
           <LinearReveal delay={0.2}>
             <div className="relative">
-              <div className="bg-white rounded-2xl border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-8">
+              <div className="bg-zinc-900 rounded-2xl border border-white/10 shadow-2xl p-8">
                 <div className="flex items-start justify-between mb-6">
                   <div>
-                    <h3 className="text-xl font-bold text-neutral-900">Session complete</h3>
-                    <p className="text-sm text-neutral-500 mt-0.5">Great work on this one.</p>
+                    <h3 className="text-xl font-bold text-white">Session complete</h3>
+                    <p className="text-sm text-zinc-400 mt-0.5">Great work on this one.</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-3xl font-bold text-neutral-900 leading-none">89</div>
-                    <div className="text-xs text-neutral-400 mt-1">confidence</div>
+                    <div className="text-3xl font-bold text-white leading-none">89</div>
+                    <div className="text-xs text-zinc-400 mt-1">confidence</div>
                   </div>
                 </div>
 
@@ -377,19 +377,19 @@ const FeedbackFeatureSection = () => {
                   ].map((kpi) => (
                     <div key={kpi.label}>
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm font-medium text-neutral-700">{kpi.label}</span>
-                        <span className="text-sm font-semibold text-neutral-900">{kpi.score}</span>
+                        <span className="text-sm font-medium text-zinc-300">{kpi.label}</span>
+                        <span className="text-sm font-semibold text-white">{kpi.score}</span>
                       </div>
-                      <div className="h-1.5 rounded-full bg-neutral-100 overflow-hidden">
-                        <div className="h-full bg-neutral-900 rounded-full" style={{ width: `${kpi.score}%` }} />
+                      <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                        <div className="h-full bg-white rounded-full" style={{ width: `${kpi.score}%` }} />
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-100">
-                  <p className="text-sm text-neutral-600 leading-relaxed">
-                    <span className="font-medium text-neutral-900">What went well:</span> You maintained a warm, open tone throughout. Your questions showed genuine curiosity.
+                <div className="p-4 rounded-xl bg-zinc-800/50 border border-white/5">
+                  <p className="text-sm text-zinc-300 leading-relaxed">
+                    <span className="font-medium text-white">What went well:</span> You maintained a warm, open tone throughout. Your questions showed genuine curiosity.
                   </p>
                 </div>
               </div>
@@ -476,19 +476,19 @@ const FeaturesSection = () => {
 // Product showcase
 const ProductShowcase = () => {
   return (
-    <section className="py-24 sm:py-32 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-white to-neutral-50/30" />
+    <section className="py-24 sm:py-32 relative" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed', backgroundRepeat: 'no-repeat' }}>
+      <div className="absolute inset-0 bg-zinc-950/40" />
       <div className="relative max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <LinearReveal delay={0.1}>
             <div className="space-y-8">
               <div className="space-y-5">
                 <p className="text-[13px] font-semibold text-purple-600 uppercase tracking-[0.15em]">See it in action</p>
-                <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 leading-[1.15] tracking-[-0.02em]">
+                <h2 className="text-3xl sm:text-4xl font-bold text-white leading-[1.15] tracking-[-0.02em]">
                   Track your growth. Celebrate progress.
                 </h2>
               </div>
-              <p className="text-lg text-neutral-500 leading-relaxed">
+              <p className="text-lg text-zinc-400 leading-relaxed">
                 An intuitive dashboard shows your progress without overwhelming you. Small wins build real confidence.
               </p>
               
@@ -500,8 +500,8 @@ const ProductShowcase = () => {
                 ].map((feature, index) => (
                   <LinearReveal key={feature} delay={0.2 + index * 0.05}>
                     <div className="flex items-center gap-3">
-                      <CheckCircle className="w-4 h-4 text-neutral-400 flex-shrink-0" />
-                      <span className="text-[15px] text-neutral-600">{feature}</span>
+                      <CheckCircle className="w-4 h-4 text-zinc-500 flex-shrink-0" />
+                      <span className="text-[15px] text-zinc-300">{feature}</span>
                     </div>
                   </LinearReveal>
                 ))}
@@ -510,13 +510,14 @@ const ProductShowcase = () => {
           </LinearReveal>
 
           <LinearReveal delay={0.2}>
-            <div className="bg-white rounded-2xl border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="bg-zinc-900 rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
               <Image 
                 src="/phil.png"
                 alt="Dashboard preview"
                 width={1200}
                 height={675}
                 style={{ width: '100%', height: 'auto' }}
+                className="opacity-90"
               />
             </div>
           </LinearReveal>
@@ -545,16 +546,15 @@ const ScenariosSection = () => {
   ];
 
   return (
-    <section className="py-24 sm:py-32 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 to-white" />
+    <section className="py-24 sm:py-32 relative">
       <div className="relative max-w-7xl mx-auto px-6">
         <LinearReveal className="text-center mb-16">
           <div className="space-y-5">
             <p className="text-[13px] font-semibold text-purple-600 uppercase tracking-[0.15em]">Scenarios</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 leading-[1.15] tracking-[-0.02em]">
+            <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient leading-[1.15] tracking-[-0.02em]">
               Practice for any situation
             </h2>
-            <p className="text-lg text-neutral-500 max-w-xl mx-auto">
+            <p className="text-lg text-zinc-400 max-w-xl mx-auto">
               Pick a scenario. Practice until it feels natural. Use it in real life.
             </p>
           </div>
@@ -567,12 +567,12 @@ const ScenariosSection = () => {
                 {[...rowOne, ...rowOne].map((item, i) => (
                   <div
                     key={`r1-${i}-${item.title}`}
-                    className="shrink-0 px-5 py-4 bg-white rounded-2xl border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center gap-3"
+                    className="shrink-0 px-5 py-4 bg-zinc-900 rounded-2xl border border-white/10 shadow-2xl flex items-center gap-3"
                   >
                     <span className="text-xl">{item.emoji}</span>
                     <div className="leading-tight text-left">
-                      <div className="text-neutral-900 font-semibold text-[15px]">{item.title}</div>
-                      <div className="text-neutral-400 text-xs">{item.tag}</div>
+                      <div className="text-white font-semibold text-[15px]">{item.title}</div>
+                      <div className="text-zinc-400 text-xs">{item.tag}</div>
                     </div>
                   </div>
                 ))}
@@ -586,12 +586,12 @@ const ScenariosSection = () => {
                 {[...rowTwo, ...rowTwo].map((item, i) => (
                   <div
                     key={`r2-${i}-${item.title}`}
-                    className="shrink-0 px-5 py-4 bg-white rounded-2xl border border-neutral-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center gap-3"
+                    className="shrink-0 px-5 py-4 bg-zinc-900 rounded-2xl border border-white/10 shadow-2xl flex items-center gap-3"
                   >
                     <span className="text-xl">{item.emoji}</span>
                     <div className="leading-tight text-left">
-                      <div className="text-neutral-900 font-semibold text-[15px]">{item.title}</div>
-                      <div className="text-neutral-400 text-xs">{item.tag}</div>
+                      <div className="text-white font-semibold text-[15px]">{item.title}</div>
+                      <div className="text-zinc-400 text-xs">{item.tag}</div>
                     </div>
                   </div>
                 ))}
@@ -629,12 +629,11 @@ const HowItWorksPreview = () => {
 
   return (
     <section className="py-24 sm:py-32 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-white to-neutral-50/30" />
       <div className="relative max-w-5xl mx-auto px-6">
         <LinearReveal className="text-center mb-16">
           <div className="space-y-5">
             <p className="text-[13px] font-semibold text-purple-600 uppercase tracking-[0.15em]">How it works</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-[-0.02em]">
+            <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient tracking-[-0.02em]">
               Three steps. That&apos;s it.
             </h2>
           </div>
@@ -644,12 +643,12 @@ const HowItWorksPreview = () => {
           {steps.map((step, index) => (
             <LinearReveal key={step.title} delay={index * 0.08}>
               <div className="text-center space-y-4">
-                <div className="text-5xl font-bold text-neutral-100 select-none tracking-tighter">{step.number}</div>
-                <div className="w-10 h-10 bg-neutral-900 rounded-xl flex items-center justify-center text-white mx-auto">
+                <div className="text-5xl font-bold text-zinc-800 select-none tracking-tighter">{step.number}</div>
+                <div className="w-10 h-10 bg-zinc-800 border border-white/10 rounded-xl flex items-center justify-center text-white mx-auto shadow-lg">
                   {step.icon}
                 </div>
-                <h3 className="text-lg font-semibold text-neutral-900">{step.title}</h3>
-                <p className="text-[15px] text-neutral-500 leading-relaxed">{step.description}</p>
+                <h3 className="text-lg font-semibold text-white">{step.title}</h3>
+                <p className="text-[15px] text-zinc-400 leading-relaxed">{step.description}</p>
               </div>
             </LinearReveal>
           ))}
@@ -659,7 +658,7 @@ const HowItWorksPreview = () => {
           <div className="text-center">
             <Link 
               href="/how-it-works"
-              className="inline-flex items-center gap-2.5 px-6 py-3 text-neutral-600 font-medium text-[15px] rounded-xl border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50 active:scale-[0.98] transition-all duration-200"
+              className="inline-flex items-center gap-2.5 px-6 py-3 text-zinc-300 font-medium text-[15px] rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/5 active:scale-[0.98] transition-all duration-200 shadow-sm"
             >
               Learn more
               <ArrowRight className="w-4 h-4" />
@@ -675,20 +674,19 @@ const HowItWorksPreview = () => {
 const MissionExcerpt = () => {
   return (
     <section className="py-24 sm:py-32 relative">
-      <div className="absolute inset-0 bg-neutral-50/50" />
       <div className="relative max-w-3xl mx-auto px-6 text-center">
         <LinearReveal>
           <div className="space-y-8">
             <p className="text-[13px] font-semibold text-purple-600 uppercase tracking-[0.15em]">Our mission</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-[-0.02em]">
+            <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient tracking-[-0.02em]">
               Everyone deserves a safe place to find their voice
             </h2>
-            <p className="text-lg text-neutral-500 max-w-xl mx-auto leading-relaxed">
+            <p className="text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed">
               Kairoo is free because practice should be accessible to everyone. No subscriptions. No premium tiers.
             </p>
             <Link 
               href="/mission"
-              className="inline-flex items-center gap-2.5 px-6 py-3 text-neutral-600 font-medium text-[15px] rounded-xl border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50 active:scale-[0.98] transition-all duration-200"
+              className="inline-flex items-center gap-2.5 px-6 py-3 text-zinc-300 font-medium text-[15px] rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/5 active:scale-[0.98] transition-all duration-200 shadow-sm"
             >
               Read our mission
               <ArrowRight className="w-4 h-4" />
@@ -703,28 +701,27 @@ const MissionExcerpt = () => {
 // CTA Section
 const CTASection = () => {
   return (
-    <section className="py-24 sm:py-32 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/30 to-white" />
+    <section className="py-24 sm:py-32 relative">
       <div className="relative max-w-3xl mx-auto px-6 text-center">
         <LinearReveal>
           <div className="space-y-8">
-            <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-[-0.02em]">
+            <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient tracking-[-0.02em]">
               Start practicing better conversations
             </h2>
-            <p className="text-lg text-neutral-500 max-w-xl mx-auto leading-relaxed">
+            <p className="text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed">
               Free to use. No signup required. Start practicing in 30 seconds.
             </p>
-            <div className="flex items-center justify-center gap-6 text-[13px] text-neutral-400">
+            <div className="flex items-center justify-center gap-6 text-[13px] text-zinc-500">
               <span>Always free</span>
-              <span className="w-1 h-1 rounded-full bg-neutral-300" />
+              <span className="w-1 h-1 rounded-full bg-zinc-700" />
               <span>Private</span>
-              <span className="w-1 h-1 rounded-full bg-neutral-300" />
+              <span className="w-1 h-1 rounded-full bg-zinc-700" />
               <span>Ready in 30s</span>
             </div>
             <div className="pt-2">
               <Link 
                 href="/signup" 
-                className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-neutral-900 text-white font-medium text-[15px] rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
+                className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-white text-zinc-900 font-semibold text-[15px] rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200 shadow-lg"
               >
                 Start practicing
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" />
@@ -740,21 +737,22 @@ const CTASection = () => {
 // Footer
 const Footer = () => {
   return (
-    <footer className="border-t border-neutral-200/40">
+    <footer className="border-t border-white/5 relative">
+      <div className="absolute inset-0 bg-zinc-950 -z-10" />
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 bg-neutral-900 rounded-lg flex items-center justify-center">
+            <div className="w-7 h-7 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xs">K</span>
             </div>
-            <span className="text-sm font-semibold text-neutral-900">Kairoo</span>
+            <span className="text-sm font-semibold text-white">Kairoo</span>
           </div>
           <div className="flex items-center gap-6">
-            <Link href="/mission" className="text-[13px] text-neutral-400 hover:text-neutral-600 transition-colors">Mission</Link>
-            <Link href="/how-it-works" className="text-[13px] text-neutral-400 hover:text-neutral-600 transition-colors">How it works</Link>
-            <Link href="/contact" className="text-[13px] text-neutral-400 hover:text-neutral-600 transition-colors">Contact</Link>
+            <Link href="/mission" className="text-[13px] text-zinc-500 hover:text-white transition-colors">Mission</Link>
+            <Link href="/how-it-works" className="text-[13px] text-zinc-500 hover:text-white transition-colors">How it works</Link>
+            <Link href="/contact" className="text-[13px] text-zinc-500 hover:text-white transition-colors">Contact</Link>
           </div>
-          <p className="text-[13px] text-neutral-400">© 2024 Kairoo</p>
+          <p className="text-[13px] text-zinc-600">© 2024 Kairoo</p>
         </div>
       </div>
     </footer>
@@ -783,16 +781,18 @@ export default function Home() {
   return (
     <>
       <Navigation />
-      <main>
-        <Hero />
-        <ScenariosSection />
-        <HowItWorksPreview />
-        <PracticeFeatureSection />
-        <FeedbackFeatureSection />
-        <FeaturesSection />
-        <MissionExcerpt />
-        <ProductShowcase />
-        <CTASection />
+      <main className="bg-zinc-950 min-h-screen text-white overflow-x-hidden relative" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed', backgroundRepeat: 'no-repeat' }}>
+        <div className="absolute inset-0 bg-zinc-950/40 pointer-events-none" />
+        <div className="relative z-10">
+          <Hero />
+          <ScenariosSection />
+          <HowItWorksPreview />
+          <PracticeFeatureSection />
+          <FeedbackFeatureSection />
+          <ProductShowcase />
+          <MissionExcerpt />
+          <CTASection />
+        </div>
       </main>
       <Footer />
     </>

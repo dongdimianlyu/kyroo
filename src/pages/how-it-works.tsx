@@ -68,16 +68,16 @@ const Navigation = () => {
       transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? "bg-white/90 backdrop-blur-2xl border-b border-neutral-200/40 shadow-[0_1px_3px_rgba(0,0,0,0.04)]" 
+          ? "bg-zinc-950/80 backdrop-blur-xl border-b border-white/5" 
           : "bg-transparent"
       }`}
     >
-      <nav className="flex items-center justify-between p-6 lg:px-8 max-w-7xl mx-auto">
+      <nav className="flex items-center justify-between p-6 lg:px-8 max-w-[90rem] mx-auto w-full">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-neutral-900 rounded-xl flex items-center justify-center">
+          <div className="w-9 h-9 bg-zinc-900 rounded-xl flex items-center justify-center border border-zinc-800">
             <span className="text-white font-bold text-sm">K</span>
           </div>
-          <span className="text-lg font-semibold text-neutral-900 tracking-tight">Kairoo</span>
+          <span className="text-lg font-semibold text-white tracking-tight">Kairoo</span>
         </Link>
         
         <div className="hidden md:flex items-center gap-8">
@@ -85,10 +85,10 @@ const Navigation = () => {
             <Link 
               key={link.href}
               href={link.href}
-              className={`text-[13px] font-medium transition-colors duration-200 ${
+              className={`text-sm font-medium transition-colors duration-200 ${
                 link.href === "/how-it-works" 
-                  ? "text-neutral-900" 
-                  : "text-neutral-500 hover:text-neutral-900"
+                  ? "text-white" 
+                  : "text-zinc-400 hover:text-white"
               }`}
             >
               {link.label}
@@ -98,7 +98,7 @@ const Navigation = () => {
         
         <Link 
           href="/onboarding" 
-          className="px-5 py-2.5 bg-neutral-900 text-white text-[13px] font-medium rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
+          className="px-5 py-2.5 bg-white text-zinc-900 text-[13px] font-semibold rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200"
         >
           Get started
         </Link>
@@ -115,8 +115,8 @@ const HowItWorksHero = () => {
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
       <motion.div style={{ y, opacity }} className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 via-white to-white" />
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #94a3b8 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+        <div className="absolute inset-0 bg-zinc-950" />
+        <div className="absolute top-0 right-0 w-full h-[800px] opacity-20 pointer-events-none" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: '100% 100%', backgroundPosition: 'center', transform: 'rotate(180deg)' }} />
       </motion.div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 pt-32 pb-24">
@@ -137,13 +137,13 @@ const HowItWorksHero = () => {
           
           <LinearTextReveal 
             text="Three steps. No complexity. Just practice."
-            className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-neutral-900 leading-[1.12] tracking-[-0.03em]"
+            className="eight-title font-medium tracking-tighter text-slate-100"
             delay={0.15}
             staggerDelay={0.025}
           />
 
           <LinearReveal delay={0.5}>
-            <p className="text-lg sm:text-xl text-neutral-500 max-w-2xl leading-relaxed">
+            <p className="one-title text-slate-100 max-w-2xl">
               Describe a situation. Talk it through with AI. See what you did well and where to grow. That&apos;s it.
             </p>
           </LinearReveal>
@@ -193,8 +193,8 @@ const HowItWorksContent = () => {
   return (
     <>
       {/* Steps section */}
-      <section className="py-24 sm:py-32 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-white to-neutral-50/30" />
+      <section className="py-24 sm:py-32 relative" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed', backgroundRepeat: 'no-repeat' }}>
+        <div className="absolute inset-0 bg-zinc-950/40" />
         <div className="relative max-w-4xl mx-auto px-6">
           <div className="space-y-20">
             {steps.map((step, index) => (
@@ -212,23 +212,23 @@ const HowItWorksContent = () => {
 
                   {/* Content */}
                   <div className="space-y-6">
-                    <h3 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-[-0.02em]">
+                    <h3 className="text-2xl sm:text-3xl font-bold landing-text-gradient tracking-[-0.02em]">
                       {step.title}
                     </h3>
-                    <p className="text-lg text-neutral-500 leading-relaxed max-w-xl">
+                    <p className="text-lg text-zinc-400 leading-relaxed max-w-xl">
                       {step.description}
                     </p>
                     <div className="space-y-3 pt-2">
                       {step.details.map((detail, idx) => (
                         <div key={idx} className="flex items-center gap-3">
                           <div className="w-1.5 h-1.5 rounded-full bg-purple-500 flex-shrink-0" />
-                          <span className="text-[15px] text-neutral-600">{detail}</span>
+                          <span className="text-[15px] text-zinc-300">{detail}</span>
                         </div>
                       ))}
                     </div>
                     {index < steps.length - 1 && (
                       <div className="pt-8 hidden lg:block">
-                        <div className="w-px h-16 bg-gradient-to-b from-neutral-200 to-transparent ml-5" />
+                        <div className="w-px h-16 bg-gradient-to-b from-zinc-800 to-transparent ml-5" />
                       </div>
                     )}
                   </div>
@@ -241,18 +241,11 @@ const HowItWorksContent = () => {
 
       {/* What makes it different */}
       <section className="py-24 sm:py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-neutral-950" />
-        <div className="absolute inset-0 grain-texture" />
-        <div className="absolute inset-0 opacity-15">
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-purple-600 rounded-full blur-[150px]" />
-          <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-indigo-500 rounded-full blur-[120px]" />
-        </div>
-
         <div className="relative z-10 max-w-5xl mx-auto px-6">
           <LinearReveal>
             <div className="max-w-2xl mb-16">
               <p className="text-[13px] font-semibold text-purple-400 uppercase tracking-[0.15em] mb-4">Why this works</p>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-[-0.02em]">
+              <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient tracking-[-0.02em]">
                 Practice is the only thing that actually builds confidence
               </h2>
             </div>
@@ -280,7 +273,6 @@ const HowItWorksContent = () => {
 
       {/* Quick facts */}
       <section className="py-24 sm:py-32 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-white to-neutral-50/50" />
         <div className="relative max-w-4xl mx-auto px-6">
           <LinearReveal>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
@@ -290,8 +282,8 @@ const HowItWorksContent = () => {
                 { stat: "Private", label: "By default" },
               ].map((item, index) => (
                 <div key={item.label} className="text-center sm:text-left">
-                  <div className="text-4xl sm:text-5xl font-bold text-neutral-900 tracking-tight mb-2">{item.stat}</div>
-                  <div className="text-[15px] text-neutral-500">{item.label}</div>
+                  <div className="text-4xl sm:text-5xl font-bold text-white tracking-tight mb-2">{item.stat}</div>
+                  <div className="text-[15px] text-zinc-400">{item.label}</div>
                 </div>
               ))}
             </div>
@@ -301,27 +293,26 @@ const HowItWorksContent = () => {
 
       {/* CTA */}
       <section className="py-24 sm:py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50/30 to-white" />
         <div className="relative max-w-3xl mx-auto px-6 text-center">
           <LinearReveal>
             <div className="space-y-8">
-              <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 tracking-[-0.02em]">
+              <h2 className="text-3xl sm:text-4xl font-bold landing-text-gradient tracking-[-0.02em]">
                 Ready to try it?
               </h2>
-              <p className="text-lg text-neutral-500 max-w-xl mx-auto leading-relaxed">
+              <p className="text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed">
                 Pick a scenario. Start talking. See how it feels. No account needed to begin.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
                 <Link 
                   href="/onboarding"
-                  className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-neutral-900 text-white font-medium text-[15px] rounded-xl hover:bg-neutral-800 active:scale-[0.98] transition-all duration-200"
+                  className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-white text-zinc-900 font-semibold text-[15px] rounded-xl hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200 shadow-lg"
                 >
                   Start practicing
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-300" />
                 </Link>
                 <Link 
                   href="/mission"
-                  className="inline-flex items-center gap-2.5 px-7 py-3.5 text-neutral-600 font-medium text-[15px] rounded-xl border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50 active:scale-[0.98] transition-all duration-200"
+                  className="inline-flex items-center gap-2.5 px-7 py-3.5 text-zinc-300 font-medium text-[15px] rounded-xl border border-white/10 hover:border-white/20 hover:bg-white/5 active:scale-[0.98] transition-all duration-200 shadow-sm"
                 >
                   Read our mission
                 </Link>
@@ -338,9 +329,12 @@ export default function HowItWorks() {
   return (
     <>
       <Navigation />
-      <main>
-        <HowItWorksHero />
-        <HowItWorksContent />
+      <main className="bg-zinc-950 min-h-screen text-white overflow-x-hidden relative" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundAttachment: 'fixed', backgroundRepeat: 'no-repeat' }}>
+        <div className="absolute inset-0 bg-zinc-950/40 pointer-events-none" />
+        <div className="relative z-10">
+          <HowItWorksHero />
+          <HowItWorksContent />
+        </div>
       </main>
     </>
   );
