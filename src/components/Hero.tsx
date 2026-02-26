@@ -6,12 +6,6 @@ export default function Hero() {
   return (
     <section className="relative min-h-[110vh] flex flex-col items-center justify-center pt-20 pb-40 rounded-xl" style={{ backgroundImage: 'url("/assets/gradient-BZl8jpii.png")', backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat' }}>
       <div className="flex flex-col items-center justify-center gap-y-4 max-w-[90rem] mx-auto w-full py-10 px-2">
-        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-zinc-900/80 border border-zinc-700/50 w-fit mt-10">
-          <div className="w-5 h-5 rounded bg-orange-500 flex items-center justify-center">
-            <span className="text-white font-bold text-[11px]">Y</span>
-          </div>
-          <span className="text-white/80 text-sm font-medium">Backed by Y Combinator</span>
-        </div>
         
         <h1 className="eight-title text-center font-medium tracking-tighter text-slate-100 mt-4">
           Meet <span className="landing-text-gradient">Kairoo</span>
